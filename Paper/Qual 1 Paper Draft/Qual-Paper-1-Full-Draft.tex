@@ -1,0 +1,1013 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+  man]{apa6}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+% Make \paragraph and \subparagraph free-standing
+\ifx\paragraph\undefined\else
+  \let\oldparagraph\paragraph
+  \renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+  \let\oldsubparagraph\subparagraph
+  \renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+% definitions for citeproc citations
+\NewDocumentCommand\citeproctext{}{}
+\NewDocumentCommand\citeproc{mm}{%
+  \begingroup\def\citeproctext{#2}\cite{#1}\endgroup}
+\makeatletter
+ % allow citations to break across lines
+ \let\@cite@ofmt\@firstofone
+ % avoid brackets around text for \cite:
+ \def\@biblabel#1{}
+ \def\@cite#1#2{{#1\if@tempswa , #2\fi}}
+\makeatother
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newenvironment{CSLReferences}[2] % #1 hanging-indent, #2 entry-spacing
+ {\begin{list}{}{%
+  \setlength{\itemindent}{0pt}
+  \setlength{\leftmargin}{0pt}
+  \setlength{\parsep}{0pt}
+  % turn on hanging indent if param 1 is 1
+  \ifodd #1
+   \setlength{\leftmargin}{\cslhangindent}
+   \setlength{\itemindent}{-1\cslhangindent}
+  \fi
+  % set entry spacing
+  \setlength{\itemsep}{#2\baselineskip}}}
+ {\end{list}}
+\usepackage{calc}
+\newcommand{\CSLBlock}[1]{\hfill\break\parbox[t]{\linewidth}{\strut\ignorespaces#1\strut}}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
+\ifLuaTeX
+\usepackage[bidi=basic]{babel}
+\else
+\usepackage[bidi=default]{babel}
+\fi
+\babelprovide[main,import]{english}
+% get rid of language-specific shorthands (see #6817):
+\let\LanguageShortHands\languageshorthands
+\def\languageshorthands#1{}
+% Manuscript styling
+\usepackage{upgreek}
+\captionsetup{font=singlespacing,justification=justified}
+
+% Table formatting
+\usepackage{longtable}
+\usepackage{lscape}
+% \usepackage[counterclockwise]{rotating}   % Landscape page setup for large tables
+\usepackage{multirow}		% Table styling
+\usepackage{tabularx}		% Control Column width
+\usepackage[flushleft]{threeparttable}	% Allows for three part tables with a specified notes section
+\usepackage{threeparttablex}            % Lets threeparttable work with longtable
+
+% Create new environments so endfloat can handle them
+% \newenvironment{ltable}
+%   {\begin{landscape}\centering\begin{threeparttable}}
+%   {\end{threeparttable}\end{landscape}}
+\newenvironment{lltable}{\begin{landscape}\centering\begin{ThreePartTable}}{\end{ThreePartTable}\end{landscape}}
+
+% Enables adjusting longtable caption width to table width
+% Solution found at http://golatex.de/longtable-mit-caption-so-breit-wie-die-tabelle-t15767.html
+\makeatletter
+\newcommand\LastLTentrywidth{1em}
+\newlength\longtablewidth
+\setlength{\longtablewidth}{1in}
+\newcommand{\getlongtablewidth}{\begingroup \ifcsname LT@\roman{LT@tables}\endcsname \global\longtablewidth=0pt \renewcommand{\LT@entry}[2]{\global\advance\longtablewidth by ##2\relax\gdef\LastLTentrywidth{##2}}\@nameuse{LT@\roman{LT@tables}} \fi \endgroup}
+
+% \setlength{\parindent}{0.5in}
+% \setlength{\parskip}{0pt plus 0pt minus 0pt}
+
+% Overwrite redefinition of paragraph and subparagraph by the default LaTeX template
+% See https://github.com/crsh/papaja/issues/292
+\makeatletter
+\renewcommand{\paragraph}{\@startsection{paragraph}{4}{\parindent}%
+  {0\baselineskip \@plus 0.2ex \@minus 0.2ex}%
+  {-1em}%
+  {\normalfont\normalsize\bfseries\itshape\typesectitle}}
+
+\renewcommand{\subparagraph}[1]{\@startsection{subparagraph}{5}{1em}%
+  {0\baselineskip \@plus 0.2ex \@minus 0.2ex}%
+  {-\z@\relax}%
+  {\normalfont\normalsize\itshape\hspace{\parindent}{#1}\textit{\addperi}}{\relax}}
+\makeatother
+
+\makeatletter
+\usepackage{etoolbox}
+\patchcmd{\maketitle}
+  {\section{\normalfont\normalsize\abstractname}}
+  {\section*{\normalfont\normalsize\abstractname}}
+  {}{\typeout{Failed to patch abstract.}}
+\patchcmd{\maketitle}
+  {\section{\protect\normalfont{\@title}}}
+  {\section*{\protect\normalfont{\@title}}}
+  {}{\typeout{Failed to patch title.}}
+\makeatother
+
+\usepackage{xpatch}
+\makeatletter
+\xapptocmd\appendix
+  {\xapptocmd\section
+    {\addcontentsline{toc}{section}{\appendixname\ifoneappendix\else~\theappendix\fi\\: #1}}
+    {}{\InnerPatchFailed}%
+  }
+{}{\PatchFailed}
+\keywords{Latent interaction, UPI, RAPI, 2S-PA}
+\DeclareDelayedFloatFlavor{ThreePartTable}{table}
+\DeclareDelayedFloatFlavor{lltable}{table}
+\DeclareDelayedFloatFlavor*{longtable}{table}
+\makeatletter
+\renewcommand{\efloat@iwrite}[1]{\immediate\expandafter\protected@write\csname efloat@post#1\endcsname{}}
+\makeatother
+\usepackage{lineno}
+
+\linenumbers
+\usepackage{csquotes}
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Two-Stage Path Analysis with Interaction: A Good Alternative to Current Methods of Modeling Latent Interaction},
+  pdfauthor={Gengrui (Jimmy) Zhang1},
+  pdflang={en-EN},
+  pdfkeywords={Latent interaction, UPI, RAPI, 2S-PA},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Two-Stage Path Analysis with Interaction: A Good Alternative to Current Methods of Modeling Latent Interaction}
+\author{Gengrui (Jimmy) Zhang\textsuperscript{1}}
+\date{}
+
+
+\shorttitle{2S-PA-Int}
+
+\authornote{
+
+The authors made the following contributions. Gengrui (Jimmy) Zhang: Conceptualization, Writing - Original Draft Preparation, Writing - Review \& Editing.
+
+Correspondence concerning this article should be addressed to Gengrui (Jimmy) Zhang. E-mail: \href{mailto:gengruiz@email.com}{\nolinkurl{gengruiz@email.com}}
+
+}
+
+\affiliation{\vspace{0.5cm}\textsuperscript{1} University of Southhern California}
+
+\abstract{%
+Modeling interaction effects within the latent variable modeling framework has become increasingly popular in psychological research as it facilitates the exploration of in-depth theory and complex data structure. Comprared to the extensitvely used regression-based approaches assuming error-free variables, the latent interaction approach is able to account for measurement error and produce estimates with less bias and more accurate standard error. In this study, we investigated three product indicator methods based on structural equation modeling (SEM): Matched-pair Unconstrained Product Indicator (UPI), Reliability-Adjusted Product Indicator (RAPI), and an extended model based on the two-stage path analysis (2S-PA) framework, namely 2S-PA-Int, by conducting a simulation study with 2,000 replications. The results showed that 2S-PA-Int produced consistently less standardized bias, acceptable relative SE bias and coverage rates, and lower RMSE values than matched-pair UPI and RAPI, particularly under the conditions of small sample size and low reliability. Generally, 2S-PA-Int showed promising statistical properties and simpler model specification, indicating that it could serve as a competitive alternative of existing methods. Future research directions of 2S-PA-Int were discussed.
+}
+
+
+
+\begin{document}
+\maketitle
+
+Social science research increasingly focuses on complex effects (e.g., nonlinear effects, moderation effects) rather than simple bivariate relationships, as the real world is rarely simple and straightforward (Carte \& Russell, 2003; Cunningham \& Ahn, 2019; MacKinnon \& Luecken, 2008). For example, previous research has demonstrated that exercise can help people lose weight. However, there is growing interest in understanding the specifics of this relationship, including the mechanisms, timing, target groups, and conditions under which exercise is most effective for weight loss. Research into moderation (or interaction) provides insights into these questions by exploring how third variables, or a set of additional variables, influence the dynamics between the variables of interest.
+
+One common way to model moderation is through regression model, specifically incorporating an interaction term \(XZ\):
+\begin{equation}
+Y = b_{0} + b_{1}X + b_{2}Z + b_{3}XZ + \epsilon,
+\end{equation}
+where \(b_{0}\) is the intercept, \(b_{1}\) and \(b_{2}\) are the regression coefficients for \(X\) and \(Z\), \(b_{3}\) is the coefficient for the interaction term \(XZ\), and \(\epsilon\) is the error term. To maintain consistency with the naming conventions used by Marsh et al. (2004), we refer to main effects (i.e., non-interaction effects) as ``first-order effects''. Hence \(X\) and \(Z\) are first-order variables and \(b_{1}\) and \(b_{2}\) are first-order effects in this case. Classical regression assumes variables are measured without error, which may lead to biased parameter estimates when measurement errors are present in empirical research (Bollen, 1989; Carroll et al., 2006; Cohen et al., 2003), and the bias may be more seriously inflated for interaction effects (Anderson et al., 1996). To address this problem, researchers use latent variables that are inferred and measured by a set of observed indicators in the structural equation modeling (SEM) framework, which can control and accommodate measurement errors in these observed indicators (Bollen, 2002). For example, depression is widely tested and measured by the Center for Epidemiologic Studies Depression (CES-D) scale consisting of 20 items (Radloff, 1977). A growing body of research has shown that moderation models based on SEM provide reliably true relationships among latent constructs (Cham et al., 2012; Maslowsky et al., 2015; Mueller, 1997; Steinmetz et al., 2011).
+
+The Two-Stage Path Analysis (2S-PA; Lai \& Hsiao, 2022) method models pathway relationships among latent variables through the use of factor scores. Simulation studies have shown its ability to yield parameter estimates with reduced standard error bias, enhanced convergence rates, and improved management of Type I error, particularly in small sample contexts (Lai et al., 2023; Lai \& Hsiao, 2022). Given its promising statistical property, simpler model specification, and easier implementation in widely used softwares, we extended the 2S-PA method to incorporate latent interaction estimation in this study, and named it 2S-PA-Int. We reviewed two widely used latent interaction models using the product indicator method, Unconstrained Product Indicator (UPI; Marsh et al., 2004) and Reliability-Adjusted Product Indicator (RAPI; Hsiao et al., 2018), and conducted a Monte Carlo simulation study to compare their performance with 2S-PA-Int. To proceed, we first introduced a classical model of latent interaction and then presented UPI, RAPI, and 2S-PA-Int with technical details.
+
+\subsection{A Classical Model of Latent Interaction}\label{a-classical-model-of-latent-interaction}
+
+Kenny and Judd (1984) initially introduced a foundational structural model for estimating latent interaction effects, specifically addressing a scenario with two latent predictors and their interaction term:
+\begin{equation}
+y = \alpha + \gamma_{x}\xi_{x} + \gamma_{m}\xi_{m} + \gamma_{xm}\xi_{x}\xi_{m} + \zeta,
+\end{equation}
+where \(\alpha\) is the constant intercept, \(\xi_{x}\) and \(\xi_{m}\) denote the first-order latent predictors, and the product \(\xi_{x}\xi_{m}\) constitutes the interaction term. Note that \(\xi_{x}\) and \(\xi_{m}\) are allowed to correlate with each other. As for other parameters, \(\zeta\) is the model's disturbance term assumed to follow a normal distribution \(\zeta \sim N(0, \psi)\) where \(\psi\) is the variance of \(\zeta\) that captures unobserved factors influencing the dependent variable. The coefficients \(\gamma_{x}\) and \(\gamma_{m}\) indicate first-order effects of the latent predictors, whereas \(\gamma_{xm}\) quantifies the latent interaction effect. The dependent variable \(y\) can be either an observed variable or a latent construct.
+
+The measurement model for the first-order latent predictors, for instance \(\xi_{x}\), is described by the following confirmatory factor analysis (CFA) framework:
+\begin{equation}
+\mathbf{x} = \boldsymbol{\tau_{x}} + \boldsymbol{\lambda_{x}}\xi_{x} + \boldsymbol{\delta_{x}},
+\end{equation}
+wherein, for each indicator \(i = 1, \ 2, \ ..., \ p\) associated with the latent predictor \(\xi_{x}\), \(\mathbf{x}\) denotes a \(p \times 1\) vector of observed first-order indicators (i.e., indicators of \(\xi_{x}\)); \(\boldsymbol{{\tau_{x}}}\) is a \(p \times 1\) vector of constant intercepts; \(\boldsymbol{\lambda}_{x}\) is a \(p \times 1\) vector of factor loadings, and \(\boldsymbol{\delta_{x}}\) is a \(p \times 1\) vector of indicator-level measurement errors. Each measurement error \(\delta_{x_{i}}\) is normally distributed with a mean of zero and a variance of \(\theta_{x_{i}}\). Assuming local independence (i.e., first-order indicators are uncorrelated with each other when indicating the same latent variable), the variance-covariance matrix of all indicators' measurement errors is a diagonal matrix \(\mathbf{\Theta_{\delta_{x}}} = diag(\theta_{x_{1}}, \theta_{x_{2}}, ..., \theta_{x_{p}})\). This measurement model and its associated parameters similarly apply to \(\xi_{m}\).
+
+Kenny and Judd's original formulation of model omitted the intercept \(\alpha\), a point later corrected by Jöreskog and Yang (1996) who revised the model under a set of assumptions. The revised latent interaction model is grounded in three primary assumptions related to multivariate normal distribution and independence: (1) The measurement errors of first-order indicators, the first-order latent predictors, and the disturbance term in the structural model are multivariate normal, uncorrelated, and independent to each other (i.e., \(Corr[\delta, \xi] = 0\); \(Corr[\zeta, \xi] = 0\); \(Corr[\delta, \zeta] = 0\) where \(Corr\) denotes the correlation index); (2) All measurement errors are mutually independent and uncorrelated to each other (i.e., \(Corr[\delta_{i}, \delta_{i'}] = 0\) for \(i \neq i'\)); (3) The correlation between first-order latent predictors (i.e., \(Corr[\xi_{x}, \xi_{m}]\)) is assumed to be non-zero and freely estimated since \(\xi_{x}\xi_{m}\) may have a non-normal distribution even though \(\xi_{x}\) and \(\xi_{m}\) are normally distributed with means of 0 (Jöreskog \& Yang, 1996).
+
+Algina and Moulder (2001) refined Jöreskog and Yang's (1996) model by using mean-centered first-order indicators (e.g., \(x_{i} - \mu_{x_{i}}\) where \(\mu_{x_{i}}\) is the mean of \(x_{i}\)) to form product indicators (PI) that indicate the latent interaction term, which enhances the model by improving interpretability of parameter estimates, facilitating model convergence rate, and reducing bias of estimation (Algina \& Moulder, 2001; Marsh et al., 2004; Moulder \& Algina, 2002). Furthermore, mean-centering first-order indicators helps mitigate the issue of multicollinearity, thereby more clearly distinguishing the contributions of the first-order latent variables and their interactions, as noted by Schoemann and Jorgensen (2021).
+
+\subsection{Unconstrained Product Indicator (UPI)}\label{unconstrained-product-indicator-upi}
+
+While Algina and Moulder (2001) significantly improved the model, their approach required complicated nonlinear constraints on parameters of PIs and the interaction term. Constraints in SEM are predefined conditions or restrictions applied to model parameters to ensure model identifiability, theoretical consistency, and interpretability (Kline, 2016). Suppose that \(x_{2}\) and \(m_{2}\) are two first-order indicators of their corresponding latent predictors \(\xi_{x}\) and \(\xi_{m}\), and their formed PI is \(x_{2}m_{2}\). Then \(x_{2}m_{2}\) can be decomposed using the measurement model of \(x_{2}\) and \(m_{2}\):
+
+\begin{equation}
+x_{2}m_{2}= (\lambda_{x_{2}}\xi_{x} + \delta_{x_{2}})(\lambda_{m_{2}}\xi_{m} + \delta_{m_{2}}),
+\end{equation}
+where \(\lambda\) is the factor loading, \(\xi\) is the first-order latent variable, and \(\delta\) is the error term of first-order indicators. After expanding the equation, it can be shown that the factor loading of this formed PI is a function of first-order indicators' factor loadings, such that \(\lambda_{x_{2}m_{2}} = \lambda_{x_{2}}\lambda_{m_{2}}\). Similarly, the error term can be derived as a function of parameters from first-order indicators: \(\delta_{x_{2}m_{2}} = \lambda_{x_{2}}\xi_{x}\delta_{m_{2}} + \lambda_{m_{2}}\xi_{m}\delta_{x_{2}} + \delta_{x_{2}}\delta_{m_{2}}\). As the number of first-order indicators increases, the model specification becomes overwhelmingly cumbersome due to resulting nonlinear constraints, which may lead to convergence issue.
+
+Marsh et al. (2004) investigated ways to eliminate complex constraints and introduced the innovative Unconstrained Product Indicator (UPI) method, which simplifies model specification and reduces the likelihood of convergence issue. The structural model of UPI is the same as equation (2) except for omitting the intercept \(\alpha\). To illustrate, consider a measurement model in which the latent variables \(\xi_{x}\) and \(\xi_{m}\) are each associated with three indicators:
+
+\begin{align}
+    \begin{bmatrix}
+        x_{1} \\
+        x_{2} \\ 
+        x_{3}
+    \end{bmatrix} =
+    \begin{bmatrix}
+        \tau_{x_{1}} \\
+        \tau_{x_{2}} \\ 
+        \tau_{x_{3}}
+    \end{bmatrix} +
+    \begin{bmatrix}
+        \lambda_{x_{1}} \\
+        \lambda_{x_{2}} \\ 
+        \lambda_{x_{3}}
+    \end{bmatrix}
+    \begin{bmatrix}
+        \xi_{x} \\
+    \end{bmatrix} +
+    \begin{bmatrix}
+        \delta_{x_{1}} \\
+        \delta_{x_{2}} \\ 
+        \delta_{x_{3}}
+    \end{bmatrix},
+\end{align}
+
+\begin{align}
+    \begin{bmatrix}
+        m_{1} \\
+        m_{2} \\ 
+        m_{3}
+    \end{bmatrix} =
+    \begin{bmatrix}
+        \tau_{m_{1}} \\
+        \tau_{m_{2}} \\ 
+        \tau_{m_{3}}
+    \end{bmatrix} +
+    \begin{bmatrix}
+        \lambda_{m_{1}} \\
+        \lambda_{m_{2}} \\ 
+        \lambda_{m_{3}}
+    \end{bmatrix}
+    \begin{bmatrix}
+        \xi_{m} \\
+    \end{bmatrix} +
+    \begin{bmatrix}
+        \delta_{m_{1}} \\
+        \delta_{m_{2}} \\ 
+        \delta_{m_{3}}
+    \end{bmatrix}
+\end{align}
+
+Marsh et al. (2004) presented two methods for specifying UPI: the all-pair UPI and the matched-pair UPI. In the all-pair UPI model, the latent interaction term is represented by all possible pairings of the first-order indicators of \(\xi_{x}\) and \(\xi_{m}\):
+
+\begin{align}
+    \begin{bmatrix}
+        x_{1}m_{1} \\
+        x_{1}m_{2} \\
+        x_{1}m_{3} \\ 
+        x_{2}m_{1} \\
+        ... \\
+        x_{3}m_{3}
+    \end{bmatrix} = 
+    \begin{bmatrix}
+        \tau_{x_{1}m_{1}} \\
+        \tau_{x_{1}m_{2}} \\ 
+        \tau_{x_{1}m_{3}} \\ 
+        \tau_{x_{2}m_{1}} \\ 
+        ...\\
+        \tau_{x_{3}m_{3}} 
+    \end{bmatrix} +
+    \begin{bmatrix}
+        \lambda_{x_{1}m_{1}} \\
+        \lambda_{x_{1}m_{2}} \\ 
+        \lambda_{x_{1}m_{3}} \\ 
+        \lambda_{x_{2}m_{1}} \\ 
+        ...\\
+        \lambda_{x_{3}m_{3}}
+    \end{bmatrix}
+    \begin{bmatrix}
+        \xi_{x}\xi_{m} \\
+    \end{bmatrix} +
+    \begin{bmatrix}
+        \delta_{x_{1}m_{1}} \\
+        \delta_{x_{1}m_{2}} \\ 
+        \delta_{x_{1}m_{3}} \\
+        \delta_{x_{2}m_{1}} \\
+        ... \\
+        \delta_{x_{3}m_{3}}
+    \end{bmatrix},
+\end{align}
+where each PI is derived from multiplying two corresponding mean-centered first-order indicators, one from \(\xi_{x}\) and the other from \(\xi_{m}\) (e.g., the PI \(x_{1}m_{1}\) is formed by the product of \(x_{1}\) and \(m_{1}\)). The coefficients \({\tau_{x_{i}m_{i}}}\), \({\lambda_{x_{i}m_{i}}}\) and \({\delta_{x_{i}m_{i}}}\) are estimated freely as intercepts, factor loadings and measurement errors, respectively. The total number of PIs are the multiplicative product of the number of first-order indicators for each latent predictor. In this case, nine unique PIs are formed (\(3 \times 3 = 9\)).
+
+Regarding the matched-pair UPI, the indicators are matched to create PIs:
+
+\begin{align}
+    \begin{bmatrix}
+        x_{1}m_{1} \\
+        x_{2}m_{2} \\
+        x_{3}m_{3}
+    \end{bmatrix} =
+    \begin{bmatrix}
+        \tau_{x_{1}m_{1}} \\
+        \tau_{x_{2}m_{2}} \\ 
+        \tau_{x_{3}m_{3}}
+    \end{bmatrix} + 
+    \begin{bmatrix}
+        \lambda_{x_{1}m_{1}} \\
+        \lambda_{x_{2}m_{2}} \\ 
+        \lambda_{x_{3}m_{3}} 
+    \end{bmatrix}
+    \begin{bmatrix}
+        \xi_{x}\xi_{m} \\
+    \end{bmatrix} +
+    \begin{bmatrix}
+        \delta_{x_{1}m_{1}} \\
+        \delta_{x_{2}m_{2}} \\ 
+        \delta_{x_{3}m_{3}}
+    \end{bmatrix}
+\end{align}
+
+This alternative formulation results in a significantly reduced number of PIs due to its straightforwardness. Marsh et al. (2004) suggested that the matched-pair UPI is more favorable according to two criteria: (1) It uses all available information by utilizing every first-order indicator; (2) It avoids redundancy by ensuring that no first-order indicators are used more than once. This method is thus recommended for simplicity and effectiveness. Moreover, they showed that the matched-pair UPI approach performs as well as the all-pair model by demonstrating low bias and robustness to non-normal data, whereas the matched-pair model is more preferable in terms of simplicity and efficiency.
+
+Since the mean of \(\xi_{x}\xi_{m}\) may not equal to 0 even though \(\xi_{x}\) and \(\xi_{m}\) are assumed to have 0 means, Marsh et al. (2004) included a mean structure in their UPI model: \(\mathbf{\kappa} = (0,\ 0,\ Cov[\xi_{x}, \xi_{m}])^T\), where \(\mathbf{\kappa}\) should be the means of the three latent variables (see Algina \& Boulder {[}2001{]} for more details). This adjustment ensures that the model accurately reflects the statistical relations between the first-order latent variables and their interaction term. Lin et al. (2010) further simplified the model by proposing a Double Mean Centering (DMC) strategy, wherein PIs composed of paired mean-centered first-order indicators are mean-centered again (e.g., \(x_{i}m_{i} - \mu_{x_{i}m_{i}}\). DMC eliminates the necessity of including a mean structure in the UPI model and demonstrates good performance of parameter estimation under the violation of normality assumption. Therefore we used the UPI method with DMC in this study.
+
+Although UPI with DMC has simpler model specification and better performance of parameter estimation compared to the classical model, an arbitrariness-complexity dilemma between the all-pair and the matched-pair methods has not been well resolved (Foldnes \& Hagtvet, 2014). Consider a model with two complex psychological constructs as latent predictors that each may need to involve over 10 indicators to achieve sufficient coverage of theory. The all-pair UPI method may potentially lead to a latent interaction term indicated by hundreds of PIs. Although a plenty of items can improve the representation of latent constructs and theoretically increase statistical power for detecting nuanced effects, they likely build up a cumbersome model that negatively impacts interpretability, escalates computational demands, and overfits the sample. The matched-pair UPI strategy effectively simplifies the model by reducing the number of necessary PIs, but also introduces a challenge of PI selection when substantive researchers need to deal with unbalanced numbers of first-order indicators. For unbalanced indicators, researchers need to make a decision on how to properly form PIs as there are multiple solutions. They may aggregate multiple observed indicators into fewer parcels (Jackman et al., 2011) or prioritize items with higher reliability for PI formation (Wu et al., 2013). However, there is not a consensus on the best strategy to form matched pairs, and the considerable arbitrariness across various alternative approaches introduces uncertainty in selecting the optimal strategy and complicates the decision-making process in model specification. To address this issue, Wu et al. (2013) investigated two solutions in which researchers could form PIs by using highly reliable first-order indicators (i.e., items with higher factor loadings) while ignoring those with low reliability, or by matching parcels of the larger group of first-order indicators with indicators of the smaller group. They recommended to form PIs according to the order of item reliability.
+
+\subsection{Reliability Adjusted Product Indicator (RAPI)}\label{reliability-adjusted-product-indicator-rapi}
+
+The RAPI method introduced by Hsiao et al. (2018) also forms PI, but it uses composite scores (sum or mean scores) of multiple first-order items. Specifically, it combines all first-order indicators into single indicators (SIs) to indicate first-order latent variables, and forms PIs by multiplying the SIs to indicate the latent interaction term. Accordingly, the formed PI is a SI as well. This method effectively circumvents the issue of arbitrariness in indicator selection while using all information without redundancy. RAPI adjusts for measurement error in composite scores by constraining error variances of SIs, thus ensuring that parameter estimates are less biased. The model is succinctly represented as follows:
+\begin{align}
+    \begin{bmatrix}
+        x_{comp} \\
+        m_{comp} \\
+        x_{comp} \cdot m_{comp}
+    \end{bmatrix} = 
+    \begin{bmatrix}
+        \tau_{x_{comp}} \\
+        \tau_{m_{comp}} \\ 
+        \tau_{x_{comp} \cdot m_{comp}} 
+    \end{bmatrix} + 
+    \begin{bmatrix}
+        1 & 0 & 0 \\
+        0 & 1 & 0 \\ 
+        0 & 0 & 1 
+    \end{bmatrix}
+    \begin{bmatrix}
+        \xi_{x} \\  
+        \xi_{m} \\ 
+        \xi_{x}\xi_{m}
+    \end{bmatrix} +
+    \begin{bmatrix}
+        \delta_{x_{comp}} \\
+        \delta_{m_{comp}} \\ 
+        \delta_{x_{comp} \cdot m_{comp}}
+    \end{bmatrix},
+\end{align}
+where \(x_{comp}\) and \(m_{comp}\) are the composite scores formed by their corresponding first-order indicators, and \(x_{comp} \cdot m_{comp}\) is the formed PI indicating the latent interaction term. These composite scores serve as SIs for their respective latent variables, with factor loadings uniformly constrained to \(1\) for model identification. The measurement errors are represented by \(\mathbf{\delta}\)s.
+
+A key characteristic of the RAPI method is its ability to accommodate measurement error in first-order indicators through the incorporation of error-variance constraints, which are calculated using composite reliability. Although technically composite reliability estimates as part of error-variance constraints can be obtained by any available methods, Hsiao et al. (2018) summarized and compared four normally used estimators for composite reliability: Cronbach's \(\alpha\) (Cronbach, 1951), \(\omega\) (McDonald, 1970; Raykov, 1997), the greatest lower bound reliability (Ten Berge \& Sočan, 2004), and Coefficient H (Hancock \& Mueller, 2011). Suppose that \(\rho_{xx'}\) denotes the estimated reliability index, the error variance of \(\xi_{x}\) can be shown as a function of the reliability index:
+\begin{equation}
+\hat{\sigma}^2_{\delta_{x}} = (1 - \rho_{xx'})\hat{\sigma}^2_{{x}},
+\end{equation}
+where \(\hat{\sigma}^2_{\delta_{x}}\) represents the estimated error variance and \(\hat{\sigma}^2_{{x}}\) represents the estimated variance of the indicator. The formula can be converted by linear transformation to show the relations between variances of the error and the latent predictor in terms of reliability: \(\hat{\sigma}_{\delta_{x}}^2 = [(1 - \rho_{xx'})/{\rho_{xx'}}]\hat{\sigma}^2_{\xi_{x}}\), where \(\hat{\sigma}^2_{\xi_{x}}\) represents the estimated variance of \(\xi_{x}\) and \(\hat{\sigma}^2_{{x}} = {\hat{\sigma}^2_{\xi_{x}} + \hat{\sigma}^2_{\delta_{x}}}\) according classical test theory (Lord et al., 1968). Hence, under the assumption of independently and identically distributed measurement error, the equation for the error-variance constraint of the interaction term \(\xi_{x}\xi_{m}\) can be derived:
+\begin{equation}
+\begin{aligned}
+\hat{\sigma}^2_{\delta_{xm}} = & \rho_{xx'}\hat{\sigma}^2_{{x}}(1 - \rho_{mm'}\hat{\sigma}^2_{{m}}) + \\&
+                        \rho_{mm'}\hat{\sigma}^2_{{m}}(1-\rho_{xx'})\hat{\sigma}^2_{{x}} + \\&
+                        (1 - \rho_{xx'})\hat{\sigma}^2_{{x}}(1 - \rho_{mm'})\hat{\sigma}^2_{{m}}. 
+\end{aligned}
+\end{equation}
+More technical details are available in Appendix A of Hsiao et al. (2018).
+
+The utilization of composite scores as SIs significantly simplifies model specification, as the total number of PIs directly corresponds to the number of interaction terms. By accounting for measurement error, RAPI is expected to produce less biased estimates of interaction effects and exhibit enhanced statistical power. However, the method's effectiveness is contingent upon accurate estimation of reliability measures since inaccurate reliability estimates which serve as the basis for error constraints can lead to biased results. Despite its acceptable model complexity and approachable implementation, Hsiao et al. (2021) showed that RAPI may lead to non-positive definite matrices due to negative error variance and inflated interaction effect estimates, under conditions of low reliability (e.g., r = .70) and small sample size (e.g., N = 100). This suggests that RAPI may generate unstable interaction estimates under such conditions.
+
+\subsection{Two-stage Path Analysis with Interaction (2S-PA-Int)}\label{two-stage-path-analysis-with-interaction-2s-pa-int}
+
+The 2S-PA method, as proposed by Lai and Hsiao (2022), introduces an alternative approach to addressing measurement error within the context of multiple congeneric items by incorporating reliability adjustment. It is similar to RAPI but uses factor scores as SIs to latent predictors. A key advancement of the 2S-PA approach is its capacity to assign observation-specific estimated reliability, thereby extending its applicability to ordered categorical items and accommodating distributions that deviate from normality (Lai et al., 2023; Lai \& Hsiao, 2022). Besides, conventional SEM models typically estimate measurement and structural models simultaneously, which necessitates a considerable sample size to achieve satisfactory convergence rates (Kline, 2016; Kyriazos, 2018). To address this potential issue, 2S-PA separates the step of specifying the measurement model from estimating the structural model, therefore alleviating computational burden and improving stability of parameter estimation.
+
+At the first stage of 2SPA, researchers obtain factor scores using first-order indicators for each participant \(j\) for \(j = 1, 2, ..., n\). Next, parallel to RAPI, the factor scores of latent predictors are multiplied to construct a PI for the interaction term \(\xi_{x_{j}}\xi_{m_{j}}\):
+
+\begin{align}
+    \begin{bmatrix}
+        \tilde{x}_{j} \\ 
+        \tilde{m}_{j} \\
+        \widetilde{xm}_{j} 
+    \end{bmatrix} = 
+    \begin{bmatrix}
+        \tau_{\tilde{x}_{j}} \\
+        \tau_{\tilde{m}_{j}} \\ 
+        \tau_{\widetilde{xm}_{j}}
+    \end{bmatrix} + 
+    \begin{bmatrix}
+        \lambda_{\tilde{x}_{j}} & 0 & 0 \\
+        0 & \lambda_{\tilde{m}_{j}} & 0 \\ 
+        0 & 0 & \lambda_{\widetilde{xm}_{j}} 
+    \end{bmatrix} 
+    \begin{bmatrix}
+        \xi_{x_{j}} \\  
+        \xi_{m_{j}} \\
+        \xi_{x_{j}}\xi_{m_{j}}
+    \end{bmatrix} +
+    \begin{bmatrix}
+        \delta_{\tilde{x}_{j}} \\
+        \delta_{\tilde{m}_{j}} \\ 
+        \delta_{\widetilde{xm}_{j}}
+    \end{bmatrix},
+\end{align}
+wherein the factor scores \(\tilde{x}_{j}\), \(\tilde{m}_{j}\) and the PI \(\widetilde{xm}_{j}\) are SIs of the respective latent variables. The intercepts, factor loadings, and error variances are all model parameters to be freely estimated.
+
+Researchers can use multiple ways to calculate factor scores (e.g., regression factor scores, expected-a-posterior factor scores), as reviewed in Estabrook and Neale (2013). We used Bartlett factor scores that are adjusted to have the same units as latent variables and constrained their factor loadings to 1 for model identification (i.e., \(\lambda_{\tilde{x}_{j}} = \lambda_{\tilde{m}_{j}} = \lambda_{\widetilde{xm}_{j}} = 1\)), as shown in Devlieger et al. (2016) and Lai et al. (2023).
+
+Given that the focus of the current study is on continuous variables and the first-order indicators of \(\xi_{x_{j}}\) and \(\xi_{m_{j}}\) are assumed to be normally distributed, the corresponding error variances are constant for all observations. The error variance constraints for factor scores are \(\hat{\sigma}_{\tilde{x}_{j}}^2\) where \(\hat{\sigma}_{\tilde{x}_{j}}\) is the estimated standard error of measurement of the factor score \(\tilde{x}\) for the person \(j\). The error-variance constraint for the interaction term is defined similarly as equation (11). Alternatively speaking, the RAPI method is a special case of 2SPA where the composite scores are used for continuous items (Lai \& Hsiao, 2022).
+
+In this paper, we investigate whether the 2S-PA-Int approach is a good alternative to existing methods of estimating latent interaction effects, for its simplicity in model complexity and clarity in model specification. Lai and Hsiao (2022) demonstrated that 2S-PA provides robust and precise estimates with less SE bias, lower Type I error rate, and higher convergence rates in small sample size and low reliability conditions. Hence we expect the 2S-PA-Int method to inherit the advantages and demonstrate desirable performance in latent interaction estimation.
+
+\section{Method}\label{method}
+
+\subsection{Simulation Design}\label{simulation-design}
+
+Adapted from Hsiao et al. (2021), the current simulation study aimed to compare the performance of UPI, RAPI and 2S-PA-Int on estimating latent interaction effects for continuous congeneric items. We investigated the bias and variance of interaction estimates generated by the three methods over various levels of sample size, reliability, and correlation between first-order latent variables. The generated population data was based on the model below with pre-defined parameter values:
+\begin{equation}
+\begin{gathered}
+x_{i} =  \tau_{x_{i}} + \lambda_{x_{i}}\xi_{x} + \delta_{x_{i}};\\
+m_{i} =  \tau_{m_{i}} + \lambda_{m_{i}}\xi_{m} + \delta_{m_{i}};\\
+y =  \tau_{y} + \gamma_{x}\xi_{x} + \gamma_{m}\xi_{m} + \gamma_{xm}\xi_{x}\xi_{m} + \zeta,
+\end{gathered}
+\end{equation}
+where the path coefficients of two latent predictors (i.e., \(\gamma_{x}\) and \(\gamma_{m}\)) and their interaction term (i.e., \(\gamma_{xm}\)) were all set to 0.3 for the structural model. The first-order latent predictors \(\xi_{x}\) and \(\xi_{m}\) were simulated from standard normal distributions with means of 0 and variances fixed at 1, each indicated by three items (i.e., \(\xi_{x}\) indicated by {[}\(x_{1}\), \(x_{2}\), \(x_{3}\){]}; \(\xi_{m}\) indicated by {[}\(m_{1}\), \(m_{2}\), \(m_{3}\){]}). The first-order indicators and the dependent variable \(y\) were all observed continuous variables with normally distributed error. Accordingly, \(\delta_{x_{i}}\), \(\delta_{m_{i}}\) and \(\zeta\) were assumed to have multivariate normal distributions and be mutually independent. \(\tau_{x_{i}}\), \(\tau_{m_{i}}\), and \(\tau_{y}\) were their corresponding constant intercepts and assumed to be 0. The first-order indicators were mean-centered for the three methods.
+
+Drawing from the concepts of Jöreskog (1971), congeneric tests were defined as a set of observed items measuring a latent construct with different factor loadings and unique error terms. These error terms were assumed to be uncorrelated with each other and with the latent construct, reflecting random measurement error unique to each item. To align with this concept, we manipulated the factor loadings and error variances for first-order indicators to create sets of congeneric items in the measurement model. Specifically, the first, second, and third indicators were set to fixed values of 1.0, 0.9, and 0.75 for both first-order latent variables (i.e., \(\lambda_{x_{1}} = \lambda_{m_{1}} = 1.0\), \(\lambda_{x_{2}} = \lambda_{m_{2}} = 0.9\), \(\lambda_{x_{3}} = \lambda_{m_{3}} = 0.75\)). According to equation (11), the error variance of the interaction term was a function of first-order indicators' reliability, implying that the interaction effect could be impacted by the amount of measurement error, and hence we varied reliability to explore how each method performed under three reliability conditions: .70, .80, and .90, which resulted in three levels of error variances. For each level, We systematically manipulated error variance proportions for each indicator, consistent with Hsiao et al.~(2021).: 44\(\%\) of the total error variance for the first indicator, 33\(\%\) for the second, and 23\(\%\) for the third. Assuming that an appropriate reliability estimate has been obtained, the total error variance would be \([3.01, \ 1.76, \ 0.78]\) when \(\lambda_{x_{1}}, \ \lambda_{x_{2}}, \ \lambda_{x_{3}} = \lambda_{m_{1}}, \ \lambda_{m_{2}}, \ \lambda_{m_{3}} = [1, \ 0.9, \ 0.75]\), as the reliability was varied at .70, .80, and .90 respectively. Taking the condition of \(\rho = .70\) as an example, the error variances of three indicators would be manipulated as \(1.32, \ 0.99, \ 0.69\).
+
+Following the suggestion of using matched-pair UPI by Marsh et al.~(2004), we included the model in which \(\xi_{x}\xi_{m}\) was indicated by three pairs of PIs: \(x_{1}m_{1}\), \(x_{2}m_{2}\), and \(x_{3}m_{3}\). For the RAPI and 2SPA methods, \(\xi_{x}\xi_{m}\) was loaded by single PIs. Specifically, for RAPI the interaction term's PI was the mean scores of first-order indicators, while for 2S-PA-Int was pre-computed Bartlett factor scores. To reduce the problem of multicollinearity between first-order latent predictors and the interaction term, the DMC strategy was applied to all the methods.
+
+The methodological literature on latent interaction models exhibited a range of researcher-selected sample sizes from 20 to 5,000 (Cham et al., 2012; Chin et al., 2003; Lin et al., 2010), with common selections ranging from 100 to 500. Consequently, we chose N = 100, 250, and 500 to represent small, medium, and large sample sizes, respectively. As for the correlation between first-order latent predictors, we followed the study design in Hsiao et al. (2021) and pre-specified three population correlations \(Corr[{\xi_{x},\xi_{m}}]\) (0, 0.3, 0.6) as zero to large correlation. Given that the variances of \(y\) (i.e., \(\sigma_{y}^2\)), \(\sigma_{\xi_{x}}^2\), and \(\sigma_{\xi_{x}}^2\) were all set to 1, \(\psi\) could be computed as \(1 - R^2\) in which \(R^2 = \gamma_{x}^2 + \gamma_{m}^2 + 2\gamma_{x}\gamma_{m}Corr[{\xi_{x},\xi_{m}}] + \gamma_{xm}^2(1 + Corr[{\xi_{x},\xi_{m}}]^2)\). For instance, \(\psi = 1 - (0.3^2 + 0.3^2 + 2\times0.3\times0.3\times0 + 0.3^2\times(1 + 0)^2) = 0.73\) for \(Corr[{\xi_{x},\xi_{m}}] = 0\). Similarly, \(\psi\) = 0.668 and 0.590 for \(Corr[{\xi_{x},\xi_{m}}]\) = 0.3 and 0.6, respectively.
+
+In summary, our study implemented a \(3 \times 3 \times 3\) factorial design, accommodating variations across three sample sizes, three levels of correlation between first-order latent predictors, and three levels of reliability.
+
+\subsection{Evaluation Criteria}\label{evaluation-criteria}
+
+We chose widely used evaluation criteria that were summarized across 2,000 replications to evaluate the accuracy and precision of the interaction effect estimates (\(\gamma_{xm}\)) of the three methods. To facilitate the interpretation of path coefficients, we obtained and evaluated standardized estimates of \(\gamma_{x}\), \(\gamma_{m}\) and \(\gamma_{xm}\).
+
+\subsubsection{Raw Bias and Standardized Bias}\label{raw-bias-and-standardized-bias}
+
+Standardized bias (SB) was used to evaluate the raw bias and accuracy of parameter estimates. It provided a normalized measure that allowed for comparing bias across different scales or units of measurement, and reflected how far an estimate was from its true value in standard error units. Hence SB was useful in comparisons where models often contained a variety of parameter types (e.g., factor loadings, path coefficients).
+
+The Standardized Bias (SB) was defined through raw Bias (B):
+
+\begin{equation}
+SB = \frac{B(\gamma_{xm})}{SE_{\gamma_{xm}}},
+\end{equation}
+
+\begin{equation}
+B(\gamma_{xm}) = R^{-1}\Sigma^{R}_{r = 1}(\hat{\gamma}_{xm_{r}} - \gamma_{xm}),
+\end{equation}
+where R was the total number of replication cycles that were counted from 1 to 2,000. \(\hat{\gamma}_{xm_{r}}\) was the estimated interaction effect in each replication cycle \(r\) and \(\gamma_{xm}\) was the population parameter set at 0.3. \(B(\gamma_{xm})\) was the averaged deviation \(\hat{\gamma}_{xm}\) from the population parameter, and \(SE_{\gamma_{xm}}\) represented the empirical standard error of \(\hat{\gamma}_{xm}\) across replications. Collins et al. (2001) suggested that an absolute value of SB \(\le 0.40\) would be considered acceptable for each replication condition.
+
+\subsubsection{Coverage Rate}\label{coverage-rate}
+
+The coverage rate with a 95\(\%\) confidence interval (CI) served as a critical metric for evaluating the reliability and accuracy of simulation results. It was defined as the percentage of replications in which the Wald confidence interval captured the true interaction effect \(\gamma_{xm}\). Low coverage rates meant that the proportion of times that \(\gamma_{xm}\) fell within the CI across replications was low, indicating that the model might have issues of misspecification, inappropriate estimation methods, small sample sizes, or violations of statistical assumptions. A coverage rate larger than \(91\%\) was considered acceptable (Muthén \& Muthén, 2002).
+
+\subsubsection{Robust Relative Standard Error Bias and Outlier Proportion of SE}\label{robust-relative-standard-error-bias-and-outlier-proportion-of-se}
+
+The relative standard error (SE) bias was used to evaluate the precision of \(\hat{\gamma}_{xm}\). This criterion compared the empirical standard deviation of \(\hat{\gamma}_{xm}\) with the sample-estimated standard error across replications:
+
+\begin{equation}
+Relative\ SE\ Bias = \frac{R^{-1}\Sigma^{R}_{r = 1}(\widehat{SE_{r}} - SD)}{SD},
+\end{equation}
+
+where \(\widehat{SE}_{r}\) was the estimated standard error of \(\hat{\gamma}_{xm}\) in a single replication cycle \(r\) and \(SD\) was the empirical standard deviation obtained from all replications. With \(SD\) being used as a reference variability measure of \(\hat{\gamma}_{xm}\), smaller relative SE bias meant the estimated standard errors were closer to the referenced variability, and the uncertainty of \(\hat{\gamma}_{xm}\) across replications was more accurately measured in each simulation condition. Absolute values of relative SE bias \(\le 10\%\) were considered acceptable and indicated that the standard errors were reasonably unbiased (Hoogland \(\&\) Boomsma, 1998). Insufficient sample sizes might result in largely biased SEs due to increased uncertainty around the parameter estimates (Bollen \& Long, 1993; Byrne, 2016). Given that the conditions of small sample size (N = 100) and high amount of measurement error (\(\rho = 0.7\)) were included in the study design, a robust version of relative SE bias was calculated as an alternative to the regular one:
+\begin{equation}
+Robust\ Relative\ SE\ Bias = \frac{MDN(\widehat{SE_{r}}) - MAD}{MAD},
+\end{equation}
+where \(MDN\) represented the median value of the estimated SE values and \(MAD\) was the empirical median-absolute-deviation of SE values. The MAD was defined by the median of absolute deviations from the median of sample, such that \(MAD = b*MDN(|\widehat{SE}_{r} - MDN(SE)|)\) where \(b\) is a scale factor set to 1.4826 to match the standard deviation of a normal distribution so that MAD can be a consistent estimator for \(SD\) (Huber, 2011; Rousseeuw \& Croux, 1993). In the context of biased SEs, we did not assume a specific distribution of SEs (e.g., normal distribution) and hence we used the median due to its robustness to non-normal distributions with skewed data and outliers (Rousseeuw \& Hubert, 2011). In addition, MAD measured variability around the median and could serve as a robust substitute to standard deviation that could be inflated by outliers or non-normality (Daszykowski et al., 2007).
+Besides, an outlier detection using the interquartile range (IQR; Dekking et al., 2005) method was included as a supplemental information of SE estimates:
+\begin{equation}
+O_{a} \not\in (Q_{1} - 1.5 \times IQR, \ Q_{3} + 1.5 \times IQR),
+\end{equation}
+where \(O_{a}\) was an observation of outlier for \(a\) = 1, 2, \ldots, b. \(IQR\) captured the spread of the middle 50\(\%\) of the sample SEs by \(IQR = Q_{3} \ - \ Q_{1}\), where \(Q_{1}\) and \(Q_{3}\) were the 25th percentile and the 75th percentile of the sample. The outlier proportion was then calculated by \(b/R\) where \(b\) represented the total count of identified outliers. Like the robust relative SE bias, the IQR method did not rely on the assumption of normal distribution, thus making it versatile across any distribution (Dekking et al., 2005).
+
+\subsubsection{Root Mean Squre Error}\label{root-mean-squre-error}
+
+The last criterion was the root mean square error (RMSE), calculated by taking the squared root of the sum of squared bias:
+
+\begin{equation}
+RMSE = \sqrt{R^{-1}\Sigma^{R}_{r = 1}(\hat{\gamma}_{xm_{r}} - \gamma_{xm})^2}.
+\end{equation}
+
+It quantified the average magnitude of the difference between the interaction estimates and the true value, reflecting both the bias and variability of the estimates across replications. Under one condition across 2,000 replication, a smaller RMSE value of a method indicated that it had relatively more accuracy than the other two methods in estimating \(\hat{\gamma}_{xm}\) (Harwell, 2019). RMSE was most informative when comparing across methods under the same simulated conditions by isolating factors of sample size, model complexity, and the amount of disturbance.
+
+\subsubsection{Empirical Type I Error Rate and Statistical Power}\label{empirical-type-i-error-rate-and-statistical-power}
+
+The empirical type I error informed the probability of incorrectly rejecting the null hypothesis that the latent interaction effect is not significant (i.e., \(H_{0}: \gamma_{xm} = 0\)) at the significance level (\(\alpha = .05\)). The type I error rate was computed across 2,000 replications by determining the proportion of instances where a Type I error occurred. Statistical power measures a method's ability to detect an effect if one truly exists. In this study, it was defined as the proportion of correctly rejecting the null hypothesis when the interaction effect truly exists (i.e., \(H_{a}: \gamma_{xm} = 0.3\)).
+
+\section{Results}\label{results}
+
+The results of the interaction effect estimated by RAPI, matched-pair UPI, and 2S-PA-Int were summarized and compared in terms of raw bias, standardized bias, relative standard error (SE) bias with outlier proportions, 95\% CI coverage rate, and root mean square error (RMSE) over 2,000 replications. Detailed statistics are displayed in Tables 1, 2, 3, and 4, respectively. Across all simulation conditions, the matched-pair UPI and 2S-PA-Int methods successfully converged without producing any inadmissible results. Models with the RAPI method had non-convergence rate of 1-12\% under 8 of the 27 conditions, particularly those with low reliability (\(\rho = 0.7\)) and small sample size (\(\textit{N} = 100\)). Subsequent analyses did not include the inadmissible solutions generated by the RAPI method.
+
+\subsection{\texorpdfstring{Raw Bias and Standardized Bias for \(\gamma_{xm}\)}{Raw Bias and Standardized Bias for \textbackslash gamma\_\{xm\}}}\label{raw-bias-and-standardized-bias-for-gamma_xm}
+
+As delineated in Table 1, an examination of all simulation conditions revealed that the absolute values of both B and SB associated with the estimate of \(\gamma_{xm}\) using the three methods consistently remained within the predetermined acceptable threshold of .40 (B = .00 \textasciitilde{} .08; SB = -.04 \textasciitilde{} .25). A discernible pattern in the impact of the correlation between the two first-order latent predictors on \(\gamma_{xm}\) was not identified. Regarding the influence of population reliability levels, all the methods demonstrated robustness to conditions of low reliability (i.e., \(\rho = 0.7\)) and showed consistently decreasing magnitude of SB and B as \(\rho\) increased from 0.7 to 0.9, across conditions of sample size and \(Corr(\xi_{x}, \xi_{m})\). For instance, holding other conditions constant, the magnitude of SB(B) decreased from .14(.08) to .08(.01) for RAPI, .13(.05) to .04(0) for matched pair UPI, and .14(.04) to .02(0) for 2S-PA-Int, implying that the estimation of \(\gamma_{xm}\) gradually became more accurate as the amount of measurement error within first-order indicators reduced.
+
+The B values generally became smaller as sample size increased for the three methods, which aligned with the statistical property of SEM models such that larger sample sizes tend to provide more accurate and reliable parameter estimates and reduced sampling errors. Nevertheless this pattern was not exactly consistent with the absolute SB because the empirical standard error of B decreased as the sample size increased, which might amplify the absolute SB. For instance, when \(\rho = .70\) and \(Corr[\xi_{x}, \xi_{m}] = 0\), the magnitude of B decreased from .08 to .01 for RAPI while the absolute SB first increased from .14 to .21 and then decreased to .19. The above findings revealed that the pattern displayed through B values might be masked by the corresponding empirical standard error, and the comparability of B need to be cautiously considered in standard units.
+
+It was found that the absolute SB of RAPI and matched-pair UPI were almost positive, while some of the 2S-PA-Int estimates were negative under high reliability. The results were consistent with previous findings for RAPI and matched-pair UPI such that they tended to provide overestimated interaction estimates with high correlations between first-order latent predictors and low reliability (Marsh et al., 2004; Hsiao et al., 2018). 2S-PA-Int did not show a clear sign of over or underestimation under high reliability, indicating that the absolute SB values were more randomly distributed in that condition. Nevertheless, all the methods yielded comparably low standardized biases across simulation conditions, which was acceptable for practical use.
+
+\begin{lltable}
+
+\begin{TableNotes}[para]
+\normalsize{\textit{Note.} $\textit{N}$ = sample size; $Corr(\xi_{x}, \xi_{m})$ = correlation between $\xi_{x}$ and $\xi_{m}$; $\rho$ = reliability level; RAPI = reliability-adjusted product indicator method; Matched-Pair UPI = matched-pair product unconstrained indicator method; 2S-PA-Int = two-stage path analysis with interaction method. Raw biases are shown in pararenthese. Note that numerical values have been rounded to two decimal places for consistency, which means that some values, while very close to 0 but not exactly 0, are displayed as 0.}
+\end{TableNotes}
+
+\small{
+
+\begin{longtable}{ccccccccccc}\noalign{\getlongtablewidth\global\LTcapwidth=\longtablewidth}
+\caption{\label{tab:standardized bias (raw bias)}Standardized Bias (Raw Bias) for $\gamma_{xm} (= 0.3)$ over 2,000 Replications.}\\
+\toprule
+ &  & \multicolumn{3}{c}{RAPI} & \multicolumn{3}{c}{Matched-Pair UPI} & \multicolumn{3}{c}{2S-PA-Int} \\
+\cmidrule(r){3-5} \cmidrule(r){6-8} \cmidrule(r){9-11}
+$\textit{N}$ & \multicolumn{1}{c}{$Corr(\xi_{x}, \xi_{m})$} & \multicolumn{1}{c}{$\rho = .70$} & \multicolumn{1}{c}{$\rho = .80$} & \multicolumn{1}{c}{$\rho = .90$} & \multicolumn{1}{c}{$\rho = .70$} & \multicolumn{1}{c}{$\rho = .80$} & \multicolumn{1}{c}{$\rho = .90$} & \multicolumn{1}{c}{$\rho = .70$} & \multicolumn{1}{c}{$\rho = .80$} & \multicolumn{1}{c}{$\rho = .90$}\\
+\midrule
+\endfirsthead
+\caption*{\normalfont{Table \ref{tab:standardized bias (raw bias)} continued}}\\
+\toprule
+ &  & \multicolumn{3}{c}{RAPI} & \multicolumn{3}{c}{Matched-Pair UPI} & \multicolumn{3}{c}{2S-PA-Int} \\
+\cmidrule(r){3-5} \cmidrule(r){6-8} \cmidrule(r){9-11}
+$\textit{N}$ & \multicolumn{1}{c}{$Corr(\xi_{x}, \xi_{m})$} & \multicolumn{1}{c}{$\rho = .70$} & \multicolumn{1}{c}{$\rho = .80$} & \multicolumn{1}{c}{$\rho = .90$} & \multicolumn{1}{c}{$\rho = .70$} & \multicolumn{1}{c}{$\rho = .80$} & \multicolumn{1}{c}{$\rho = .90$} & \multicolumn{1}{c}{$\rho = .70$} & \multicolumn{1}{c}{$\rho = .80$} & \multicolumn{1}{c}{$\rho = .90$}\\
+\midrule
+\endhead
+100 & 0 & 0.16 (0.08) & 0.18 (0.03) & 0.04 (0) & 0.09 (0.03) & 0.11 (0.02) & 0 (0) & 0.11 (0.03) & 0.05 (0.01) & -0.02 (0)\\
+ & 0.3 & 0.08 (0.06) & 0.18 (0.03) & 0.01 (0) & 0.12 (0.04) & 0.12 (0.02) & -0.01 (0) & 0.11 (0.03) & 0.06 (0.01) & -0.04 (0)\\
+ & 0.6 & 0.19 (0.06) & 0.19 (0.02) & 0.06 (0.01) & 0.12 (0.03) & 0.14 (0.02) & 0 (0) & 0.16 (0.02) & 0.1 (0.01) & 0 (0)\\
+250 & 0 & 0.21 (0.02) & 0.11 (0.01) & 0.09 (0.01) & 0.06 (0.01) & 0.06 (0.01) & 0.06 (0) & 0.08 (0.01) & 0.02 (0) & 0.03 (0)\\
+ & 0.3 & 0.24 (0.03) & 0.11 (0.01) & 0.07 (0) & 0.11 (0.01) & 0.08 (0.01) & 0.03 (0) & 0.12 (0.01) & 0.03 (0) & 0.02 (0)\\
+ & 0.6 & 0.21 (0.02) & 0.13 (0.01) & 0.05 (0) & 0.14 (0.02) & 0.11 (0.01) & 0.02 (0) & 0.13 (0.01) & 0.07 (0) & 0.02 (0)\\
+500 & 0 & 0.15 (0.01) & 0.06 (0) & 0.06 (0) & 0.08 (0.01) & 0.03 (0) & 0.02 (0) & 0.06 (0) & -0.02 (0) & 0 (0)\\
+ & 0.3 & 0.2 (0.01) & 0.1 (0.01) & 0.04 (0) & 0.13 (0.01) & 0.06 (0) & 0 (0) & 0.1 (0.01) & 0.03 (0) & -0.02 (0)\\
+ & 0.6 & 0.14 (0.01) & 0.12 (0.01) & 0.02 (0) & 0.09 (0.01) & 0.06 (0) & -0.01 (0) & 0.07 (0) & 0.08 (0) & -0.01 (0)\\
+\bottomrule
+\addlinespace
+\insertTableNotes
+\end{longtable}
+
+}
+
+\end{lltable}
+
+\subsection{\texorpdfstring{Relative SE Bias of \(\gamma_{xm}\)}{Relative SE Bias of \textbackslash gamma\_\{xm\}}}\label{relative-se-bias-of-gamma_xm}
+
+Table 2 showed the robust relative standard error (SE) bias ratio with outlier proportions of SE when \(\gamma_{xm} = 0.3\). All the values outside the -10\% \textasciitilde{} 10\% range were bolded. Generally, the magnitude of robust relative SE bias were all within the -10\% \textasciitilde{} 10\% range for RAPI, matched-pair UPI, and 2S-PA-Int across conditions of medium to high reliability level. The ranges were from .56\%(1.55\%) to 8.33\%(1.65\%) for RAPI, .09\%(1.55\%) to -8.96\%(5.85\%) for matched-pair UPI, and -.57\%(1.40\%) to -7.39\%(1.30\%) for 2S-PA-Int, which implied that the estimated SE values of \(\hat{\gamma}_{xm}\) were unbiased. Compared to 2S-PA-Int, matched-pair UPI produced two relative SE values outside the acceptable range under conditions of small sample size (\(\textit{N} = 100\)) and low reliability (\(\rho = .70\)): -11.52\%(8.15\%) and -14.14\%(8.40\%), meaning that the SE values were negatively biased. As for RAPI, unacceptable relative SE biases appeared in various conditions under low reliability (\(\rho = .7\)), meaning that RAPI may generate the interaction effect with more uncertainty as measurement error is high. The outlier proportions of SEs identified by the IQR method showed declining trends for all the methods as sample size increased and reliability levels improved, meaning that the estimation of \(\gamma_{xm}\) became more accurate and stable with less extreme values. For instance, holding \(Corr(\xi_{x}, \xi_{m}) = 0\), the proportion of outliers for RAPI decreased from 10.90\% to 5.55\% and to 2.60\% as \(N\) increased for \(\rho = .70\), while within the condition of \(\textit{N} = 100\) and the proportion decreased from 10.90\% to 5.40\% and to 1.90\% as \(\rho\).
+
+However, the robust relative SE bias did not demonstrate a clear pattern associated with \(\rho\) and \(N\). It was found that even though under the condition of large sample size and high reliability, the robust relative SE bias could be higher then those under the worse conditions. Additionally, the overall values of the relative SE bias were negative for matched-pair UPI and 2S-PA-Int, and almost positive for RAPI, which indicated that the SEs were systematically underestimated for matched-pair UPI and 2S-PA-Int but overestimated for RAPI.
+
+\begin{lltable}
+
+\begin{TableNotes}[para]
+\normalsize{\textit{Note.} $\textit{N}$ = sample size; $Corr(\xi_{x}, \xi_{m})$ = correlation between $\xi_{x}$ and $\xi_{m}$; $\rho$ = reliability level; RAPI = reliability-adjusted product indicator method; Matched-Pair UPI = matched-pair product unconstrained indicator method; 2S-PA-Int = two-stage path analysis with interaction method. Outlier proportions of SE are shown in parenthese and all the numbers were percentages. Note that relative SE bias values outside the acceptable range of [-10$\%$, 10$\%$] are bolded.}
+\end{TableNotes}
+
+\scriptsize{
+
+\begin{longtable}{ccccccccccc}\noalign{\getlongtablewidth\global\LTcapwidth=\longtablewidth}
+\caption{\label{tab:MAD relative SE bias with outliers proportion}Robust Relative Standard Error (SE) Bias Ratio (Outlier Proportion of SE; $\%$) for $\gamma_{xm} (= 0.3)$ over 2,000 Replications.}\\
+\toprule
+ &  & \multicolumn{3}{c}{RAPI} & \multicolumn{3}{c}{Matched-Pair UPI} & \multicolumn{3}{c}{2S-PA-Int} \\
+\cmidrule(r){3-5} \cmidrule(r){6-8} \cmidrule(r){9-11}
+$\textit{N}$ & \multicolumn{1}{c}{$Corr(\xi_{x}, \xi_{m})$} & \multicolumn{1}{c}{$\rho = .70$} & \multicolumn{1}{c}{$\rho = .80$} & \multicolumn{1}{c}{$\rho = .90$} & \multicolumn{1}{c}{$\rho = .70$} & \multicolumn{1}{c}{$\rho = .80$} & \multicolumn{1}{c}{$\rho = .90$} & \multicolumn{1}{c}{$\rho = .70$} & \multicolumn{1}{c}{$\rho = .80$} & \multicolumn{1}{c}{$\rho = .90$}\\
+\midrule
+\endfirsthead
+\caption*{\normalfont{Table \ref{tab:MAD relative SE bias with outliers proportion} continued}}\\
+\toprule
+ &  & \multicolumn{3}{c}{RAPI} & \multicolumn{3}{c}{Matched-Pair UPI} & \multicolumn{3}{c}{2S-PA-Int} \\
+\cmidrule(r){3-5} \cmidrule(r){6-8} \cmidrule(r){9-11}
+$\textit{N}$ & \multicolumn{1}{c}{$Corr(\xi_{x}, \xi_{m})$} & \multicolumn{1}{c}{$\rho = .70$} & \multicolumn{1}{c}{$\rho = .80$} & \multicolumn{1}{c}{$\rho = .90$} & \multicolumn{1}{c}{$\rho = .70$} & \multicolumn{1}{c}{$\rho = .80$} & \multicolumn{1}{c}{$\rho = .90$} & \multicolumn{1}{c}{$\rho = .70$} & \multicolumn{1}{c}{$\rho = .80$} & \multicolumn{1}{c}{$\rho = .90$}\\
+\midrule
+\endhead
+100 & 0 & \textbf{14.22 (10.55)} & 4.92 (5.60) & 1.69 (3.30) & \textbf{-12.77 (8.60)} & -8.22 (5.15) & -2.67 (3.05) & -1.93 (8.25) & -6.07 (3.85) & -3.27 (1.75)\\
+ & 0.3 & 9.44 (10.75) & 5.54 (4.80) & 2.96 (2.20) & \textbf{-11.41 (7.10)} & \textbf{-10.29 (4.85)} & -5.36 (3.40) & -6.28 (7.50) & -4.49 (3.00) & -4.18 (1.90)\\
+ & 0.6 & \textbf{15.19 (8.05)} & 5.08 (3.90) & 0.53 (1.45) & -7.37 (6.70) & -7.29 (3.90) & -7.17 (2.30) & -3.03 (5.65) & -4.24 (3.25) & -4.25 (1.10)\\
+250 & 0 & 7.42 (5.55) & \textbf{11.93 (2.50)} & 2.43 (1.65) & -4.95 (3.75) & -2.15 (4.20) & -2.84 (1.95) & -5.61 (3.25) & 2.15 (1.65) & -1.85 (1.35)\\
+ & 0.3 & 5.74 (5.45) & 6.36 (2.80) & 6.47 (1.30) & -6.2 (3.65) & -5.98 (3.10) & -1.2 (1.75) & \textbf{-10.24 (4.10)} & -4.16 (2.00) & 1.84 (1.20)\\
+ & 0.6 & 8.4 (4.55) & 9.4 (2.50) & 4.9 (0.95) & -5.88 (4.60) & 1.36 (3.40) & -2.09 (1.65) & -8.3 (3.55) & -1.68 (1.70) & -1.82 (0.55)\\
+500 & 0 & \textbf{12.46 (3.85)} & 3.87 (1.70) & -0.89 (1.15) & -0.65 (3.15) & -3.85 (2.50) & -4.06 (1.55) & -1.54 (3.60) & -5.68 (1.40) & -4.99 (0.85)\\
+ & 0.3 & \textbf{13.39 (3.10)} & 7.97 (2.10) & 5.3 (0.85) & 3.06 (3.40) & -7.51 (3.00) & -0.19 (0.65) & -2.26 (2.05) & -4.14 (1.75) & 0.23 (0.65)\\
+ & 0.6 & 5.34 (2.85) & \textbf{10.14 (1.85)} & 3.34 (0.60) & -3.61 (3.20) & 0.19 (2.00) & 0 (0.70) & \textbf{-11.12 (2.30)} & -0.87 (1.50) & -2.61 (0.70)\\
+\bottomrule
+\addlinespace
+\insertTableNotes
+\end{longtable}
+
+}
+
+\end{lltable}
+
+\subsection{\texorpdfstring{Coverage Rate of 95\% CI of \(\gamma_{xm}\)}{Coverage Rate of 95\% CI of \textbackslash gamma\_\{xm\}}}\label{coverage-rate-of-95-ci-of-gamma_xm}
+
+\begin{lltable}
+
+\begin{TableNotes}[para]
+\normalsize{\textit{Note.} $\textit{N}$ = sample size; $Corr(\xi_{x}, \xi_{m})$ = correlation between $\xi_{x}$ and $\xi_{m}$; $\rho$ = reliability level; RAPI = reliability-adjusted product indicator method; Matched-Pair UPI = matched-pair product unconstrained indicator method; 2S-PA-Int = two-stage path analysis with interaction method. Coverage rates not reaching the acceptable threshold of 91$\%$ are bolded.}
+\end{TableNotes}
+
+\small{
+
+\begin{longtable}{ccccccccccc}\noalign{\getlongtablewidth\global\LTcapwidth=\longtablewidth}
+\caption{\label{tab:coverage rate}95 $\%$ Confidence Interval (CI) Coverage Rate for $\gamma_{xm} (= 0.3)$ over 2,000 Replications.}\\
+\toprule
+ &  & \multicolumn{3}{c}{RAPI} & \multicolumn{3}{c}{Matched-Pair UPI} & \multicolumn{3}{c}{2S-PA-Int} \\
+\cmidrule(r){3-5} \cmidrule(r){6-8} \cmidrule(r){9-11}
+$\textit{N}$ & \multicolumn{1}{c}{$Corr(\xi_{x}, \xi_{m})$} & \multicolumn{1}{c}{$\rho = .70$} & \multicolumn{1}{c}{$\rho = .80$} & \multicolumn{1}{c}{$\rho = .90$} & \multicolumn{1}{c}{$\rho = .70$} & \multicolumn{1}{c}{$\rho = .80$} & \multicolumn{1}{c}{$\rho = .90$} & \multicolumn{1}{c}{$\rho = .70$} & \multicolumn{1}{c}{$\rho = .80$} & \multicolumn{1}{c}{$\rho = .90$}\\
+\midrule
+\endfirsthead
+\caption*{\normalfont{Table \ref{tab:coverage rate} continued}}\\
+\toprule
+ &  & \multicolumn{3}{c}{RAPI} & \multicolumn{3}{c}{Matched-Pair UPI} & \multicolumn{3}{c}{2S-PA-Int} \\
+\cmidrule(r){3-5} \cmidrule(r){6-8} \cmidrule(r){9-11}
+$\textit{N}$ & \multicolumn{1}{c}{$Corr(\xi_{x}, \xi_{m})$} & \multicolumn{1}{c}{$\rho = .70$} & \multicolumn{1}{c}{$\rho = .80$} & \multicolumn{1}{c}{$\rho = .90$} & \multicolumn{1}{c}{$\rho = .70$} & \multicolumn{1}{c}{$\rho = .80$} & \multicolumn{1}{c}{$\rho = .90$} & \multicolumn{1}{c}{$\rho = .70$} & \multicolumn{1}{c}{$\rho = .80$} & \multicolumn{1}{c}{$\rho = .90$}\\
+\midrule
+\endhead
+100 & 0 & 97.05 & 97.45 & 96.05 & \textbf{87.05} & 92.20 & 93.90 & 94.85 & 95.20 & 94.70\\
+ & 0.3 & 96.90 & 96.80 & 95.55 & \textbf{88.8} & 92.35 & 94.40 & 95.30 & 94.95 & 93.85\\
+ & 0.6 & 97.20 & 96.90 & 96.25 & 91.05 & 92.70 & 94.55 & 95.70 & 94.60 & 94.10\\
+250 & 0 & 96.65 & 97.05 & 96.40 & 91.55 & 93.50 & 95.20 & 93.45 & 94.20 & 95.50\\
+ & 0.3 & 97.40 & 97.15 & 95.55 & 92.35 & 93.80 & 94.40 & 94.45 & 94.50 & 94.45\\
+ & 0.6 & 96.80 & 97.15 & 95.15 & 93.2 & 95.20 & 93.70 & 92.75 & 95.75 & 94.05\\
+500 & 0 & 96.95 & 96.20 & 96.25 & 93.65 & 94.05 & 95.00 & 93.80 & 94.40 & 94.75\\
+ & 0.3 & 97.60 & 96.40 & 96.20 & 94.45 & 93.70 & 95.25 & 94.25 & 94.50 & 95.00\\
+ & 0.6 & 96.85 & 97.15 & 95.90 & 92.65 & 94.95 & 94.70 & 92.45 & 95.05 & 94.85\\
+\bottomrule
+\addlinespace
+\insertTableNotes
+\end{longtable}
+
+}
+
+\end{lltable}
+
+As shown in Table 3, the coverage rates of 95\(\%\) CI were adequately within the acceptable range (91 - 98\%) for RAPI and 2S-PA-Int across all the simulation conditions, with a range from 95.50\% to 97.75\% for RAPI and 93.10\% to 95.50\% for 2S-PA-Int. For UPI, three values that occurred under the condition of small sample size (\(\textit{N} = 100\)) and low reliability level (\(\rho = .70\)) were beyond the acceptable range: 87.9\%, 88.75\%, and 89.65\%; Nevertheless, the lowest coverage only showed a 2.1\% gap to 91\%.
+No clear trends of coverage rate were observed within the methods in terms of sample size, population reliability level, and correlation between first-order latent variables. However, across the methods, it was observed that generally RAPI demonstrated the highest coverage rate, followed by 2S-PA-Int with the second highest, and UPI with the lowest coverage rate. This order revealed that the RAPI method had the highest chance of capturing the true interaction effect with 2S-PA-Int and UPI followed, when the true interaction effect existed.
+
+\subsection{\texorpdfstring{RMSE of \(\gamma_{xm}\)}{RMSE of \textbackslash gamma\_\{xm\}}}\label{rmse-of-gamma_xm}
+
+\begin{lltable}
+
+\begin{TableNotes}[para]
+\normalsize{\textit{Note.} $\textit{N}$ = sample size; $Corr(\xi_{x}, \xi_{m})$ = correlation between $\xi_{x}$ and $\xi_{m}$; $\rho$ = reliability level; RAPI = reliability-adjusted product indicator method; Matched-Pair UPI = matched-pair product unconstrained indicator method; 2S-PA-Int = two-stage path analysis with interaction method. Note that the methods are grouped in the second-order header for comparing RMSE under the same conditions.}
+\end{TableNotes}
+
+\footnotesize{
+
+\begin{longtable}{ccccccccccc}\noalign{\getlongtablewidth\global\LTcapwidth=\longtablewidth}
+\caption{\label{tab:rmse}Root Mean Square Error (RMSE) for $\gamma_{xm} (= 0.3)$ over 2,000 Replications.}\\
+\toprule
+ &  & \multicolumn{3}{c}{$\rho = .70$} & \multicolumn{3}{c}{$\rho = .80$} & \multicolumn{3}{c}{$\rho = .90$} \\
+\cmidrule(r){3-5} \cmidrule(r){6-8} \cmidrule(r){9-11}
+$\textit{N}$ & \multicolumn{1}{c}{$Corr(\xi_{x}, \xi_{m})$} & \multicolumn{1}{c}{RAPI} & \multicolumn{1}{c}{Matched-Pair UPI} & \multicolumn{1}{c}{2S-PA-Int} & \multicolumn{1}{c}{RAPI} & \multicolumn{1}{c}{Matched-Pair UPI} & \multicolumn{1}{c}{2S-PA-Int} & \multicolumn{1}{c}{RAPI} & \multicolumn{1}{c}{Matched-Pair UPI} & \multicolumn{1}{c}{2S-PA-Int}\\
+\midrule
+\endfirsthead
+\caption*{\normalfont{Table \ref{tab:rmse} continued}}\\
+\toprule
+ &  & \multicolumn{3}{c}{$\rho = .70$} & \multicolumn{3}{c}{$\rho = .80$} & \multicolumn{3}{c}{$\rho = .90$} \\
+\cmidrule(r){3-5} \cmidrule(r){6-8} \cmidrule(r){9-11}
+$\textit{N}$ & \multicolumn{1}{c}{$Corr(\xi_{x}, \xi_{m})$} & \multicolumn{1}{c}{RAPI} & \multicolumn{1}{c}{Matched-Pair UPI} & \multicolumn{1}{c}{2S-PA-Int} & \multicolumn{1}{c}{RAPI} & \multicolumn{1}{c}{Matched-Pair UPI} & \multicolumn{1}{c}{2S-PA-Int} & \multicolumn{1}{c}{RAPI} & \multicolumn{1}{c}{Matched-Pair UPI} & \multicolumn{1}{c}{2S-PA-Int}\\
+\midrule
+\endhead
+100 & 0 & 0.52 & 0.40 & 0.25 & 0.16 & 0.20 & 0.14 & 0.11 & 0.12 & 0.11\\
+ & 0.3 & 0.74 & 0.31 & 0.26 & 0.14 & 0.19 & 0.13 & 0.11 & 0.11 & 0.10\\
+ & 0.6 & 0.30 & 0.24 & 0.16 & 0.12 & 0.15 & 0.11 & 0.09 & 0.10 & 0.09\\
+250 & 0 & 0.12 & 0.14 & 0.11 & 0.08 & 0.10 & 0.08 & 0.07 & 0.07 & 0.07\\
+ & 0.3 & 0.11 & 0.13 & 0.10 & 0.08 & 0.10 & 0.08 & 0.06 & 0.07 & 0.06\\
+ & 0.6 & 0.09 & 0.12 & 0.09 & 0.07 & 0.08 & 0.06 & 0.06 & 0.06 & 0.06\\
+500 & 0 & 0.08 & 0.10 & 0.07 & 0.06 & 0.07 & 0.06 & 0.05 & 0.05 & 0.05\\
+ & 0.3 & 0.07 & 0.09 & 0.07 & 0.05 & 0.07 & 0.05 & 0.04 & 0.05 & 0.04\\
+ & 0.6 & 0.06 & 0.08 & 0.06 & 0.05 & 0.05 & 0.05 & 0.04 & 0.04 & 0.04\\
+\bottomrule
+\addlinespace
+\insertTableNotes
+\end{longtable}
+
+}
+
+\end{lltable}
+
+Table 4 showed that the RMSE values for \(\gamma_{xm}\) decreased as the sample size increased and the reliability level increased. Comparing RMSE across methods, 2S-PA-Int showed the least (or equally least) RMSE values across all the simulation conditions, indicating that 2S-PA-Int had a closer fit of to the data and more accurate estimation of the true \(\gamma_{xm}\). For example, under the small sample size and low reliability, the RMSE values of 2S-PA-Int ranged from .20 to .32 while those of RAPI and matched-pair UPI ranged from .25 to .61 and .34 to .39 respectively. However, note that the differences on RMSE across the methods became less obvious under the condition of high reliability (\(\rho = .90\)), meaning that all the methods tended to produce more accurate and less unstable estimations of the interaction effect.
+
+\subsection{Empirical Type I Error Rate and Statistical Power}\label{empirical-type-i-error-rate-and-statistical-power-1}
+
+\begin{lltable}
+
+\begin{TableNotes}[para]
+\normalsize{\textit{Note.} $\textit{N}$ = sample size; $Corr(\xi_{x}, \xi_{m})$ = correlation between $\xi_{x}$ and $\xi_{m}$; $\rho$ = reliability level; RAPI = reliability-adjusted product indicator method; Matched-Pair UPI = matched-pair product unconstrained indicator method; 2S-PA-Int = two-stage path analysis with interaction method. Note that the methods are grouped in the second-order header for comparing the empirical Type I error rate under the same conditions.}
+\end{TableNotes}
+
+\footnotesize{
+
+\begin{longtable}{ccccccccccc}\noalign{\getlongtablewidth\global\LTcapwidth=\longtablewidth}
+\caption{\label{tab:type I error}Empirical Type I Error Rate for $\gamma_{xm} (= 0)$ over 2,000 Replications.}\\
+\toprule
+ &  & \multicolumn{3}{c}{$\rho = .70$} & \multicolumn{3}{c}{$\rho = .80$} & \multicolumn{3}{c}{$\rho = .90$} \\
+\cmidrule(r){3-5} \cmidrule(r){6-8} \cmidrule(r){9-11}
+$\textit{N}$ & \multicolumn{1}{c}{$Corr(\xi_{x}, \xi_{m})$} & \multicolumn{1}{c}{$\rho = .70$} & \multicolumn{1}{c}{$\rho = .80$} & \multicolumn{1}{c}{$\rho = .90$} & \multicolumn{1}{c}{$\rho = .70$} & \multicolumn{1}{c}{$\rho = .80$} & \multicolumn{1}{c}{$\rho = .90$} & \multicolumn{1}{c}{$\rho = .70$} & \multicolumn{1}{c}{$\rho = .80$} & \multicolumn{1}{c}{$\rho = .90$}\\
+\midrule
+\endfirsthead
+\caption*{\normalfont{Table \ref{tab:type I error} continued}}\\
+\toprule
+ &  & \multicolumn{3}{c}{$\rho = .70$} & \multicolumn{3}{c}{$\rho = .80$} & \multicolumn{3}{c}{$\rho = .90$} \\
+\cmidrule(r){3-5} \cmidrule(r){6-8} \cmidrule(r){9-11}
+$\textit{N}$ & \multicolumn{1}{c}{$Corr(\xi_{x}, \xi_{m})$} & \multicolumn{1}{c}{$\rho = .70$} & \multicolumn{1}{c}{$\rho = .80$} & \multicolumn{1}{c}{$\rho = .90$} & \multicolumn{1}{c}{$\rho = .70$} & \multicolumn{1}{c}{$\rho = .80$} & \multicolumn{1}{c}{$\rho = .90$} & \multicolumn{1}{c}{$\rho = .70$} & \multicolumn{1}{c}{$\rho = .80$} & \multicolumn{1}{c}{$\rho = .90$}\\
+\midrule
+\endhead
+100 & 0 & 0.01 & 0.03 & 0.04 & 0.00 & 0.03 & 0.05 & 0.03 & 0.06 & 0.05\\
+ & 0.3 & 0.01 & 0.03 & 0.04 & 0.01 & 0.03 & 0.04 & 0.04 & 0.05 & 0.05\\
+ & 0.6 & 0.01 & 0.03 & 0.04 & 0.01 & 0.03 & 0.04 & 0.04 & 0.06 & 0.05\\
+250 & 0 & 0.02 & 0.05 & 0.05 & 0.02 & 0.05 & 0.05 & 0.04 & 0.06 & 0.05\\
+ & 0.3 & 0.03 & 0.04 & 0.05 & 0.02 & 0.04 & 0.05 & 0.04 & 0.05 & 0.05\\
+ & 0.6 & 0.03 & 0.05 & 0.05 & 0.03 & 0.05 & 0.05 & 0.05 & 0.05 & 0.05\\
+500 & 0 & 0.04 & 0.05 & 0.05 & 0.04 & 0.05 & 0.04 & 0.05 & 0.05 & 0.05\\
+ & 0.3 & 0.04 & 0.04 & 0.05 & 0.04 & 0.04 & 0.05 & 0.05 & 0.05 & 0.05\\
+ & 0.6 & 0.04 & 0.05 & 0.05 & 0.04 & 0.05 & 0.05 & 0.05 & 0.06 & 0.05\\
+\bottomrule
+\addlinespace
+\insertTableNotes
+\end{longtable}
+
+}
+
+\end{lltable}
+
+\begin{lltable}
+
+\begin{TableNotes}[para]
+\normalsize{\textit{Note.} $\textit{N}$ = sample size; $Corr(\xi_{x}, \xi_{m})$ = correlation between $\xi_{x}$ and $\xi_{m}$; $\rho$ = reliability level; RAPI = reliability-adjusted product indicator method; Matched-Pair UPI = matched-pair product unconstrained indicator method; 2S-PA-Int = two-stage path analysis with interaction method. Note that the methods are grouped in the second-order header for comparing statistical power under the same conditions.}
+\end{TableNotes}
+
+\footnotesize{
+
+\begin{longtable}{ccccccccccc}\noalign{\getlongtablewidth\global\LTcapwidth=\longtablewidth}
+\caption{\label{tab:power}Statistical Power for $\gamma_{xm} (= 0.3)$ over 2,000 Replications.}\\
+\toprule
+ &  & \multicolumn{3}{c}{$\rho = .70$} & \multicolumn{3}{c}{$\rho = .80$} & \multicolumn{3}{c}{$\rho = .90$} \\
+\cmidrule(r){3-5} \cmidrule(r){6-8} \cmidrule(r){9-11}
+$\textit{N}$ & \multicolumn{1}{c}{$Corr(\xi_{x}, \xi_{m})$} & \multicolumn{1}{c}{$\rho = .70$} & \multicolumn{1}{c}{$\rho = .80$} & \multicolumn{1}{c}{$\rho = .90$} & \multicolumn{1}{c}{$\rho = .70$} & \multicolumn{1}{c}{$\rho = .80$} & \multicolumn{1}{c}{$\rho = .90$} & \multicolumn{1}{c}{$\rho = .70$} & \multicolumn{1}{c}{$\rho = .80$} & \multicolumn{1}{c}{$\rho = .90$}\\
+\midrule
+\endfirsthead
+\caption*{\normalfont{Table \ref{tab:power} continued}}\\
+\toprule
+ &  & \multicolumn{3}{c}{$\rho = .70$} & \multicolumn{3}{c}{$\rho = .80$} & \multicolumn{3}{c}{$\rho = .90$} \\
+\cmidrule(r){3-5} \cmidrule(r){6-8} \cmidrule(r){9-11}
+$\textit{N}$ & \multicolumn{1}{c}{$Corr(\xi_{x}, \xi_{m})$} & \multicolumn{1}{c}{$\rho = .70$} & \multicolumn{1}{c}{$\rho = .80$} & \multicolumn{1}{c}{$\rho = .90$} & \multicolumn{1}{c}{$\rho = .70$} & \multicolumn{1}{c}{$\rho = .80$} & \multicolumn{1}{c}{$\rho = .90$} & \multicolumn{1}{c}{$\rho = .70$} & \multicolumn{1}{c}{$\rho = .80$} & \multicolumn{1}{c}{$\rho = .90$}\\
+\midrule
+\endhead
+100 & 0 & 0.21 & 0.56 & 0.80 & 0.14 & 0.49 & 0.80 & 0.45 & 0.66 & 0.82\\
+ & 0.3 & 0.28 & 0.66 & 0.84 & 0.19 & 0.60 & 0.82 & 0.53 & 0.75 & 0.85\\
+ & 0.6 & 0.43 & 0.79 & 0.92 & 0.35 & 0.75 & 0.92 & 0.70 & 0.86 & 0.93\\
+250 & 0 & 0.83 & 0.97 & 0.99 & 0.73 & 0.95 & 0.99 & 0.90 & 0.98 & 0.99\\
+ & 0.3 & 0.90 & 0.99 & 1.00 & 0.81 & 0.97 & 1.00 & 0.95 & 0.99 & 1.00\\
+ & 0.6 & 0.97 & 1.00 & 1.00 & 0.93 & 1.00 & 1.00 & 0.98 & 1.00 & 1.00\\
+500 & 0 & 0.99 & 1.00 & 1.00 & 0.98 & 1.00 & 1.00 & 1.00 & 1.00 & 1.00\\
+ & 0.3 & 1.00 & 1.00 & 1.00 & 0.99 & 1.00 & 1.00 & 1.00 & 1.00 & 1.00\\
+ & 0.6 & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & 1.00\\
+\bottomrule
+\addlinespace
+\insertTableNotes
+\end{longtable}
+
+}
+
+\end{lltable}
+
+\section{Discussion}\label{discussion}
+
+Applied researchers often focus on complex relationships between variables, such as interactions. However, classical regression models, which assume variables are free of measurement error, have been shown to produce biased estimates. Consequently, latent variables approaches with the SEM framework are increasingly being considered. In this study, we reviewed and compared the performance of matched-pair UPI and RAPI with 2S-PA-Int in estimating interaction effects on congeneric items with varying factor loadings and errors.
+
+We extended the 2S-PA model by Lai and Hsiao (2022) to support latent interaction estimation, namely 2S-PA-Int.
+The major difference between matched-pair UPI, RAPI, and 2S-PA-Int is on the formation of the latent interaction term. Specifically, matched-pair UPI forms the latent interaction term by using multiple PIs generated by first-order indicators, and thus it is a multiple-indicator method. Instead, RAPI and 2S-PA use composite scores and factor scores as SIs to the latent interaction term, respectively. Our findings indicated that all the three methods were capable of generating unbiased estimates of interaction effects by accounting for measurement errors, with the magnitude of SB and B estimates falling below the .40 threshold. Notably, RAPI and UPI exhibited substantially positive SB values, suggesting a tendency to overestimate interaction effects when true effects are present. These observations align with the results from Marsh et al. (2004) using items with congeneric factors (i.e., only factor loadings were varied), Hsiao et al. (2018) using tau-equivalent items (i.e., only error variances were varied), and Hsiao et al. (2021) using congeneric items, where matched-pair UPI and RAPI slightly overestimated interaction coefficients when true interaction effects were nonzero, albeit to an acceptable degree. Our results echoed that RAPI and matched-pair UPI should be used with caution when researchers prefer to be more conservative with estimated effects.
+
+Higher coverage rates with 95\% CI for RAPI around 95\% \textasciitilde{} 97\% were observed in our results, implying that RAPI has higher chance and accuracy in capturing true interaction effects within the 95\% confidence intervals, compared to matched-pair UPI and 2S-PA-Int. 2S-PA-Int estimated interaction effects with acceptable coverage rates as well, though slightly lower than those estimated by RAPI, implying that 2S-PA-Int is able to capture the true effects with high likelihood. Matched-pair UPI was affected mostly by small sample size and low reliability level in our study, which implied that it is not as robust as RAPI and 2S-PA-Int and not recommended to use under this condition. Overall, the results of coverage rate also implied that RAPI and 2S-PA-Int have the potential of adequate statistical power to accurately identify the presence and magnitude of interaction effects across conditions. Our results were consistent with past research mentioned above; however, Marsh et al.~(2004) did not test matched-pair UPI on fully congeneric items and it may imply that matched-pair UPI has less chance of capturing true effects with varied error variances within first-order indicators.
+
+Sample size and reliability level significantly impacted the estimation of non-zero interaction effects. The absolute values of SB and B were sensitive to low sample size and high amount of measurement error reflected by the estimated reliability, and they generally became smaller with increased sample size and decreased error for all the methods. It implies that RAPI, matched-pair UPI, and 2S-PA-Int tend to have better performance in estimating interaction effects with larger sample sizes. Within the same level of sample size, higher reliability levels of first-order indicators generally result in more unbiased estimated for all the methods in most cases. The relative SE biases showed similar patterns, such that the magnitude of relative SE bias became smaller with increasing sample size and reliability level. Particularly RAPI generally exhibited larger relative SE biases than matched-pair UPI and 2S-PA-Int especially under small sample size and low reliability level, indicating that RAPI is more inclined to generate unstable interaction estimates under such conditions. Overall, although the three methods had at least one case of relative SE bias outside the acceptable range, 2S-PA-Int was slightly more stable under most of conditions. In terms of RMSE, it was apparently affected by both sample size and reliability level for all the methods. As sample size and reliability individually or jointly increase, the RMSE values demonstrated declining trends in magnitude, meaning that the interaction estimates showed more accuracy and variability. Despite the consistent trends, the 2S-PA-Int method produced estimates with less RMSE than RAPI and matched-pair UPI particularly under small sample size and low reliability level, implying that 2S-PA-Int can generate more accurate and stable interaction effects under these conditions. Taking all the evaluation criteria into account, 2S-PA-Int showed ample potential to serve as a good alternative to RAPI and matched-UPI for latent interaction estimation by demonstrating robustness to extreme conditions.
+
+Revisiting Marsh's criteria of a good latent interaction model, 2S-PA-Int is practically preferable in terms of simple model specification as a single-indicator method, and comprehensive usage of information by using factors scores based on all first-order indicators. Specifically, models overloaded with indicators may have difficulties in reaching convergence due to the intricate covariance structures to be estimated, potentially resulting in non-identifiable models (Bollen, 1989). Furthermore, Byrne (2016) highlights that excessive indicators can introduce redundancy, complicating the model unnecessarily and increasing the likelihood of estimation problems. Thus, 2S-PA-Int should be a safer alternative to matched-pair UPI especially with small sample size and low reliability level; compared to RAPI, 2S-PA-Int is more advantageous in terms of stability and accuracy of interaction estimates.
+
+\section{Limitations and Future Directions}\label{limitations-and-future-directions}
+
+Marsh et al.~(2004) demonstrated that all-pair UPI was not preferred because it did not have substantial improvement on latent interaction estimation but has slightly more complicated model compared to matched-pair UPI. We explored the performance of all-pair UPI on congeneric items in our preliminary study, as Marsh et al.~(2004) only explored parallel items without varied conditions of factor loadings and error variances. We found that the standardized biases of interaction estimates produced by all-pair UPI were negligible for parallel items but not for congeneric factor items (i.e., items with varied factor loadings but same error variances) and congeneric items. A reasonable explanation of increasing standard biases is that raw biases were very small for three types of items, while the corresponding standard errors became systematically smaller with sample size increased. Thus, the results implied that all-pair UPI did not have as good performance as matched-pair UPI and hence we did not included it in our main study (Results of preliminary simulation study of all-pair UPI are available at: \url{https://github.com/Gengrui-Zhang/2S-PA-Int/blob/main/Qual_1_Supplemental_Material/Supplemental-Material.pdf}).
+
+Regarding the study design, we have not included the condition when the effect of \(\xi_{x}\xi_{m}\) is 0, which means that the evaluation of Type I error rate and power cannot be conducted. We will include this condition as a factor of study design in the future. Besides, some alternative methods using distribution analytic approach, such as the latent moderated structural equation (LMS; Klein \& Moosbrugger, 2000) method, were not evaluated in this study, given that the focus of this study was on product indicator methods. Past literature has shown that LMS tended to produce unbiased estimates of the latent interaction effect with acceptable statistical power on congeneric items with normal distribution (Hsiao, et al., 2021; Cham et al., 2012). Therefore, in future investigations, we plan to incorporate widely used alternative methods for comparison with the 2S-PA-Int approach. Additionally, study designs in the past methodological paper on latent interaction effects were almost simply structured with two latent predictors and one interaction term, which could be insufficient to accommodate more complicated real-world scenarios such as multiple interaction terms. Besides, multilevel design is increasingly used in educational, counseling, and organizational research (e.g., students nested in classrooms, patients nested in clinics, employees nested in companies), and it is worth exploring the potential of 2S-PA-Int with complicated data types and structures with varied sample sizes and reliability levels.
+
+As for other limitations, Hsiao et al.~(2018) mentioned that RAPI may be more approachable when researchers do not have the access of original data and have to analyze secondary data since composite scores are usually reported with reliability index (e.g., usually Cronbach's \(\alpha\)). When factor scores with standard errors are not available in some secondary dataset, researchers may not be able to compute factors scores and thus apply 2S-PA-Int in this case. Second, currently the congeneric items in this study design are all continuous with normal distributions. Given that categorical data is frequently used in psychology research to capture the qualitative aspects of human behavior, attitudes, and characteristics (Brown, 2015; Kline, 2016), 2S-PA-Int has not been evaluated and should be studied with categorical items in the future. Nevertheless, 2S-PA-Int is expected to show better performance on estimating latent interaction effects since theoretically it can incorporate differential standard error of measurement for each observation.
+
+\newpage
+
+\section{References}\label{references}
+
+\phantomsection\label{refs}
+\begin{CSLReferences}{1}{0}
+\bibitem[\citeproctext]{ref-alginaNoteEstimatingJoreskogYang2001}
+Algina, J., \& Moulder, B. C. (2001). A note on estimating the {J{ö}reskog-Yang} model for latent variable interaction using {LISREL} 8.3. \emph{Structural Equation Modeling}, \emph{8}(1), 40--52. \url{https://doi.org/10.1207/S15328007SEM0801_3}
+
+\bibitem[\citeproctext]{ref-andersonComparisonBiasMean1996}
+Anderson, L. E., Stone-Romero, E. F., \& Tisak, J. (1996). A {Comparison} of bias and mean squared error in parameter estimates of interaction effects: {Moderated} multiple regression versus error-in-variables regression. \emph{Multivariate Behavioral Research}, \emph{31}(1), 69--94. \url{https://doi.org/10.1207/s15327906mbr3101_5}
+
+\bibitem[\citeproctext]{ref-bollenStructuralEquationsLatent1989d}
+Bollen, K. A. (1989). \emph{Structural equations with latent variables} (pp. xiv, 514). John Wiley \& Sons. \url{https://doi.org/10.1002/9781118619179}
+
+\bibitem[\citeproctext]{ref-bollenLatentVariablesPsychology2002a}
+Bollen, K. A. (2002). Latent variables in psychology and the social sciences. \emph{Annual Review of Psychology}, \emph{53}(1), 605--634. \url{https://doi.org/10.1146/annurev.psych.53.100901.135239}
+
+\bibitem[\citeproctext]{ref-bollenTestingStructuralEquation1993}
+Bollen, K. A., \& Long, J. S. (Eds.). (1993). \emph{Testing structural equation models} (p. 320). Sage Publications, Inc.
+
+\bibitem[\citeproctext]{ref-brownConfirmatoryFactorAnalysis2015}
+Brown, T. A. (2015). \emph{Confirmatory factor analysis for applied research, 2nd ed} (pp. xvii, 462). The Guilford Press.
+
+\bibitem[\citeproctext]{ref-byrneStructuralEquationModeling2016}
+Byrne, B. M. (2016). \emph{Structural equation modeling with {AMOS}: {Basic} concepts, applications, and programming} (3rd ed.). Routledge. \url{https://doi.org/10.4324/9781315757421}
+
+\bibitem[\citeproctext]{ref-carrollMeasurementErrorNonlinear2006}
+Carroll, R. J., Ruppert, D., Stefanski, L. A., \& Crainiceanu, C. M. (2006). \emph{Measurement error in nonlinear models: {A} modern perspective, second edition} (2nd ed.). {Chapman and Hall/CRC}. \url{https://doi.org/10.1201/9781420010138}
+
+\bibitem[\citeproctext]{ref-cartePursuitModerationNine2003b}
+Carte, T. A., \& Russell, C. J. (2003). In pursuit of moderation: {Nine} common errors and their solutions. \emph{MIS Quarterly}, \emph{27}(3), 479--501. \url{https://doi.org/10.2307/30036541}
+
+\bibitem[\citeproctext]{ref-chamEstimatingLatentVariable2012a}
+Cham, H., West, S. G., Ma, Y., \& Aiken, L. S. (2012). Estimating latent variable interactions with non-normal observed data: {A} comparison of four approaches. \emph{Multivariate Behav Res}, \emph{47}(6), 840--876. \url{https://doi.org/10.1080/00273171.2012.732901}
+
+\bibitem[\citeproctext]{ref-chinPartialLeastSquares2003}
+Chin, W. W., Marcolin, B. L., \& Newsted, P. R. (2003). A partial least squares latent variable modeling approach for measuring interaction effects: {Results} from a {Monte Carlo} simulation study and an electronic-mail emotion/adoption study. \emph{Information Systems Research}, \emph{14}(2), 189--217. \url{https://doi.org/10.1287/isre.14.2.189.16018}
+
+\bibitem[\citeproctext]{ref-cohenAppliedMultipleRegression2003}
+Cohen, J., Cohen, P., West, S. G., \& Aiken, L. S. (2003). \emph{Applied multiple regression/correlation analysis for the behavioral sciences, 3rd ed} (pp. xxviii, 703). Lawrence Erlbaum Associates Publishers.
+
+\bibitem[\citeproctext]{ref-collinsComparisonInclusiveRestrictive2001}
+Collins, L. M., Schafer, J. L., \& Kam, C. M. (2001). \href{https://www.ncbi.nlm.nih.gov/pubmed/11778676}{A comparison of inclusive and restrictive strategies in modern missing data procedures}. \emph{Psychol Methods}, \emph{6}(4), 330--351.
+
+\bibitem[\citeproctext]{ref-cronbachCoefficientAlphaInternal1951}
+Cronbach, L. J. (1951). Coefficient alpha and the internal structure of tests. \emph{Psychometrika}, \emph{16}(3), 297--334. \url{https://doi.org/10.1007/BF02310555}
+
+\bibitem[\citeproctext]{ref-cunninghamModerationSportManagement2019a}
+Cunningham, G. B., \& Ahn, N. Y. (2019). Moderation in sport management research: {Room} for growth. \emph{Measurement in Physical Education and Exercise Science}, \emph{23}(4), 301--313. \url{https://doi.org/10.1080/1091367X.2018.1472095}
+
+\bibitem[\citeproctext]{ref-daszykowskiRobustStatisticsData2007}
+Daszykowski, M., Kaczmarek, K., Vander Heyden, Y., \& Walczak, B. (2007). Robust statistics in data analysis --- {A} review. \emph{Chemometrics and Intelligent Laboratory Systems}, \emph{85}(2), 203--219. \url{https://doi.org/10.1016/j.chemolab.2006.06.016}
+
+\bibitem[\citeproctext]{ref-dekkingModernIntroductionProbability2005a}
+Dekking, F. M., Kraaikamp, C., Lopuhaä, H. P., \& Meester, L. E. (2005). \emph{A {Modern Introduction} to {Probability} and {Statistics}}. Springer. \url{https://doi.org/10.1007/1-84628-168-7}
+
+\bibitem[\citeproctext]{ref-devliegerHypothesisTestingUsing2016}
+Devlieger, I., Mayer, A., \& Rosseel, Y. (2016). Hypothesis testing using factor score regression. \emph{Educ Psychol Meas}, \emph{76}(5), 741--770. \url{https://doi.org/10.1177/0013164415607618}
+
+\bibitem[\citeproctext]{ref-estabrookComparisonFactorScore2013}
+Estabrook, R., \& Neale, M. (2013). A comparison of factor score estimation methods in the presence of missing data: {Reliability} and an application to nicotine dependence. \emph{Multivariate Behav Res}, \emph{48}(1), 1--27. \url{https://doi.org/10.1080/00273171.2012.730072}
+
+\bibitem[\citeproctext]{ref-foldnesChoiceProductIndicators2014}
+Foldnes, N., \& Hagtvet, K. A. (2014). The choice of product indicators in latent variable interaction models: {Post} hoc analyses. \emph{Psychological Methods}, \emph{19}(3), 444--457. \url{https://doi.org/10.1037/a0035728}
+
+\bibitem[\citeproctext]{ref-hancockReliabilityAradoxAssessing2011}
+Hancock, G. R., \& Mueller, R. O. (2011). The reliability aradox in assessing structural relations within covariance structure models. \emph{Educational and Psychological Measurement}, \emph{71}(2), 306--324. \url{https://doi.org/10.1177/0013164410384856}
+
+\bibitem[\citeproctext]{ref-harwellStrategyUsingBias2019}
+Harwell, M. (2019). A strategy for using bias and {RMSE} as outcomes in {Monte Carlo} studies in statistics. \emph{J. Mod. Appl. Stat. Methods}, \emph{17}(2), jmasm.eP2938. \url{https://doi.org/10.22237/jmasm/1551907966}
+
+\bibitem[\citeproctext]{ref-hsiaoEvaluationTwoMethods2018a}
+Hsiao, Y.-Y., Kwok, O.-M., \& Lai, M. H. C. (2018). Evaluation of two methods for modeling measurement errors when testing interaction effects with observed composite scores. \emph{Educ Psychol Meas}, \emph{78}(2), 181--202. \url{https://doi.org/10.1177/0013164416679877}
+
+\bibitem[\citeproctext]{ref-hsiaoModelingMeasurementErrors2021}
+Hsiao, Y.-Y., Kwok, O.-M., \& Lai, M. H. C. (2021). Modeling measurement errors of the exogenous composites from congeneric measures in interaction models. \emph{Struct Equ Modeling}, \emph{28}(2), 250--260. \url{https://doi.org/10.1080/10705511.2020.1782206}
+
+\bibitem[\citeproctext]{ref-huberRobustStatistics2011}
+Huber, P. J. (2011). Robust {Statistics}. In M. Lovric (Ed.), \emph{International {Encyclopedia} of {Statistical Science}} (pp. 1248--1251). Springer. \url{https://doi.org/10.1007/978-3-642-04898-2_594}
+
+\bibitem[\citeproctext]{ref-jackmanEstimatingLatentVariable2011a}
+Jackman, G.-A., Leite, W., \& Cochrane, D. (2011). Estimating latent variable interactions with the unconstrained approach: {A} comparison of methods to form product indicators for large, unequal numbers of items. \emph{Structural Equation Modeling}, \emph{18}, 274--288. \url{https://doi.org/10.1080/10705511.2011.557342}
+
+\bibitem[\citeproctext]{ref-joreskogStatisticalAnalysisSets1971}
+Jöreskog, K. G. (1971). Statistical analysis of sets of congeneric tests. \emph{Psychometrika}, \emph{36}(2), 109--133. \url{https://doi.org/10.1007/BF02291393}
+
+\bibitem[\citeproctext]{ref-Jreskog1996NonlinearSE}
+Jöreskog, K. G., \& Yang, F. (1996). \emph{Nonlinear structural equation models: {The Kenny-Judd} model with {Interaction} effects}.
+
+\bibitem[\citeproctext]{ref-kennyEstimatingNonlinearInteractive1984a}
+Kenny, D. A., \& Judd, C. M. (1984). Estimating the nonlinear and interactive effects of latent variables. \emph{Psychological Bulletin}, \emph{96}(1), 201--210. \url{https://doi.org/10.1037/0033-2909.96.1.201}
+
+\bibitem[\citeproctext]{ref-kleinMaximumLikelihoodEstimation2000a}
+Klein, A., \& Moosbrugger, H. (2000). Maximum likelihood estimation of latent interaction effects with the {LMS} method. \emph{Psychometrika}, \emph{65}(4), 457--474. \url{https://doi.org/10.1007/BF02296338}
+
+\bibitem[\citeproctext]{ref-klinePrinciplesPracticeStructural2016}
+Kline, R. B. (2016). \emph{Principles and practice of structural equation modeling, 4th ed} (pp. xvii, 534). Guilford Press.
+
+\bibitem[\citeproctext]{ref-kyriazosAppliedPsychometricsSample2018}
+Kyriazos, T. (2018). Applied psychometrics: {Sample} size and sample power considerations in factor analysis ({EFA}, {CFA}) and {SEM} in general. \emph{Psychology}, \emph{09}, 2207--2230. \url{https://doi.org/10.4236/psych.2018.98126}
+
+\bibitem[\citeproctext]{ref-laiTwostagePathAnalysis2022a}
+Lai, M. H. C., \& Hsiao, Y.-Y. (2022). Two-stage path analysis with definition variables: {An} alternative framework to account for measurement error. \emph{Psychological Methods}, \emph{27}(4), 568--588. \url{https://doi.org/10.1037/met0000410}
+
+\bibitem[\citeproctext]{ref-laiCorrectingUnreliabilityPartial2023}
+Lai, M. H. C., Tse, W. W.-Y., Zhang, G., Li, Y., \& Hsiao, Y.-Y. (2023). Correcting for unreliability and partial invariance: {A} two-stage path analysis approach. \emph{Structural Equation Modeling: A Multidisciplinary Journal}, \emph{30}(2), 258--271. \url{https://doi.org/10.1080/10705511.2022.2125397}
+
+\bibitem[\citeproctext]{ref-linStructuralEquationModels2010b}
+Lin, G.-C., Wen, Z., Marsh, H. W., \& Lin, H.-S. (2010). Structural equation models of latent interactions: {Clarification} of orthogonalizing and double-mean-centering strategies. \emph{Structural Equation Modeling: A Multidisciplinary Journal}, \emph{17}(3), 374--391. \url{https://doi.org/10.1080/10705511.2010.488999}
+
+\bibitem[\citeproctext]{ref-lordStatisticalTheoriesMental1968}
+Lord, F. M., Novick, M. R., \& Birnbaum, A. (1968). \emph{Statistical theories of mental test scores}. Addison-Wesley.
+
+\bibitem[\citeproctext]{ref-mackinnonHowWhomMediation2008a}
+MacKinnon, D. P., \& Luecken, L. J. (2008). How and for whom? {Mediation} and moderation in health psychology. \emph{Health Psychol}, \emph{27}(2S), S99--S100. \url{https://doi.org/10.1037/0278-6133.27.2(Suppl.).S99}
+
+\bibitem[\citeproctext]{ref-marshStructuralEquationModels2004a}
+Marsh, H. W., Wen, Z., \& Hau, K.-T. (2004). Structural equation models of latent interactions: Evaluation of alternative estimation strategies and indicator construction. \emph{Psychol Methods}, \emph{9}(3), 275--300. \url{https://doi.org/10.1037/1082-989X.9.3.275}
+
+\bibitem[\citeproctext]{ref-maslowskyEstimatingInterpretingLatent2015a}
+Maslowsky, J., Jager, J., \& Hemken, D. (2015). Estimating and interpreting latent variable interactions: {A} tutorial for applying the latent moderated structural equations method. \emph{Int J Behav Dev}, \emph{39}(1), 87--96. \url{https://doi.org/10.1177/0165025414552301}
+
+\bibitem[\citeproctext]{ref-mcdonaldTheoreticalFoundationsPrincipal1970}
+McDonald, R. P. (1970). The theoretical foundations of principal factor analysis, canonical factor analysis, and alpha factor analysis. \emph{British Journal of Mathematical and Statistical Psychology}, \emph{23}(1), 1--21. \url{https://doi.org/10.1111/j.2044-8317.1970.tb00432.x}
+
+\bibitem[\citeproctext]{ref-moulderComparisonMethodsEstimating2002a}
+Moulder, B. C., \& Algina, J. (2002). Comparison of methods for estimating and testing latent variable interactions. \emph{Structural Equation Modeling}, \emph{9}(1), 1--19. \url{https://doi.org/10.1207/S15328007SEM0901_1}
+
+\bibitem[\citeproctext]{ref-muellerStructuralEquationModeling1997a}
+Mueller, R. O. (1997). Structural equation modeling: {Back} to basics. \emph{Structural Equation Modeling}, \emph{4}(4), 353--369. \url{https://doi.org/10.1080/10705519709540081}
+
+\bibitem[\citeproctext]{ref-muthenHowUseMonte2002}
+Muthén, L. K., \& Muthén, B. O. (2002). How to use a {Monte Carlo} study to decide on sample size and determine power. \emph{Structural Equation Modeling: A Multidisciplinary Journal}, \emph{9}(4), 599--620. \url{https://doi.org/10.1207/S15328007SEM0904_8}
+
+\bibitem[\citeproctext]{ref-radloffCESDScaleSelfreport1977b}
+Radloff, L. S. (1977). The {CES-D} scale: {A} self-report depression scale for research in the general population. \emph{Applied Psychological Measurement}, \emph{1}(3), 385--401. \url{https://doi.org/10.1177/014662167700100306}
+
+\bibitem[\citeproctext]{ref-raykovEstimationCompositeReliability1997}
+Raykov, T. (1997). Estimation of composite reliability for congeneric measures. \emph{Applied Psychological Measurement}, \emph{21}(2), 173--184. \url{https://doi.org/10.1177/01466216970212006}
+
+\bibitem[\citeproctext]{ref-rousseeuwAlternativesMedianAbsolute1993}
+Rousseeuw, P. J., \& Croux, C. (1993). Alternatives to the {Median Absolute Deviation}. \emph{Journal of the American Statistical Association}, \emph{88}(424), 1273--1283. \url{https://doi.org/10.2307/2291267}
+
+\bibitem[\citeproctext]{ref-rousseeuwRobustStatisticsOutlier2011}
+Rousseeuw, P. J., \& Hubert, M. (2011). Robust statistics for outlier detection. \emph{WIREs Data Mining and Knowledge Discovery}, \emph{1}(1), 73--79. \url{https://doi.org/10.1002/widm.2}
+
+\bibitem[\citeproctext]{ref-schoemannTestingInterpretingLatent2021}
+Schoemann, A. M., \& Jorgensen, T. D. (2021). Testing and interpreting latent variable interactions using the {semTools} package. \emph{Psych}, \emph{3}(3), 322--335. \url{https://doi.org/10.3390/psych3030024}
+
+\bibitem[\citeproctext]{ref-steinmetzThreeApproachesEstimate2011a}
+Steinmetz, H., Davidov, E., \& Schmidt, P. (2011). Three approaches to estimate latent interaction effects: {Intention} and perceived behavioral control in the theory of planned behavior. \emph{Methodological Innovations Online}, \emph{6}(1), 95--110. \url{https://doi.org/10.4256/mio.2010.0030}
+
+\bibitem[\citeproctext]{ref-tenbergeGreatestLowerBound2004}
+Ten Berge, J. M. F., \& Sočan, G. (2004). The greatest lower bound to the reliability of a test and the hypothesis of unidimensionality. \emph{Psychometrika}, \emph{69}(4), 613--625. \url{https://doi.org/10.1007/BF02289858}
+
+\bibitem[\citeproctext]{ref-wuComparisonStrategiesForming2013}
+Wu, Y., Wen, Z., Marsh, H., \& Hau, K.-T. (2013). A comparison of strategies for forming product indicators for unequal numbers of items in structural equation models of latent interactions. \emph{Structural Equation Modeling: A Multidisciplinary Journal}, \emph{20}, 551--567. \url{https://doi.org/10.1080/10705511.2013.824772}
+
+\end{CSLReferences}
+
+
+\end{document}

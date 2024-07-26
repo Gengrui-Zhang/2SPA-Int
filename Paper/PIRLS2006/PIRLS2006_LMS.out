@@ -1,0 +1,762 @@
+Mplus VERSION 8.8 (Mac)
+MUTHEN & MUTHEN
+07/09/2024  10:33 PM
+
+INPUT INSTRUCTIONS
+
+  TITLE: PILRS2006_LMS
+
+  DATA:
+    FILE IS "/Users/jimmy_z/R Projects/2S-PA-Int/Paper/PIRLS2006/PIRLS_Data.dat";
+
+  VARIABLE:
+    NAMES ARE ASBGRST1 ASBGRST2 ASBGRST3 ASBGRST4 ASBGRST5 ASBGRST6
+             ASRREA01 ASRREA02 ASRREA03 ASRREA04 ASRREA05
+             ASBGRST2_recode ASBGRST3_recode ASBGRST5_recode ASBGRST6_recode;
+    USEVARIABLES ARE ASBGRST1 ASBGRST4 ASBGRST6_recode
+                   ASBGRST2_recode ASBGRST3_recode ASBGRST5_recode ASRREA01;
+
+  ANALYSIS:
+  ESTIMATOR IS MLR;
+  ALGORITHM = integration;
+  TYPE= random;
+
+  MODEL:
+    ! Define the latent variables
+    IM BY ASBGRST1 ASBGRST4 ASBGRST6_recode;
+    EM BY ASBGRST2_recode ASBGRST3_recode ASBGRST5_recode;
+
+    ! Define the interaction term
+    IMXEM | IM XWITH EM;
+
+    ! Specify the regression relationships
+    ASRREA01 ON IM (b1);
+    ASRREA01 ON EM (b2);
+    ASRREA01 ON IMXEM (b3);
+
+    ! Specify the variances
+    IM (v1);
+    EM (v2);
+
+  ! Define the betas
+  MODEL CONSTRAINT:
+    NEW(beta1 beta2 beta3);
+    beta1 = b1 * SQRT(v1);
+    beta2 = b2 * SQRT(v2);
+    beta3 = b3 * SQRT(v1) * SQRT(v2);
+
+  OUTPUT:
+    STANDARDIZED;
+    TECH1;
+    TECH4;
+    TECH8;
+
+
+
+*** WARNING in VARIABLE command
+  Note that only the first 8 characters of variable names are used in the output.
+  Shorten variable names to avoid any confusion.
+   1 WARNING(S) FOUND IN THE INPUT INSTRUCTIONS
+
+
+
+PILRS2006_LMS
+
+SUMMARY OF ANALYSIS
+
+Number of groups                                                 1
+Number of observations                                        4900
+
+Number of dependent variables                                    7
+Number of independent variables                                  0
+Number of continuous latent variables                            3
+
+Observed dependent variables
+
+  Continuous
+   ASBGRST1    ASBGRST4    ASBGRST6_R  ASBGRST2_R  ASBGRST3_R  ASBGRST5_R
+   ASRREA01
+
+Continuous latent variables
+   IM          EM          IMXEM
+
+
+Estimator                                                      MLR
+Information matrix                                        OBSERVED
+Optimization Specifications for the Quasi-Newton Algorithm for
+Continuous Outcomes
+  Maximum number of iterations                                 100
+  Convergence criterion                                  0.100D-05
+Optimization Specifications for the EM Algorithm
+  Maximum number of iterations                                 500
+  Convergence criteria
+    Loglikelihood change                                 0.100D-02
+    Relative loglikelihood change                        0.100D-05
+    Derivative                                           0.100D-02
+Optimization Specifications for the M step of the EM Algorithm for
+Categorical Latent variables
+  Number of M step iterations                                    1
+  M step convergence criterion                           0.100D-02
+  Basis for M step termination                           ITERATION
+Optimization Specifications for the M step of the EM Algorithm for
+Censored, Binary or Ordered Categorical (Ordinal), Unordered
+Categorical (Nominal) and Count Outcomes
+  Number of M step iterations                                    1
+  M step convergence criterion                           0.100D-02
+  Basis for M step termination                           ITERATION
+  Maximum value for logit thresholds                            15
+  Minimum value for logit thresholds                           -15
+  Minimum expected cell size for chi-square              0.100D-01
+Optimization algorithm                                         EMA
+Integration Specifications
+  Type                                                    STANDARD
+  Number of integration points                                  15
+  Dimensions of numerical integration                            2
+  Adaptive quadrature                                           ON
+Cholesky                                                       OFF
+
+Input data file(s)
+  /Users/jimmy_z/R Projects/2S-PA-Int/Paper/PIRLS2006/PIRLS_Data.dat
+Input data format  FREE
+
+
+
+UNIVARIATE SAMPLE STATISTICS
+
+
+     UNIVARIATE HIGHER-ORDER MOMENT DESCRIPTIVE STATISTICS
+
+         Variable/         Mean/     Skewness/   Minimum/ % with                Percentiles
+        Sample Size      Variance    Kurtosis    Maximum  Min/Max      20%/60%    40%/80%    Median
+
+     ASBGRST1              2.396       0.165       1.000   31.31%       1.000      2.000      2.000
+            4900.000       1.399      -1.475       4.000   26.67%       3.000      4.000
+     ASBGRST4              3.090      -0.791       1.000   13.78%       2.000      3.000      4.000
+            4900.000       1.220      -0.847       4.000   52.10%       4.000      4.000
+     ASBGRST6_RECODE       3.213      -1.074       1.000   11.51%       2.000      3.000      4.000
+            4900.000       1.053      -0.131       4.000   54.04%       4.000      4.000
+     ASBGRST2_RECODE       2.326       0.138       1.000   30.94%       1.000      2.000      2.000
+            4900.000       1.188      -1.306       4.000   17.49%       3.000      3.000
+     ASBGRST3_RECODE       3.039      -0.768       1.000   13.02%       2.000      3.000      3.000
+            4900.000       1.086      -0.645       4.000   43.29%       4.000      4.000
+     ASBGRST5_RECODE       3.449      -1.560       1.000    6.65%       3.000      4.000      4.000
+            4900.000       0.803       1.355       4.000   66.04%       4.000      4.000
+     ASRREA01            538.916      -0.301     259.727    0.02%     480.221    523.850    543.180
+            4900.000    5278.308       0.043     760.943    0.02%     561.614    600.762
+
+
+THE MODEL ESTIMATION TERMINATED NORMALLY
+
+
+
+MODEL FIT INFORMATION
+
+Number of Free Parameters                       24
+
+Loglikelihood
+
+          H0 Value                      -67861.102
+          H0 Scaling Correction Factor      1.0777
+            for MLR
+
+Information Criteria
+
+          Akaike (AIC)                  135770.205
+          Bayesian (BIC)                135926.133
+          Sample-Size Adjusted BIC      135849.869
+            (n* = (n + 2) / 24)
+
+
+
+MODEL RESULTS
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ IM       BY
+    ASBGRST1           1.000      0.000    999.000    999.000
+    ASBGRST4           1.668      0.062     26.899      0.000
+    ASBGRST6_R         1.682      0.075     22.573      0.000
+
+ EM       BY
+    ASBGRST2_R         1.000      0.000    999.000    999.000
+    ASBGRST3_R         1.439      0.058     24.746      0.000
+    ASBGRST5_R         0.557      0.036     15.342      0.000
+
+ ASRREA01   ON
+    IM               117.909     11.678     10.097      0.000
+    EM               -72.141     11.955     -6.034      0.000
+    IMXEM             41.247      4.719      8.740      0.000
+
+ EM       WITH
+    IM                 0.213      0.010     20.316      0.000
+
+ Intercepts
+    ASBGRST1           2.396      0.017    141.806      0.000
+    ASBGRST4           3.089      0.016    195.776      0.000
+    ASBGRST6_R         3.213      0.015    219.180      0.000
+    ASBGRST2_R         2.326      0.016    149.356      0.000
+    ASBGRST3_R         3.039      0.015    204.142      0.000
+    ASBGRST5_R         3.449      0.013    269.424      0.000
+    ASRREA01         530.114      1.506    352.045      0.000
+
+ Variances
+    IM                 0.262      0.019     13.657      0.000
+    EM                 0.254      0.017     14.785      0.000
+
+ Residual Variances
+    ASBGRST1           1.137      0.021     54.848      0.000
+    ASBGRST4           0.491      0.021     23.454      0.000
+    ASBGRST6_R         0.311      0.016     19.450      0.000
+    ASBGRST2_R         0.935      0.019     49.541      0.000
+    ASBGRST3_R         0.560      0.023     24.189      0.000
+    ASBGRST5_R         0.724      0.019     37.760      0.000
+    ASRREA01        4092.658    158.378     25.841      0.000
+
+New/Additional Parameters
+    BETA1             60.348      5.870     10.282      0.000
+    BETA2            -36.340      5.827     -6.237      0.000
+    BETA3             10.634      1.251      8.500      0.000
+
+
+QUALITY OF NUMERICAL RESULTS
+
+     Condition Number for the Information Matrix              0.394E-05
+       (ratio of smallest to largest eigenvalue)
+
+
+STANDARDIZED MODEL RESULTS
+
+
+STDYX Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ IM       BY
+    ASBGRST1           0.433      0.015     28.101      0.000
+    ASBGRST4           0.773      0.011     70.439      0.000
+    ASBGRST6_R         0.839      0.009     89.256      0.000
+
+ EM       BY
+    ASBGRST2_R         0.462      0.015     30.652      0.000
+    ASBGRST3_R         0.696      0.015     44.938      0.000
+    ASBGRST5_R         0.313      0.018     17.380      0.000
+
+ ASRREA01   ON
+    IM                 0.805      0.075     10.668      0.000
+    EM                -0.485      0.077     -6.327      0.000
+    IMXEM              0.142      0.016      8.925      0.000
+
+ EM       WITH
+    IM                 0.827      0.018     46.166      0.000
+
+ Intercepts
+    ASBGRST1           2.026      0.016    129.197      0.000
+    ASBGRST4           2.797      0.033     83.732      0.000
+    ASBGRST6_R         3.132      0.043     73.274      0.000
+    ASBGRST2_R         2.134      0.017    122.175      0.000
+    ASBGRST3_R         2.917      0.035     82.505      0.000
+    ASBGRST5_R         3.849      0.063     61.123      0.000
+    ASRREA01           7.073      0.093     75.923      0.000
+
+ Variances
+    IM                 1.000      0.000    999.000    999.000
+    EM                 1.000      0.000    999.000    999.000
+
+ Residual Variances
+    ASBGRST1           0.813      0.013     60.961      0.000
+    ASBGRST4           0.403      0.017     23.727      0.000
+    ASBGRST6_R         0.296      0.016     18.719      0.000
+    ASBGRST2_R         0.786      0.014     56.452      0.000
+    ASBGRST3_R         0.516      0.022     23.968      0.000
+    ASBGRST5_R         0.902      0.011     79.802      0.000
+    ASRREA01           0.728      0.031     23.819      0.000
+
+
+STDY Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ IM       BY
+    ASBGRST1           0.433      0.015     28.101      0.000
+    ASBGRST4           0.773      0.011     70.439      0.000
+    ASBGRST6_R         0.839      0.009     89.256      0.000
+
+ EM       BY
+    ASBGRST2_R         0.462      0.015     30.652      0.000
+    ASBGRST3_R         0.696      0.015     44.938      0.000
+    ASBGRST5_R         0.313      0.018     17.380      0.000
+
+ ASRREA01   ON
+    IM                 0.805      0.075     10.668      0.000
+    EM                -0.485      0.077     -6.327      0.000
+    IMXEM              0.142      0.016      8.925      0.000
+
+ EM       WITH
+    IM                 0.827      0.018     46.166      0.000
+
+ Intercepts
+    ASBGRST1           2.026      0.016    129.197      0.000
+    ASBGRST4           2.797      0.033     83.732      0.000
+    ASBGRST6_R         3.132      0.043     73.274      0.000
+    ASBGRST2_R         2.134      0.017    122.175      0.000
+    ASBGRST3_R         2.917      0.035     82.505      0.000
+    ASBGRST5_R         3.849      0.063     61.123      0.000
+    ASRREA01           7.073      0.093     75.923      0.000
+
+ Variances
+    IM                 1.000      0.000    999.000    999.000
+    EM                 1.000      0.000    999.000    999.000
+
+ Residual Variances
+    ASBGRST1           0.813      0.013     60.961      0.000
+    ASBGRST4           0.403      0.017     23.727      0.000
+    ASBGRST6_R         0.296      0.016     18.719      0.000
+    ASBGRST2_R         0.786      0.014     56.452      0.000
+    ASBGRST3_R         0.516      0.022     23.968      0.000
+    ASBGRST5_R         0.902      0.011     79.802      0.000
+    ASRREA01           0.728      0.031     23.819      0.000
+
+
+STD Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ IM       BY
+    ASBGRST1           0.512      0.019     27.313      0.000
+    ASBGRST4           0.854      0.015     58.423      0.000
+    ASBGRST6_R         0.861      0.014     59.442      0.000
+
+ EM       BY
+    ASBGRST2_R         0.504      0.017     29.569      0.000
+    ASBGRST3_R         0.725      0.018     39.329      0.000
+    ASBGRST5_R         0.281      0.017     16.214      0.000
+
+ ASRREA01   ON
+    IM                60.348      5.870     10.282      0.000
+    EM               -36.340      5.827     -6.237      0.000
+    IMXEM             10.634      1.251      8.500      0.000
+
+ EM       WITH
+    IM                 0.827      0.018     46.166      0.000
+
+ Intercepts
+    ASBGRST1           2.396      0.017    141.806      0.000
+    ASBGRST4           3.089      0.016    195.776      0.000
+    ASBGRST6_R         3.213      0.015    219.180      0.000
+    ASBGRST2_R         2.326      0.016    149.356      0.000
+    ASBGRST3_R         3.039      0.015    204.142      0.000
+    ASBGRST5_R         3.449      0.013    269.424      0.000
+    ASRREA01         530.114      1.506    352.045      0.000
+
+ Variances
+    IM                 1.000      0.000    999.000    999.000
+    EM                 1.000      0.000    999.000    999.000
+
+ Residual Variances
+    ASBGRST1           1.137      0.021     54.848      0.000
+    ASBGRST4           0.491      0.021     23.454      0.000
+    ASBGRST6_R         0.311      0.016     19.450      0.000
+    ASBGRST2_R         0.935      0.019     49.541      0.000
+    ASBGRST3_R         0.560      0.023     24.189      0.000
+    ASBGRST5_R         0.724      0.019     37.760      0.000
+    ASRREA01        4092.658    158.378     25.841      0.000
+
+
+R-SQUARE
+
+    Observed                                        Two-Tailed
+    Variable        Estimate       S.E.  Est./S.E.    P-Value
+
+    ASBGRST1           0.187      0.013     14.051      0.000
+    ASBGRST4           0.597      0.017     35.220      0.000
+    ASBGRST6           0.704      0.016     44.628      0.000
+    ASBGRST2           0.214      0.014     15.326      0.000
+    ASBGRST3           0.484      0.022     22.469      0.000
+    ASBGRST5           0.098      0.011      8.690      0.000
+    ASRREA01           0.272      0.031      8.877      0.000
+
+
+TECHNICAL 1 OUTPUT
+
+
+     PARAMETER SPECIFICATION
+
+
+           NU
+              ASBGRST1      ASBGRST4      ASBGRST6      ASBGRST2      ASBGRST3
+              ________      ________      ________      ________      ________
+                    1             2             3             4             5
+
+
+           NU
+              ASBGRST5      ASRREA01
+              ________      ________
+                    6             0
+
+
+           LAMBDA
+              IM            EM            IMXEM         ASRREA01
+              ________      ________      ________      ________
+ ASBGRST1           0             0             0             0
+ ASBGRST4           7             0             0             0
+ ASBGRST6           8             0             0             0
+ ASBGRST2           0             0             0             0
+ ASBGRST3           0             9             0             0
+ ASBGRST5           0            10             0             0
+ ASRREA01           0             0             0             0
+
+
+           THETA
+              ASBGRST1      ASBGRST4      ASBGRST6      ASBGRST2      ASBGRST3
+              ________      ________      ________      ________      ________
+ ASBGRST1          11
+ ASBGRST4           0            12
+ ASBGRST6           0             0            13
+ ASBGRST2           0             0             0            14
+ ASBGRST3           0             0             0             0            15
+ ASBGRST5           0             0             0             0             0
+ ASRREA01           0             0             0             0             0
+
+
+           THETA
+              ASBGRST5      ASRREA01
+              ________      ________
+ ASBGRST5          16
+ ASRREA01           0             0
+
+
+           ALPHA
+              IM            EM            IMXEM         ASRREA01
+              ________      ________      ________      ________
+                    0             0             0            17
+
+
+           BETA
+              IM            EM            IMXEM         ASRREA01
+              ________      ________      ________      ________
+ IM                 0             0             0             0
+ EM                 0             0             0             0
+ IMXEM              0             0             0             0
+ ASRREA01          18            19            20             0
+
+
+           PSI
+              IM            EM            IMXEM         ASRREA01
+              ________      ________      ________      ________
+ IM                21
+ EM                22            23
+ IMXEM              0             0             0
+ ASRREA01           0             0             0            24
+
+
+     PARAMETER SPECIFICATION FOR THE ADDITIONAL PARAMETERS
+
+
+           NEW/ADDITIONAL PARAMETERS
+              BETA1         BETA2         BETA3
+              ________      ________      ________
+                   25            26            27
+
+
+     STARTING VALUES
+
+
+           NU
+              ASBGRST1      ASBGRST4      ASBGRST6      ASBGRST2      ASBGRST3
+              ________      ________      ________      ________      ________
+                2.396         3.090         3.213         2.326         3.039
+
+
+           NU
+              ASBGRST5      ASRREA01
+              ________      ________
+                3.449         0.000
+
+
+           LAMBDA
+              IM            EM            IMXEM         ASRREA01
+              ________      ________      ________      ________
+ ASBGRST1       1.000         0.000         0.000         0.000
+ ASBGRST4       1.000         0.000         0.000         0.000
+ ASBGRST6       1.000         0.000         0.000         0.000
+ ASBGRST2       0.000         1.000         0.000         0.000
+ ASBGRST3       0.000         1.000         0.000         0.000
+ ASBGRST5       0.000         1.000         0.000         0.000
+ ASRREA01       0.000         0.000         0.000         1.000
+
+
+           THETA
+              ASBGRST1      ASBGRST4      ASBGRST6      ASBGRST2      ASBGRST3
+              ________      ________      ________      ________      ________
+ ASBGRST1       0.699
+ ASBGRST4       0.000         0.610
+ ASBGRST6       0.000         0.000         0.526
+ ASBGRST2       0.000         0.000         0.000         0.594
+ ASBGRST3       0.000         0.000         0.000         0.000         0.543
+ ASBGRST5       0.000         0.000         0.000         0.000         0.000
+ ASRREA01       0.000         0.000         0.000         0.000         0.000
+
+
+           THETA
+              ASBGRST5      ASRREA01
+              ________      ________
+ ASBGRST5       0.401
+ ASRREA01       0.000         0.000
+
+
+           ALPHA
+              IM            EM            IMXEM         ASRREA01
+              ________      ________      ________      ________
+                0.000         0.000         0.000       538.916
+
+
+           BETA
+              IM            EM            IMXEM         ASRREA01
+              ________      ________      ________      ________
+ IM             0.000         0.000         0.000         0.000
+ EM             0.000         0.000         0.000         0.000
+ IMXEM          0.000         0.000         0.000         0.000
+ ASRREA01       0.000         0.000         0.000         0.000
+
+
+           PSI
+              IM            EM            IMXEM         ASRREA01
+              ________      ________      ________      ________
+ IM             0.050
+ EM             0.000         0.050
+ IMXEM          0.000         0.000         0.000
+ ASRREA01       0.000         0.000         0.000      2639.154
+
+
+     STARTING VALUES FOR THE ADDITIONAL PARAMETERS
+
+
+           NEW/ADDITIONAL PARAMETERS
+              BETA1         BETA2         BETA3
+              ________      ________      ________
+                0.500         0.500         0.500
+
+
+TECHNICAL 4 OUTPUT
+
+
+     ESTIMATES DERIVED FROM THE MODEL
+
+
+           ESTIMATED MEANS FOR THE LATENT VARIABLES
+              IM            EM            IMXEM         ASRREA01
+              ________      ________      ________      ________
+                0.000         0.000         0.213       538.909
+
+
+           S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              IM            EM            IMXEM         ASRREA01
+              ________      ________      ________      ________
+                0.000         0.000         0.010         1.038
+
+
+           EST./S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              IM            EM            IMXEM         ASRREA01
+              ________      ________      ________      ________
+                0.000         0.000        20.316       519.242
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              IM            EM            IMXEM         ASRREA01
+              ________      ________      ________      ________
+                1.000         1.000         0.000         0.000
+
+
+           ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              IM            EM            IMXEM         ASRREA01
+              ________      ________      ________      ________
+ IM             0.262
+ EM             0.213         0.254
+ IMXEM          0.000         0.000         0.112
+ ASRREA01      15.504         6.836         4.617      5618.034
+
+
+           S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              IM            EM            IMXEM         ASRREA01
+              ________      ________      ________      ________
+ IM             0.019
+ EM             0.010         0.017
+ IMXEM          0.000         0.000         0.011
+ ASRREA01       1.106         0.751         0.649       129.930
+
+
+           EST./S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              IM            EM            IMXEM         ASRREA01
+              ________      ________      ________      ________
+ IM            13.657
+ EM            20.316        14.785
+ IMXEM          0.000         0.000        10.410
+ ASRREA01      14.022         9.100         7.113        43.239
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              IM            EM            IMXEM         ASRREA01
+              ________      ________      ________      ________
+ IM             0.000
+ EM             0.000         0.000
+ IMXEM          1.000         1.000         0.000
+ ASRREA01       0.000         0.000         0.000         0.000
+
+
+           ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              IM            EM            IMXEM         ASRREA01
+              ________      ________      ________      ________
+ IM             1.000
+ EM             0.827         1.000
+ IMXEM          0.000         0.000         1.000
+ ASRREA01       0.404         0.181         0.184         1.000
+
+
+           S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              IM            EM            IMXEM         ASRREA01
+              ________      ________      ________      ________
+ IM             0.000
+ EM             0.018         0.000
+ IMXEM          0.000         0.000         0.000
+ ASRREA01       0.017         0.020         0.021         0.000
+
+
+           EST./S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              IM            EM            IMXEM         ASRREA01
+              ________      ________      ________      ________
+ IM           999.000
+ EM            46.166       999.000
+ IMXEM          0.000         0.000       999.000
+ ASRREA01      23.769         9.094         8.834       999.000
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              IM            EM            IMXEM         ASRREA01
+              ________      ________      ________      ________
+ IM             0.000
+ EM             0.000         0.000
+ IMXEM          1.000         1.000         0.000
+ ASRREA01       0.000         0.000         0.000         0.000
+
+
+TECHNICAL 8 OUTPUT
+
+
+   E STEP  ITER  LOGLIKELIHOOD    ABS CHANGE   REL CHANGE  ALGORITHM
+              1 -0.74110225D+05    0.0000000    0.0000000  EM
+              2 -0.69393932D+05 4716.2929984    0.0636389  EM
+              3 -0.68744455D+05  649.4766464    0.0093593  EM
+              4 -0.68378750D+05  365.7056657    0.0053198  EM
+              5 -0.68184296D+05  194.4537609    0.0028438  EM
+              6 -0.68078604D+05  105.6917462    0.0015501  EM
+              7 -0.68020960D+05   57.6443690    0.0008467  EM
+              8 -0.67989258D+05   31.7015534    0.0004661  EM
+              9 -0.67970690D+05   18.5677415    0.0002731  EM
+             10 -0.67958654D+05   12.0360188    0.0001771  EM
+             11 -0.67950023D+05    8.6317874    0.0001270  EM
+             12 -0.67943302D+05    6.7202257    0.0000989  EM
+             13 -0.67937735D+05    5.5669442    0.0000819  EM
+             14 -0.67932909D+05    4.8260542    0.0000710  EM
+             15 -0.67928589D+05    4.3206471    0.0000636  EM
+             16 -0.67924635D+05    3.9536718    0.0000582  EM
+             17 -0.67920965D+05    3.6697171    0.0000540  EM
+             18 -0.67917529D+05    3.4365719    0.0000506  EM
+             19 -0.67914293D+05    3.2354527    0.0000476  EM
+             20 -0.67911238D+05    3.0553852    0.0000450  EM
+             21 -0.67908348D+05    2.8899890    0.0000426  EM
+             22 -0.67905612D+05    2.7355101    0.0000403  EM
+             23 -0.67903023D+05    2.5896932    0.0000381  EM
+             24 -0.67900571D+05    2.4512112    0.0000361  EM
+             25 -0.67898252D+05    2.3191963    0.0000342  EM
+             26 -0.67896059D+05    2.1930975    0.0000323  EM
+             27 -0.67893987D+05    2.0725437    0.0000305  EM
+             28 -0.67892029D+05    1.9572621    0.0000288  EM
+             29 -0.67890182D+05    1.8470493    0.0000272  EM
+             30 -0.67888441D+05    1.7417440    0.0000257  EM
+             31 -0.67886799D+05    1.6412074    0.0000242  EM
+             32 -0.67885254D+05    1.5453190    0.0000228  EM
+             33 -0.67883800D+05    1.4539616    0.0000214  EM
+             34 -0.67882433D+05    1.3670271    0.0000201  EM
+             35 -0.67881149D+05    1.2844018    0.0000189  EM
+             36 -0.67879943D+05    1.2059738    0.0000178  EM
+             37 -0.67878811D+05    1.1316269    0.0000167  EM
+             38 -0.67877750D+05    1.0612436    0.0000156  EM
+             39 -0.67876755D+05    0.9946984    0.0000147  EM
+             40 -0.67875823D+05    0.9318726    0.0000137  EM
+             41 -0.67874951D+05    0.8726150    0.0000129  EM
+             42 -0.67874134D+05    0.8168037    0.0000120  EM
+             43 -0.67873370D+05    0.7643075    0.0000113  EM
+             44 -0.67872655D+05    0.7149811    0.0000105  EM
+             45 -0.67871986D+05    0.6686924    0.0000099  EM
+             46 -0.67871361D+05    0.6252931    0.0000092  EM
+             47 -0.67870776D+05    0.5846477    0.0000086  EM
+             48 -0.67870229D+05    0.5466191    0.0000081  EM
+             49 -0.67869718D+05    0.5110700    0.0000075  EM
+             50 -0.67869240D+05    0.4778740    0.0000070  EM
+             51 -0.67868793D+05    0.4468918    0.0000066  EM
+             52 -0.67868375D+05    0.4180015    0.0000062  EM
+             53 -0.67867984D+05    0.3910800    0.0000058  EM
+             54 -0.67867618D+05    0.3660050    0.0000054  EM
+             55 -0.67867276D+05    0.3426640    0.0000050  EM
+             56 -0.67866955D+05    0.3209481    0.0000047  EM
+             57 -0.67866654D+05    0.3007496    0.0000044  EM
+             58 -0.67866372D+05    0.2819713    0.0000042  EM
+             59 -0.67866108D+05    0.2645148    0.0000039  EM
+             60 -0.67865859D+05    0.2482916    0.0000037  EM
+             61 -0.67865626D+05    0.2332152    0.0000034  EM
+             62 -0.67865407D+05    0.2192051    0.0000032  EM
+             63 -0.67865201D+05    0.2061839    0.0000030  EM
+             64 -0.67863889D+05    1.3119526    0.0000193  QN
+             65 -0.67863117D+05    0.7718053    0.0000114  EM
+             66 -0.67862997D+05    0.1195715    0.0000018  EM
+             67 -0.67862896D+05    0.1011648    0.0000015  EM
+             68 -0.67862806D+05    0.0899682    0.0000013  EM
+             69 -0.67862724D+05    0.0818925    0.0000012  EM
+             70 -0.67862649D+05    0.0755919    0.0000011  EM
+             71 -0.67862578D+05    0.0704200    0.0000010  EM
+             72 -0.67862512D+05    0.0660242    0.0000010  EM
+             73 -0.67862450D+05    0.0621950    0.0000009  EM
+             74 -0.67862391D+05    0.0587911    0.0000009  EM
+             75 -0.67862336D+05    0.0557251    0.0000008  EM
+             76 -0.67862283D+05    0.0529299    0.0000008  EM
+             77 -0.67861675D+05    0.6078752    0.0000090  QN
+             78 -0.67861488D+05    0.1871450    0.0000028  EM
+             79 -0.67861444D+05    0.0435508    0.0000006  EM
+             80 -0.67861413D+05    0.0310398    0.0000005  EM
+             81 -0.67861389D+05    0.0237718    0.0000004  EM
+             82 -0.67861370D+05    0.0191548    0.0000003  EM
+             83 -0.67861354D+05    0.0160630    0.0000002  EM
+             84 -0.67861340D+05    0.0139021    0.0000002  EM
+             85 -0.67861328D+05    0.0123342    0.0000002  EM
+             86 -0.67861317D+05    0.0111556    0.0000002  EM
+             87 -0.67861306D+05    0.0102394    0.0000002  EM
+             88 -0.67861297D+05    0.0095033    0.0000001  EM
+             89 -0.67861288D+05    0.0088934    0.0000001  EM
+             90 -0.67861280D+05    0.0083737    0.0000001  EM
+             91 -0.67861272D+05    0.0079199    0.0000001  EM
+             92 -0.67861110D+05    0.1618458    0.0000024  QN
+             93 -0.67861104D+05    0.0056198    0.0000001  EM
+             94 -0.67861103D+05    0.0011440    0.0000000  EM
+             95 -0.67861102D+05    0.0006178    0.0000000  EM
+
+
+     Beginning Time:  22:33:50
+        Ending Time:  22:34:32
+       Elapsed Time:  00:00:42
+
+
+
+MUTHEN & MUTHEN
+3463 Stoner Ave.
+Los Angeles, CA  90066
+
+Tel: (310) 391-9971
+Fax: (310) 391-8971
+Web: www.StatModel.com
+Support: Support@StatModel.com
+
+Copyright (c) 1998-2022 Muthen & Muthen

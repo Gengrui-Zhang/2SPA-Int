@@ -1,0 +1,232 @@
+---
+title             : "Two-Stage Path Analysis: Corrected Standard Error"
+
+author: 
+  - name          : "Gengrui (Jimmy) Zhang"
+
+bibliography      : "r-references.bib"
+
+floatsintext      : no
+linenumbers       : yes
+draft             : no
+mask              : no
+
+figurelist        : no
+tablelist         : no
+footnotelist      : no
+
+classoption       : "man"
+header-includes   :
+  - |
+    \makeatletter
+    \renewcommand{\paragraph}{\@startsection{paragraph}{4}{\parindent}%
+      {0\baselineskip \@plus 0.2ex \@minus 0.2ex}%
+      {-1em}%
+      {\normalfont\normalsize\bfseries\typesectitle}}
+    
+    \renewcommand{\subparagraph}[1]{\@startsection{subparagraph}{5}{1em}%
+      {0\baselineskip \@plus 0.2ex \@minus 0.2ex}%
+      {-\z@\relax}%
+      {\normalfont\normalsize\bfseries\itshape\hspace{\parindent}{#1}\textit{\addperi}}{\relax}}
+    \makeatother
+
+csl               : "`r system.file('rmd', 'apa7.csl', package = 'papaja')`"
+documentclass     : "apa7"
+output            : papaja::apa6_pdf
+---
+
+```{r setup, include = FALSE}
+library("papaja")
+r_refs("r-references.bib")
+```
+
+```{r analysis-preferences}
+# Seed for random number generation
+set.seed(42)
+knitr::opts_chunk$set(cache.extra = knitr::rand_seed)
+```
+
+The two-stage path analysis (2S-PA) approach, as a review, separates the model specification and estimation into two steps (Lai & Hsiao, 2022). At the first stage, factor scores are obtained using any appropriate psychometric methods across observations, and the corresponding estimated standard errors of measurement are computed for each observation. Different types of factor scores can be used at the first stage, such as expected-a-posterior (EAP) scores, regression scores, and composite scores. At the second stage, the factor scores from the first stage are analyzed in a path model while incorporating the measurement error to correct for biases. Below I will review the statistical model of 2S-PA with two types of factor scores. 
+
+Assume that $\tilde{x}_{j}$ and $\tilde{m}_{j}$ are estimated factor scores obtained at stage 1 for the observation $j$ from two sets of observed indicators $x_{1j}$ ~ $x_{3j}$ and $m_{1j}$ ~ $m_{3j}$. At stage 2, the structural is composed of two parts:
+
+\begin{equation}
+    \begin{cases}
+      \boldsymbol{\tilde{\xi}_{j}} = \boldsymbol{\Lambda_{j}}^\text{*}\boldsymbol{\xi_{j}} + \boldsymbol{\varepsilon_{j}}^\text{*} \\
+      \boldsymbol{\xi_{j}} = \boldsymbol{\alpha} + \boldsymbol{\Gamma}\boldsymbol{\xi_{j}} + \boldsymbol{\zeta_{j}}, 
+    \end{cases}       
+\end{equation}
+where $\boldsymbol{\tilde{\xi}_{j}}$ is a $q \times 1$ vector of factor scores (i.e., $\boldsymbol{\tilde{\xi}_{j}} \ = \ [\tilde{x}_{j}, \ \tilde{m}_{j}]^T$), and $\boldsymbol{\xi_{j}}$ is the corresponding $q \times 1$ vector of latent constructs indicated by their factor scores for each observation. $\boldsymbol{\Lambda_{j}}^\text{*}$ and $\boldsymbol{\varepsilon_{j}}^\text{*}$ are factor loadings and error terms of the factor score indicators. Note that $\boldsymbol{\varepsilon_{j}}^\text{*}$ follows normal distribution, $\boldsymbol{\varepsilon_{j}}^\text{*} \sim N(0, \ \boldsymbol{\Theta_{j}}^\text{*})$, where $\boldsymbol{\Theta_{j}}^\text{*}$ is a $q \times q$ covariance matrix of measurement error for the factor score indicators. $\boldsymbol{\zeta_{j}}$ is the disturbance term of the endogenous latent variable in the structural model with a distribution of $\boldsymbol{\zeta_{j}} \sim N(0, \ \boldsymbol{\psi})$ where $\psi$ is the variance of disturbance. Under the conditions that each factor scores are computed by separate unidimensional factor models or by using Bartlett methods (Bartlett, 1937),  $\boldsymbol{\Lambda_{j}}^\text{*}$ will be a diagonal matrix. For example, 
+
+\begin{align}
+\boldsymbol{\Lambda_{j}}^\text{*} = 
+    \begin{bmatrix}
+        \lambda_{x_{j}}^\text{*} & 0 \\
+        0 & \lambda_{m_{j}}^\text{*} \\ 
+    \end{bmatrix}.
+\end{align}
+
+As mentioned before, factor scores have different types. The first type is obtained using the regression method (Thurstone, 1935). Taking the group of $x$ indicators as an example to demonstrate the computation of factor score, the estimation of observation-specific factor scores based on observed indicators can be represented as $\boldsymbol{\tilde{\xi}_{x_{j}}} = \boldsymbol{A_{x_{j}}} \boldsymbol{x}_{j}$ where $\boldsymbol{A_{x_{j}}}$ is the factor score weighting matrix using the regression method and $\boldsymbol{x_{j}} \ = \ [x_{1j}, \ x_{2j}, \ x_{3j}]^T$. From existing literature (e.g., Devlieger et al., 2016), the formula of the factor score weighting matrix is $\boldsymbol{A_{x_{j}}} = Var(\xi_{x_{j}})\boldsymbol{\lambda_{x_{j}}}^T\boldsymbol{\Sigma}_{\boldsymbol{x_{j}}}^{-1}$, wherein $Var(\xi_{x_{j}})$ is the variance of latent variable $\xi_{x_{j}}$, $\boldsymbol{\lambda_{x_{j}}}^T$ is the transposed vector of factor loadings implied by a CFA model for observed indicators such that $\boldsymbol{x_{j}} \ = \ \boldsymbol{\lambda_{x_{j}}}\xi_{x_{j}} + \boldsymbol{\varepsilon_{x_{j}}}$, and ${\Sigma}_{\boldsymbol{x_{j}}}^{-1}$ is an inverse matrix of variance-covariance of observed indicators. Thus, the estimated factor scores can be represented using the weighting matrix, such that $\boldsymbol{\tilde{\xi}_{x_{j}}} \ = \ \boldsymbol{A_{x_{j}}} \boldsymbol{\lambda_{x_{j}}}\xi_{x_{j}} + \boldsymbol{A_{x_{j}}}\boldsymbol{\varepsilon_{x_{j}}}$. Further more, the reliability measure of the estimated factor scores can be computed as the proportion of true score variance over the total variance, such that $\rho_{\boldsymbol{\tilde{\xi}_{x_{j}}}} \ = \ (\boldsymbol{A_{x_{j}}} \boldsymbol{\lambda_{x_{j}}})^2Var(\xi_{x_{j}})/[(\boldsymbol{A_{x_{j}}} \boldsymbol{\lambda_{x_{j}}})^2Var(\xi_{x_{j}}) \ + \ \boldsymbol{A_{x_{j}}}\boldsymbol{\Theta_{x_{j}}}\boldsymbol{A_{x_{j}}}^T]$ with $\boldsymbol{\Theta_{x_{j}}}$ being the unique factor covariance matrix (Lai & Hsiao, 2023). 
+
+As for Bartlett factor scores (Bartlett, 1937), the factor loadings of estimated factor scores on the corresponding latent variables are constrained to 1 (e.g., $\lambda_{x_{j}}^\text{*} \ = \ 1$). Accordingly, the score matrix for Bartlett scores now changes to $\boldsymbol{A_{x_{j}}} = (\boldsymbol{\lambda_{x_{j}}}^T\boldsymbol{\Theta_{x_{j}}}^{-1}\boldsymbol{\lambda_{x_{j}}})^{-1}\boldsymbol{\lambda_{x_{j}}}^T\boldsymbol{\Theta_{x_{j}}}^{-1}$ and the error variance-covariance matrix of estimated factor scores becomes $(\boldsymbol{\lambda_{x_{j}}}^T\boldsymbol{\Theta_{x_{j}}}^{-1}\boldsymbol{\lambda_{x_{j}}})^{-1}$.
+
+## The Issue of Using Reliability as Known
+
+Currently, 2S-PA treats the standard error of measurement of factor scores from stage 1 as known and uses the standard error of measurement as error-constraints on the structural coefficients in the stage 2 estimation. However, the factor loading matrix and error variance-covariance matrix of the factor scores obtained in the stage 1 can have uncertainty and should be accounted for in the second stage. 
+
+The second part in the equation (1) is the structural model used to estimate the structural parameters that describe the relations between the latent constructs, where $\boldsymbol{\alpha}$ is the constant intercept, $\boldsymbol{\Gamma}$ is the structural coefficients, and $\boldsymbol{\zeta_{j}}$ is the disturbance term for the endogenous latent construct. However, currently the estimation of structural parameters in 2S-PA assumes that the measurement error (reliability) from stage 1 is known. Alternatively speaking, the error constraints on $\boldsymbol{\Lambda_{j}}^\text{*}$ and $\boldsymbol{\Theta_{j}}^\text{*}$ are fixed values, which does not account for uncertainty in the estimation of measurement model at stage 1. Meijer et al. (2021) points out that treating the estimates as the true values (i.e, population values) may result in underestimated standard errors of the structural parameter estimators. Rosseel and Loh (2022) also mentioned that the uncertainty from the first stage could not be ignored and should be reflected in the structural model. 
+
+To account for the uncertainty at stage 1, we proposed to obtain corrected standard errors using a method similar to the one discussed in Meijer et al. (2021), as can be incorporated in the estimation of parameters in the structural model at stage 2:
+
+\begin{equation}
+\hat{V}_{\boldsymbol{\gamma},\ c} = \hat{V}_{\boldsymbol{\gamma}} + J_{\boldsymbol{\gamma}}(\hat{\boldsymbol{\omega}})\hat{V}_{\boldsymbol{\hat{\boldsymbol{\omega}}}}J_{\boldsymbol{\gamma}}(\hat{\boldsymbol{\omega}})^T,
+\end{equation}
+
+where $\hat{V}_{\boldsymbol{\gamma}}$ is a variance-covariance matrix of structural parameters, in which $\boldsymbol{\gamma}$ is a vector of individual structural parameters in the matrix, in the structural model that ignores uncertainty in the stage 1. In a simple regression model (e.g., $\xi_{m}$ is predicted by $\xi_{x}$), $\boldsymbol{\gamma}$ has only one parameter $\gamma_{xm}$. $\hat{V}_{\boldsymbol{\hat{\omega}}}$ is a variance-covariance matrix of the measurement parameters of the factor scores. Assuming factor scores of $x$ indicators and $m$ indicators have been computed as $\tilde{\xi}_{x_{j}}$ and $\tilde{\xi}_{m_{j}}$, the vector of measurement parameters will be $\boldsymbol{\hat{\omega}} \ = \ (\lambda_{x_{j}}^\text{*}, \ \lambda_{m_{j}}^\text{*}, \ \theta_{x_{j}}^\text{*}, \ \theta_{m_{j}}^\text{*})$ for regression factor scores. As for Bartlett scores, $\boldsymbol{\hat{\omega}} \ = \ (\theta_{x_{j}}^\text{*}, \ \theta_{m_{j}}^\text{*})$ since the factor loadings have been constrained to $1$. 
+
+$\hat{V}_{\boldsymbol{\hat{\omega}}}$ is the variance-covariance matrix of estimated measurement error from stage 1. $J_{\boldsymbol{\gamma}}(\boldsymbol{\hat{\omega}})$ is the Jacobian matrix of $\boldsymbol{\gamma}$ with respect to $\boldsymbol{\hat{\omega}}$, which maps changes in the parameter $\boldsymbol{\hat{\omega}}$ to changes in $\boldsymbol{\gamma}$ and hence accounts for the uncertainty in $\boldsymbol{\hat{\omega}}$. Specifically, the Jacobian matrix can be represented as:
+
+\begin{align}
+J_{\boldsymbol{\gamma}}(\boldsymbol{\hat{\omega}}) = 
+\begin{bmatrix}
+\frac{\partial \boldsymbol{\gamma}}{\partial \hat{\omega}_{1}} &...& \frac{\partial \boldsymbol{\gamma}}{\partial \hat{\omega}_{k}},
+\end{bmatrix}
+\end{align}
+where $\partial$ is the first-order partial derivative. Mathematically, it represents the differential of $\boldsymbol{\gamma}$ at every point of measurement parameters $\hat{\omega}$ for $\hat{\omega}_{1}, \ \hat{\omega}_{2}, \ ... \ ,\hat{\omega}_{k}$ where $\boldsymbol{\gamma}$ is differentiable. 
+
+In the case of simple regression example where $\boldsymbol{\gamma} \ = \ \gamma_{xm}$, the formula of $J_{\boldsymbol{\gamma}}(\boldsymbol{\hat{\omega}})$ for regression factor scores can be expanded as:
+
+\begin{align}
+J_{\boldsymbol{\gamma}}(\boldsymbol{\hat{\omega}}) = 
+\begin{bmatrix}
+\frac{\partial \gamma_{xm}}{\partial \lambda_{x_{j}}^*} & \frac{\partial \gamma_{xm}}{\partial \lambda_{m_{j}}^*} & \frac{\partial \gamma_{xm}}{\partial \theta_{x_{j}}^*} & \frac{\partial \gamma_{xm}}{\partial \theta_{m_{j}}^*}
+\end{bmatrix},
+\end{align}
+and 
+
+\begin{align}
+J_{\boldsymbol{\gamma}}(\boldsymbol{\hat{\omega}}) = 
+\begin{bmatrix}
+\frac{\partial \gamma_{xm}}{\partial \theta_{x_{j}}^*} & \frac{\partial \gamma_{xm}}{\partial \theta_{m_{j}}^*}
+\end{bmatrix}
+\end{align}
+for Bartlett scores. For more complicated structural models where $\boldsymbol{\gamma}$ has multiple elements of structural parameters, $J_{\boldsymbol{\gamma}}(\boldsymbol{\hat{\omega}})$ will have multiple rows where each row representing one parameter. 
+
+Each element in the Jacobian matrix $J_{\boldsymbol{\gamma}}(\boldsymbol{\hat{\omega}})$ represents the partial derivatives of each $\gamma$ with respect to each $\hat{\omega}$ and reflects how changes in the measurement parameters of factor scores in $\hat{\omega}_{1}$ ~ $\hat{\omega}_{k}$ will affect the estimation of structural parameters. Thus, the term $J_{\gamma}(\hat{\omega}) \hat{V}_{\omega} J_{\gamma}(\hat{\omega})^T$ in general captures the contribution of the uncertainty of measurement parameters at stage 1 to the uncertainty in the estimator of the structural model at stage 2. $\hat{V}_{\gamma,\ c}$ represents the estimated structural parameters adjusting for the uncertainty in $\boldsymbol{\hat{\omega}}$, namely corrected estimators.
+
+Rosseel and Loh (2022) introduced another new two-step method of estimating SEM models, called "structural-after-measurement", in which the measurement model is estimated first and then the structural model. The two-step corrected standard errors are available in SAM models, and it was shown that SAM is advantageous in generating unbiased parameter estimates with reasonable standard errors with robustness against misspecifications and small sample sizes. Similar to 2S-PA, the mechanism of two-step estimation largely avoids convergence issue and reduces model complexity. Their SAM method has two variants, local SAM and global SAM. Given the promising performance of SAM, I plan to compare the performance of 2S-PA with corrected standard errors with SAM models. Below I will briefly review local and global SAM, while more technical details are available in Rosseel and Loh (2022). 
+
+## General Idea of SAM Framework
+
+The general idea of SAM framework is using estimated parameters from measurement models (step 1), and then use these parameters as fixed values or obtained information to estimate the structural parameters in step 2. To keep consistency of notation using in Rosseel and Loh (2022), $\boldsymbol{\omega_{1}}$ will be used to represent parameters from measurement models and $\boldsymbol{\omega_{2}}$ is for structural parameters.
+
+\begin{equation}
+\boldsymbol{\omega_{1}} = (\boldsymbol{\nu}, \boldsymbol{\Lambda}, \boldsymbol{\Theta}),
+\end{equation}
+where $\boldsymbol{\nu}$ is a vector of the constant intercepts, $\boldsymbol{\Lambda}$ is a vector of the factor loadings, and $\boldsymbol{\Theta}$ is a variance-covariance matrix of measurement error, for observed indicators. 
+
+\begin{equation}
+\boldsymbol{\omega_{2}} = (\boldsymbol{\alpha}, \boldsymbol{B}, \boldsymbol{\Psi}),
+\end{equation}
+where $\boldsymbol{\alpha}$ is a vector of the constant intercepts, $\boldsymbol{B}$ is a vector of the regression/path coefficients, and $\boldsymbol{\Psi}$ is a variance-covariance matrix of disturbances, for latent variables. 
+
+As Rosseel and Loh (2022) mentioned, the goal of using two-step estimation is to use the estimators $\boldsymbol{\hat{\omega}_{1}}$ as a mere mean to obtain reliable estimates for $\boldsymbol{\hat{\omega}_{2}}$ with reasonable standard errors.
+
+### Local SAM
+
+Local SAM involves computing the measurement parameters, such as factor loadings and measurement errors, and using them to derive and estimate the mean vector (i.e., $E(\xi)$) and covariance matrix (i.e., $Cov(\xi)$) of the latent variables. The derivation utilizes summary statistics of observed indicators and transforms them through a mapping matrix $M$, which effectively bridges the observed data with the latent construct space. This process benefits from reducing biases in parameter estimates due to model misspecification and helps to alleviate issues with model convergence, especially in smaller samples or more complex models.
+
+Specifically, the observed indicators can be estimated using a CFA model, such that
+
+\begin{equation}
+\boldsymbol{y} = \boldsymbol{\nu} + \boldsymbol{\Lambda}\boldsymbol{\xi} + \boldsymbol{\varepsilon}
+\end{equation},
+and the relations between latent variables $\boldsymbol{\xi}$ and observed indicators $\boldsymbol{y}$ can be connected by the mapping matrix, where
+
+\begin{equation}
+\boldsymbol{\xi} = \boldsymbol{M}(\boldsymbol{y} - \boldsymbol{\nu} - \boldsymbol{\varepsilon})
+\end{equation}.
+The dimension of $\boldsymbol{M}$ is the number of latent variables by the number of observed indicators. The choices of $\boldsymbol{M}$ can be the maximum-likehlihood (ML) discrepancy function, weighted least squares (WLS) function, or unweighted least squared (ULS) function. Details of rationales of choosing the mapping matrix are available in Rosseel and Loh (2022).
+
+Hence, the estimation of the mean vector and the variance-covariance matrix of latent variables can be expresses as: 
+
+\begin{equation}
+\boldsymbol{\widehat{E(\boldsymbol{\xi})}} = \widehat{\boldsymbol{M}}(\bar{\boldsymbol{y}} - \hat{\boldsymbol{\nu}})
+\end{equation}, 
+and
+\begin{equation}
+\boldsymbol{\widehat{Var(\boldsymbol{\xi})}} = \widehat{\boldsymbol{M}}(\boldsymbol{S} - \hat{\boldsymbol{\Theta}})\widehat{\boldsymbol{M}}^T
+\end{equation},
+where $\boldsymbol{S}$ is the sample variance-covariance matrix.
+
+Then the estimates $\boldsymbol{\widehat{E(\boldsymbol{\xi})}}$ and $\boldsymbol{\widehat{Var(\boldsymbol{\xi})}}$ estimated from step 1 will be used to estimate parameters in $\boldsymbol{\omega_{2}}$. 
+
+### Global SAM
+
+Global SAM starts by estimating the measurement model parameters as listed in the equation (7). Once these parameters are established, they are kept constant throughout the subsequent analysis. This is in contrast to Local SAM, where the estimation of structural parameters is based on derived statistics (i.e., $\boldsymbol{\widehat{E(\boldsymbol{\xi})}}$ and $\boldsymbol{\widehat{Var(\boldsymbol{\xi})}}$) from the measurement model. In Global SAM, after fixing the measurement model parameters, the entire structural model, including these fixed parameters, is estimated. This approach does not require the intermediate calculation of the latent variables' mean vector and covariance matrix as in Local SAM. Alternatively speaking, the calculations of $\boldsymbol{\widehat{E(\boldsymbol{\xi})}}$ and $\boldsymbol{\widehat{Var(\boldsymbol{\xi})}}$ are implicitly estimated (Rosseel & Loh, 2022). Instead, the parameters of the structural model in the equation (8) are directly estimated while treating the measurement part parameters as known constants. Global SAM is particularly advantageous in complex SEM frameworks characterized by intricate variable dependencies, offering a thorough analysis by utilizing the stability of the pre-estimated measurement model. Compared to local SAM, global SAM is more generalized as it can be fitted to any models that can be fitted with traditional SEM models. 
+
+## Current Study
+
+In this study, I plan to evaluate 2S-PA with corrected standard errors by accounting for measurement uncertainty from stage 1 estimation, and compare the performance of traditional structural equation modeling (SEM), local and global structural-after-measurement (SAM) models, and 2S-PA without correcting standard errors through the Monte Carlo simulation experiments.
+
+## Methods and Study Design
+
+I will use `R 4.3.2` (R Core Team, 2023) to conduct the simulation studies in this project. Specifically, the SEM and 2S-PA models will be implemented through the R package `lavaan` (Rosseel, 2012) and user-defined functions, while SAM models will be implemented using `sam` function in `lavaan`. The simulation design will be structured and conducted using the R package `SimDesign` (Chalmers, 2020).
+
+### Model 1: Simple Regression Model
+
+The first model I intend to assess is a simple regression model with two latent variables, $\xi_{x}$ and $\xi_{m}$, where $\xi_{m}$ is predicted by $\xi_{x}$:
+
+\begin{equation}
+\xi_{m_{j}} = \gamma_{0} + \gamma_{1}\xi_{x_{j}} + \zeta_{j},
+\end{equation}
+where $\xi_{x_{j}}$ is simulated with standard normal distribution, and $\zeta_{j}$ is simulated with a normal distribution following $N \sim (0, 1 - \gamma_{1}^2)$. The variance of $\xi_{m_{j}}$ can be computed from pre-defined variance of $\zeta_{j}$, as discussed later. The indicators are then generated by the confirmatory factor analysis (CFA) model:
+\begin{equation}
+\begin{gathered}
+x_{ij} =  \tau_{x_{ij}} + \lambda_{x_{ij}}\xi_{x_{j}} + \delta_{x_{ij}};\\
+m_{ij} =  \tau_{m_{ij}} + \lambda_{m_{ij}}\xi_{m_{j}} + \delta_{m_{ij}},
+\end{gathered}
+\end{equation}
+where each observation-specific observed indicator is represented by $x_{ij}$ and $m_{ij}$ that are simulated as continuous variables with normally distributed error. $\delta_{x_{ij}}$ and $\delta_{m_{ij}}$ are observation-specific error term for each observed indicator. $\delta_{x_{ij}}$, $\delta_{m_{ij}}$ and $\zeta_{j}$ are assumed to have multivariate normal distributions and be mutually independent. $\tau_{x_{ij}}$ and $\tau_{m_{ij}}$ are their corresponding constant intercepts and assumed to be 0. As there are two methods of computing factor scores, I plan to use both methods in this study, and hence the 2S-PA model will have two variants to be included in the simulation study, one for the regression scores (2S-PA-reg) and one for the Bartlett scores (2S-PA-Bar).
+
+Reliability in factor scores is crucial because it impacts the accuracy of measuring latent constructs, which affects the validity and interpretability of SEM results (Brown, 2015). High reliability in factor scores ensures consistent and stable measurements, reducing the impact of measurement error and enhancing the statistical power of the analysis. As discussed earlier, reliability of estimated factor scores is a function of factor loadings and measurement errors in observed indicators. Therefore, I plan to manipulate the level of error variances of observed indicators (and hence reliability of observed indicators) to explore how reliability of observed indicators will affect the estimation of structural parameters across methods. The error variances will be varied across items to achieve three different levels of reliability of observed indicators: $\rho \ = \ 0.7, \ 0.8, \ 0.9$ where $\rho$ is the reliability measure. For each reliability level, the error variances will be systematically varied to have different proportions. Suppose that three observed indicators will be generated for each latent variable (i.e., $x_{1j}$ ~ $x_{3j}$ for $\xi_{x_{j}}$; $m_{1j}$ ~ $m_{3j}$ for $\xi_{m_{j}}$) and the factor loadings of two sets of indicators are set to [.8, .7, .6] for $x_{1j}$ ~ $x_{3j}$ and [.75, .65, .50] for $m_{1j}$ ~ $m_{3j}$, the proportions can be manipulated as: 44$\%$ of the total error variance for the first indicator, 33$\%$ for the second, and 23$\%$ for the third, for $x$ and $m$ indicators. Any appropriate reliability measure can be used as an estimator of reliability, and I will use composite reliability in this study, where $\rho = \Sigma(\lambda)^2/(\Sigma[\lambda]^2 + \theta)$. Assuming that $\rho = .70$, the total error variance for $x_{1j}$ ~ $x_{3j}$ will be 1.89 and for $m_{1j}$ ~ $m_{3j}$ will be 1.55 using the formula of composite reliability. After adjusting the proportions of items, the the error variances of three indicators would be manipulated as $[0.83, \ 0.62, \ 0.44]$ for $x_{1j}$ ~ $x_{3j}$, and $[0.68, \ 0.51, \ 0.36]$ for $m_{1j}$ ~ $m_{3j}$. The sample sizes will be manipulated to have 100, 250, and 500 observations to represent small, medium, and large sample size. 
+
+Second, sample size is a prevalent experiment condition in most SEM research (e.g., Fan et al., 1999; Wolf et al., 2013), since sample size is related to multiple important statistical properties of SEM, such as statistical power and convergence issue (Kline, 2016). Past research has proposed some rule-of-thumbs of suggested sample size, such as "sample size $\ge 100$" for simple path model in general recommendation (Boomsma, 1982). However, Wolf et al. (2013) pointed out that there is not a "gold rule" for a single number of the best sample size, and the determination of sample size should take into accout the number of indicators, number of factors, and complexity or types of SEM models. Given that Lai & Hsiao (2022) adopted the design of "sample size per indicator", I plan to continue to use this design to simultaneously explore the effect of sample size and number of indicators on the performance of the 2S-PA models. The ratio of sample size per indicator will be set to $N/i = 6, \ 12, \ 100$, and the tentative numbers of indicators will be $i = 6, \, 12, \ 24$. Specifically, the number of indicators will be split to 3 and 3 for two latent variables in this model (i.e., $i = 3$ for $\xi_{x_{j}}$). Then, the range of sample sizes will be 36 $\sim$ 2,400.
+
+The intercept $\gamma_{0}$ will be set to 0 and $\gamma_{1}$ will be set to 0 or .39 as null effect or medium effect, for the structural parameters. 
+
+In summary, the current study will have a $3 \times 3 \times 2$ design with three levels of the ratio of sample sizes per observed indicator, three reliability levels of observed indicators, and two levels of the effect size of the path coefficient. The Monte Carlo simulation will tentatively have 2,000 replications for each condition.
+
+### Model 2: Mediation Model
+
+Given that median analysis is popular in psychological research (Rucker et al., 2011; Agler & De Boeck, 2017), I plan to evaluate the performance of 2S-PA with corrected standard errors in an expanded model from the equation (13) by including a mediator $\xi_{z_{j}}$, where:
+
+\begin{equation}
+\begin{gathered}
+\xi_{z_{j}} =  \gamma_{0}' +  \gamma_{1}'\xi_{x_{j}} + \zeta_{j}';\\
+\xi_{m_{j}} = \gamma_{0}'' + \gamma_{1}''\xi_{x_{j}} + \gamma_{2}''\xi_{z_{j}} + \zeta_{j}'',
+\end{gathered}
+\end{equation}
+where $\xi_{z_{j}}$ mediates the path from $\xi_{x_{j}}$ to $\xi_{m_{j}}$. $\gamma_{0}'$, $\gamma_{1}'$, $\zeta_{j}'$ are the structural parameters of the path from $\xi_{x_{j}}$ to $\xi_{z_{j}}$, where as $\gamma_{0}''$, $\gamma_{1}''$, $\gamma_{2}''$, $\zeta_{j}''$ are those from $\xi_{x_{j}}$ and $\xi_{m_{j}}$ to $\xi_{m_{j}}$. The indirect effect is defined as the product of the path coefficients $\gamma_{1}' \times \gamma_{2}''$. The error variances wil be manipulated using the same way for $\xi_{x_{j}}$ and $\xi_{m_{j}}$'s indicators. 
+
+Based on the study design in Lai & Hsiao (2022), $\gamma_{0}'$ and $\gamma_{0}''$ are set 0. $\gamma_{1}''$ is fixed to .15 as a small direct effect of $\xi_{x_{j}}$ on $\xi_{m_{j}}$, while each of $\gamma_{1}'$ and $\gamma_{2}''$ is set to either 0 or .39 as null effect and medium effect. The indirect effect will be either 0 or .1521. Hence the possible configurations of path coefficients (i.e., $\gamma_{1}'$, $\gamma_{2}''$, $\gamma_{1}''$, $\gamma_{1}' \times \gamma_{2}''$) will be [0, 0, .15, 0], [0, .39, .15, 0], [.39, 0, .15, 0], and [.39, .39, .15, .1521]. 
+
+The other designs will be similar to the study of model 1. In summary, the study of mediation model will have a $3 \times 3 \times 4$ design with three levels of the ratio of sample sizes per observed indicator, three reliability levels of observed indicators, and four levels of the effect sizes of the path coefficients. 
+
+## Evaluation Criteria
+
+Across all the models, the standardized point estimate of the path coefficients with standard error will be compared. For study 1, the point estimate of $\hat{\gamma}_{1}$ with its standard error $\hat{SE}(\hat{\gamma}_{1})$ will be obtained for model evaluation and comparisons. As for study 2, the point estimates of all the four path coefficients with standard errors will be obtained and compared.
+
+The main evaluation criteria will include convergence rate, empirical Type I error, and empirical statistical power, which are used to examine the performance of each method on estimating path coefficients. The specific details of evaluation criteria have been described in Study 2. 
+
+
+
+
+
+
+
+
+
+
+
+

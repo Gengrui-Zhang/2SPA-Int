@@ -1,0 +1,79 @@
+---
+title             : "Systematic Review on Simulation Studies of Latent Interaction"
+
+author: 
+  - name          : "Gengrui (Jimmy) Zhang"
+
+bibliography      : "r-references.bib"
+
+floatsintext      : no
+linenumbers       : yes
+draft             : no
+mask              : no
+
+figurelist        : no
+tablelist         : no
+footnotelist      : no
+
+classoption       : "man"
+header-includes   :
+  - |
+    \makeatletter
+    \renewcommand{\paragraph}{\@startsection{paragraph}{4}{\parindent}%
+      {0\baselineskip \@plus 0.2ex \@minus 0.2ex}%
+      {-1em}%
+      {\normalfont\normalsize\bfseries\typesectitle}}
+    
+    \renewcommand{\subparagraph}[1]{\@startsection{subparagraph}{5}{1em}%
+      {0\baselineskip \@plus 0.2ex \@minus 0.2ex}%
+      {-\z@\relax}%
+      {\normalfont\normalsize\bfseries\itshape\hspace{\parindent}{#1}\textit{\addperi}}{\relax}}
+    \makeatother
+
+csl               : "`r system.file('rmd', 'apa7.csl', package = 'papaja')`"
+documentclass     : "apa7"
+output            : papaja::apa6_pdf
+---
+
+```{r setup, include = FALSE}
+library("papaja")
+r_refs("r-references.bib")
+```
+
+```{r analysis-preferences}
+# Seed for random number generation
+set.seed(42)
+knitr::opts_chunk$set(cache.extra = knitr::rand_seed)
+```
+
+The exploration of interaction effects in psychological research is increasingly popular. A few reviewing articles in family studies, business management, and school psychology, have been published particularly for instructing researchers to test and interpret interaction effects (Whisman & McClelland, 2005; Dawson, 2014; Fairchild & McQuillin, 2010). The interaction effect examines how a third variable, known as a moderator, alters the relationship between a predictor and an outcome variable, demonstrating the complexity of how individual traits, environmental factors, and situational contexts interact. Fairchild and McQuillin (2010) clarified that the terms “moderation” and “interaction” are often used interchangeably since both terms imply how a third variable can modify relations between two variables. One of the predominant approaches for conducting interaction analysis is through moderated multiple regression (MMR), where the regression model incorporates a product term composed of its explanatory variable and moderator, and is usually estimated using a least squares method (Aiken & West, 1991; Newsom et al., 2003; Yuan et al., 2014). Considering the most parsimonious MMR model with one predictor ($X$), one moderator ($Z$), and one criterion variable ($Y$):
+\begin{equation}
+Y = \beta_{0} + \beta_{1}X + \beta_{2}Z + \beta_{3}X \cdot Z + \epsilon,
+\end{equation}
+where $\beta_{0}$ is the intercept, $\beta_{1}$ is the regression coefficient for $X$, and $\beta_{2}$ is the regression coefficient for $Z$. $X \cdot Z$ is the product (or interaction) term created by multiplying the first-order variables $X$ and $Z$ and should imply information about the interaction between $X$ and $Z$. $\beta_{3}$ is the regression coefficient for $X \cdot Z$. $\epsilon$ is a normally distributed random residual term and carries information of unaccounted variance not explained by $X$, $Z$ and $X \cdot Z$. Assuming assumptions of typical multiple regression models are met (Osborne & Waters, 2019; Osborne et al., 2001), a significant interaction effect is determined by rejecting the null hypothesis (i.e., $H_{0}$) that $\beta_{3} = 0$ through the $t$ test.
+
+Observed variables in classical regression models are assumed to be measured without errors; however, this assumption usually does not hold true in real practice and empirical research. Measurement errors do play a crucial role in parameter estimation, and they can stem from various sources such as respondent misunderstanding, data entry mistakes, or instrument flaws, and can significantly distort the analysis if not properly addressed (Bollen, 1989). Low reliability (i.e., high amount of measurement error) in the predictor $X$ and moderator $Z$ may introduce bias when estimating the interaction effect $\beta_{3}$, and subsequently inflated standard error, reduced statistical power, and attenuated effect size (Fisicaro & Lautenschlager, 1992; Carroll et al., 2006; Aguinis et al., 2005). Latent variable models, such as structural equation modeling (SEM), explicitly incorporate measurement errors into their framework, distinguishing between the true scores of the underlying construct and the observed scores that may be contaminated by errors (Jöreskog, 1970). Latent variables represent underlying factors or traits that are indicated by a set of observed variables but cannot be measured directly (Bollen, 1989). For instance, psychological concepts like intelligence or satisfaction are often quantified through various indirect measures, rather than being observed outright. 
+
+As for interaction analysis, the issue of measurement errors is more serious. Busemeyer and Jones (1983) mentioned that the reliability of the product term $XZ$ is a function of the reliability of predicting variables (e.g., $X$ and $Z$) and their correlation. Alternatively speaking, the estimation of interaction effect will be downward biased with a larger degree if predicting variables are highly correlated and contain more measurement errors, and such bias will not be remedied by increased sample size. Hence, an increasing number of latent variable models with interaction (i.e., latent interaction model) have been proposed to account for measurement error and produce more accurate parameter estimation.
+
+In this section, I will provide a comprehensive review of latent interaction models based on their assumptions, variable types, and estimation methods. 
+
+## Development of Latent Interaction Models
+
+### The Seminal Model by Kenny and Judd (1984)
+
+The idea of modeling latent interaction was first formally proposed by Kenny and Judd (1984) that is commonly recognized as the seminal article on the development of latent interaction methods. The structural model looks similar to MMR, except that it is based on latent variables:
+\begin{equation}
+y = \alpha + \gamma_{x}\xi_{x} + \gamma_{m}\xi_{m} + \gamma_{xm}\xi_{x}\xi_{m} + \zeta,
+\end{equation}
+where $\alpha$ is the constant intercept, $\xi_{x}$ is the latent predictor, $\xi_{m}$ is the latent moderator, and $\xi_{x}\xi_{m}$ is the latent interaction variable created by multiplying $\xi_{x}$ and $\xi_{m}$. Note that $\xi_{x}$ and $\xi_{m}$ are named first-order latent variables as well. $\gamma_{x}$, $\gamma_{m}$, and $\gamma_{xm}$ are the path coefficients of the first-order variables and the interaction term. $\zeta$ is the disturbance term. Each latent variable is assumed to be indicated by at least two observed items and hence follows a typical factor analysis model:
+\begin{align}
+x_{1} = \lambda_{x_{1}}\xi_{x} + \epsilon_{x_{1}} && x_{2} = \lambda_{x_{2}}\xi_{x} + \epsilon_{x_{2}},
+\end{align}
+\begin{align}
+m_{1} = \lambda_{m_{1}}\xi_{m} + \epsilon_{m_{1}} && m_{2} = \lambda_{m_{2}}\xi_{m} + \epsilon_{m_{2}},
+\end{align}
+
+
+
+

@@ -1,0 +1,46 @@
+TITLE: PILRS2006_LMS
+
+DATA:
+  FILE IS "/Users/jimmy_z/R Projects/2S-PA-Int/Paper/PIRLS2006/PIRLS_Data.dat"; 
+
+VARIABLE:
+  NAMES ARE ASBGRST1 ASBGRST2 ASBGRST3 ASBGRST4 ASBGRST5 ASBGRST6 
+           ASRREA01 ASRREA02 ASRREA03 ASRREA04 ASRREA05 
+           ASBGRST2_recode ASBGRST3_recode ASBGRST5_recode ASBGRST6_recode;
+  USEVARIABLES ARE ASBGRST1 ASBGRST4 ASBGRST6_recode 
+                 ASBGRST2_recode ASBGRST3_recode ASBGRST5_recode ASRREA01;
+
+ANALYSIS:
+ESTIMATOR IS MLR;
+ALGORITHM = integration;
+TYPE= random;
+
+MODEL:
+  ! Define the latent variables
+  IM BY ASBGRST1 ASBGRST4 ASBGRST6_recode;
+  EM BY ASBGRST2_recode ASBGRST3_recode ASBGRST5_recode;
+
+  ! Define the interaction term
+  IMXEM | IM XWITH EM;
+
+  ! Specify the regression relationships
+  ASRREA01 ON IM (b1);
+  ASRREA01 ON EM (b2);
+  ASRREA01 ON IMXEM (b3);
+
+  ! Specify the variances
+  IM (v1);
+  EM (v2);
+
+! Define the betas
+MODEL CONSTRAINT:
+  NEW(beta1 beta2 beta3);
+  beta1 = b1 * SQRT(v1);
+  beta2 = b2 * SQRT(v2);
+  beta3 = b3 * SQRT(v1) * SQRT(v2);
+
+OUTPUT:
+  STANDARDIZED;
+  TECH1;
+  TECH4;
+  TECH8;

@@ -1,0 +1,1318 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+  11pt,
+  man]{apa6}
+
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+% Make \paragraph and \subparagraph free-standing
+\ifx\paragraph\undefined\else
+  \let\oldparagraph\paragraph
+  \renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+  \let\oldsubparagraph\subparagraph
+  \renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newlength{\cslentryspacingunit} % times entry-spacing
+\setlength{\cslentryspacingunit}{\parskip}
+\newenvironment{CSLReferences}[2] % #1 hanging-ident, #2 entry spacing
+ {% don't indent paragraphs
+  \setlength{\parindent}{0pt}
+  % turn on hanging indent if param 1 is 1
+  \ifodd #1
+  \let\oldpar\par
+  \def\par{\hangindent=\cslhangindent\oldpar}
+  \fi
+  % set entry spacing
+  \setlength{\parskip}{#2\cslentryspacingunit}
+ }%
+ {}
+\usepackage{calc}
+\newcommand{\CSLBlock}[1]{#1\hfill\break}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{#1}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{#1}\break}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
+\ifLuaTeX
+\usepackage[bidi=basic]{babel}
+\else
+\usepackage[bidi=default]{babel}
+\fi
+\babelprovide[main,import]{english}
+% get rid of language-specific shorthands (see #6817):
+\let\LanguageShortHands\languageshorthands
+\def\languageshorthands#1{}
+% Manuscript styling
+\usepackage{upgreek}
+\captionsetup{font=singlespacing,justification=justified}
+
+% Table formatting
+\usepackage{longtable}
+\usepackage{lscape}
+% \usepackage[counterclockwise]{rotating}   % Landscape page setup for large tables
+\usepackage{multirow}		% Table styling
+\usepackage{tabularx}		% Control Column width
+\usepackage[flushleft]{threeparttable}	% Allows for three part tables with a specified notes section
+\usepackage{threeparttablex}            % Lets threeparttable work with longtable
+
+% Create new environments so endfloat can handle them
+% \newenvironment{ltable}
+%   {\begin{landscape}\centering\begin{threeparttable}}
+%   {\end{threeparttable}\end{landscape}}
+\newenvironment{lltable}{\begin{landscape}\centering\begin{ThreePartTable}}{\end{ThreePartTable}\end{landscape}}
+
+% Enables adjusting longtable caption width to table width
+% Solution found at http://golatex.de/longtable-mit-caption-so-breit-wie-die-tabelle-t15767.html
+\makeatletter
+\newcommand\LastLTentrywidth{1em}
+\newlength\longtablewidth
+\setlength{\longtablewidth}{1in}
+\newcommand{\getlongtablewidth}{\begingroup \ifcsname LT@\roman{LT@tables}\endcsname \global\longtablewidth=0pt \renewcommand{\LT@entry}[2]{\global\advance\longtablewidth by ##2\relax\gdef\LastLTentrywidth{##2}}\@nameuse{LT@\roman{LT@tables}} \fi \endgroup}
+
+% \setlength{\parindent}{0.5in}
+% \setlength{\parskip}{0pt plus 0pt minus 0pt}
+
+% Overwrite redefinition of paragraph and subparagraph by the default LaTeX template
+% See https://github.com/crsh/papaja/issues/292
+\makeatletter
+\renewcommand{\paragraph}{\@startsection{paragraph}{4}{\parindent}%
+  {0\baselineskip \@plus 0.2ex \@minus 0.2ex}%
+  {-1em}%
+  {\normalfont\normalsize\bfseries\itshape\typesectitle}}
+
+\renewcommand{\subparagraph}[1]{\@startsection{subparagraph}{5}{1em}%
+  {0\baselineskip \@plus 0.2ex \@minus 0.2ex}%
+  {-\z@\relax}%
+  {\normalfont\normalsize\itshape\hspace{\parindent}{#1}\textit{\addperi}}{\relax}}
+\makeatother
+
+\makeatletter
+\usepackage{etoolbox}
+\patchcmd{\maketitle}
+  {\section{\normalfont\normalsize\abstractname}}
+  {\section*{\normalfont\normalsize\abstractname}}
+  {}{\typeout{Failed to patch abstract.}}
+\patchcmd{\maketitle}
+  {\section{\protect\normalfont{\@title}}}
+  {\section*{\protect\normalfont{\@title}}}
+  {}{\typeout{Failed to patch title.}}
+\makeatother
+
+\usepackage{xpatch}
+\makeatletter
+\xapptocmd\appendix
+  {\xapptocmd\section
+    {\addcontentsline{toc}{section}{\appendixname\ifoneappendix\else~\theappendix\fi\\: #1}}
+    {}{\InnerPatchFailed}%
+  }
+{}{\PatchFailed}
+\usepackage{csquotes}
+\geometry{left = 2.54cm, right = 2.54cm, top = 2.54cm, bottom = 2.54cm}
+
+
+\usepackage{float}
+\usepackage{sectsty}
+\usepackage{paralist}
+\usepackage{setspace}\setstretch {1.5}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{dcolumn}
+\usepackage{amsmath}
+\usepackage[style=apa]{biblatex}
+\usepackage{indentfirst}
+\setlength\parindent{24pt}
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdflang={en-EN},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\author{\phantom{0}}
+\date{}
+
+
+\shorttitle{Proposal}
+
+\affiliation{\phantom{0}}
+
+\begin{document}
+
+\allsectionsfont{\centering}
+\subsectionfont{\raggedright}
+\subsubsectionfont{\raggedright}
+
+\pagenumbering{gobble}
+
+\begin{centering}
+
+\vspace*{6cm}
+
+\Large
+
+\doublespacing
+{\bf Dissertation Proposal}
+
+\vspace{1 cm}
+
+\normalsize
+\singlespacing
+By
+
+\vspace{0.5 cm}
+
+\Large
+
+{\bf Gengrui (Jimmy) Zhang}
+
+\vspace{1.5 cm}
+
+\normalsize 
+{\bf The University Of Southern California}
+
+\normalsize 
+{\bf Department of Psychology}
+
+\vspace{1.5 cm}
+
+\normalsize
+April 2024
+
+\end{centering}
+
+\newpage
+
+\pagenumbering{gobble}
+
+\begin{centering}
+
+\Large
+{\bf Proposal Summary and Contribution}
+
+\end{centering}
+
+\spacing{1.5}
+
+In my written papers for the written qualifying exam, I extended the Two-Stage Path Analysis (2S-PA) model to incorporate estimation of latent interaction effects for continuous variables, namely Two-Stage Path Analysis with Interaction (2S-PA-Int). The results showed that 2S-PA-Int has the potential of producing unbiased estimates with precise standard error, high coverage rates, and low RMSEA values, compared to Unconstrained Product Indicator (UPI) and Reliability-Adjusted Product Indicator (RAPI). To further investigate latent interaction models and more possibilities of 2S-PA (and 2S-PA-Int), I propose to conduct three research projects to continue my doctoral study.
+For study 1, I will systemically review all existing methodological paper in which at least one simulation study has been conducted to evaluate latent interaction models. Although multiple latent interaction models have been developed and evaluated in many simulation studies, there are currently not a systematic review on study design and a formal synthesis of results. My research will contribute to clarifying methodological consensus and variability within multiple methods, evaluate their robustness and limitations, and setting standards for future simulations on the topic of latent interaction models.
+
+Although 2S-PA-Int showed promising properties of estimating latent interaction effects with continuous indicators, it has not been evaluated for categorical indicators, given that categorical variables are predominantly useful and widely applied in psychological studies. In study 2, I will conduct a Monte Carlo simulation study to evaluate 2S-PA-Int for categorical indicators and compare its performance to UPI and latent moderated structural (LMS) equations. This study will reveal generalizability of 2S-PA-Int on various data type.
+
+Besides, current 2S-PA model uses parameters obtained from measurement model (stage 1) as known statistics (i.e., fixed values), while these parameters may contain uncertainty. Ignoring these uncertainty may result in biased estimation of structural parameters with underestimated standard errors. In study 3, I will incorporate the uncertainty of measurement parameters into the estimation of structural parameters at stage 2, and conduct a Monte Carlo simulation study to evaluate the performance of 2S-PA. This study will contribute to amend the statistical model of 2S-PA by making it more robust to measurement error.
+
+\pagenumbering{roman}
+
+\newpage
+
+\centering
+\raggedright
+\newpage
+\tableofcontents
+
+\newpage
+
+\pagenumbering{arabic}
+\setlength{\parindent}{0.5in}
+
+\hypertarget{literature-review-of-latent-interaction-models}{%
+\section{Literature Review of Latent Interaction Models}\label{literature-review-of-latent-interaction-models}}
+
+The exploration of interaction effects in psychological research is increasingly popular. A few reviewing articles in family studies, business management, and school psychology, have been published particularly for instructing researchers to test and interpret interaction effects (Dawson, 2014; Fairchild \& McQuillin, 2010; Whisman \& McClelland, 2005). The interaction effect examines how a third variable, known as a moderator, alters the relationship between a predictor and an outcome variable, demonstrating the complexity of how individual traits, environmental factors, and situational contexts interact. Fairchild and McQuillin (2010) clarified that the terms ``moderation'' and ``interaction'' are often used interchangeably since both terms imply how a third variable can modify relations between two variables. One of the predominant approaches for conducting interaction analysis is through moderated multiple regression (MMR), where the regression model incorporates a product term composed of its explanatory variable and moderator, and is usually estimated using a least squares method (Aiken \& West, 1991; Newsom et al., 2003). Considering the most parsimonious MMR model with one predictor (\(X\)), one moderator (\(Z\)), and one criterion variable (\(Y\)):
+\begin{equation}
+Y = \beta_{0} + \beta_{1}X + \beta_{2}Z + \beta_{3}XZ + \epsilon,
+\end{equation}
+where \(\beta_{0}\) is the intercept, \(\beta_{1}\) is the regression coefficient for \(X\), and \(\beta_{2}\) is the regression coefficient for \(Z\). \(XZ\) is the product (or interaction) term created by multiplying the first-order variables, \(X\) and \(Z\). \(\beta_{3}\) is the regression coefficient for \(XZ\). \(\epsilon\) is a normally distributed random residual term and carries information of unaccounted variance not explained by \(X\), \(Z\) and \(XZ\). Assuming assumptions of typical multiple regression models are satisfied (Osborne \& Waters, 2002), a significant interaction effect is determined by rejecting the null hypothesis (i.e., \(H_{0}\)) that \(\beta_{3} = 0\) through a \(t\) test.
+
+Observed variables in classical regression models are assumed to be measured without error; however, this assumption usually does not hold true in real practice and empirical research. Measurement errors do play a crucial role in parameter estimation. They stem from various sources such as respondent misunderstanding, data entry mistakes, or instrument flaws, and significantly distort the analysis if not properly addressed (Bollen, 1989). Low reliability (i.e., high amount of measurement error) in the predictor \(X\) and moderator \(Z\) may introduce bias when estimating the interaction effect \(\beta_{3}\), and subsequently inflated standard error, reduced statistical power, and attenuated effect size (Aguinis et al., 2005; Carroll et al., 2006; Fisicaro \& Lautenschlager, 1992). Latent variable models, such as structural equation modeling (SEM), explicitly incorporate measurement errors into their framework, distinguishing between the true scores of the underlying construct and the observed scores that may be contaminated by errors (Jöreskog, 1971). Latent variables represent underlying factors or traits that are indicated by a set of observed variables but cannot be measured directly (Bollen, 1989). For instance, psychological concepts like intelligence or satisfaction are often quantified through various indirect measures, rather than being observed outright.
+
+As for interaction analysis, the issue of measurement error is more serious. Busemeyer and Jones (1983) mentioned that the reliability of the product term \(XZ\) is a function of the reliability of predictor variables (e.g., \(X\) and \(Z\)) and their correlation. Alternatively speaking, the estimation of interaction effect will be downwardly biased with a larger degree if predictor variables are highly correlated and contain considerable amount of measurement error, and such bias will not be remedied by increasing sample size. Hence, an escalating number of latent variable models with interaction (i.e., latent interaction model) have been proposed to account for measurement error and obtain more accurate parameter estimation.
+
+In next section, I will provide a brief review of latent interaction models based on their assumptions, variable types, and estimation methods. Then, I will introduce Study 1 of my dissertation proposal, in which I will conduct a systematic review of simulation studies that have investigated each method of estimating latent interaction effects.
+
+\hypertarget{constrained-product-indicator-method-cpi-the-seminal-model-by-kenny-and-judd-1984}{%
+\subsection{Constrained Product Indicator Method (CPI): The Seminal Model by Kenny and Judd (1984)}\label{constrained-product-indicator-method-cpi-the-seminal-model-by-kenny-and-judd-1984}}
+
+The idea of modeling latent interaction was first formally proposed by Kenny and Judd (1984) that is commonly recognized as the seminal article of latent interaction. The structural model looks similar to MMR, except that it is built on latent variables:
+\begin{equation}
+y = \alpha + \gamma_{x}\xi_{x} + \gamma_{m}\xi_{m} + \gamma_{xm}\xi_{x}\xi_{m} + \zeta,
+\end{equation}
+where \(\alpha\) is the constant intercept, \(\xi_{x}\) is the latent predictor, \(\xi_{m}\) is the latent moderator, and \(\xi_{x}\xi_{m}\) is the latent interaction variable created by multiplying \(\xi_{x}\) and \(\xi_{m}\). Note that \(\xi_{x}\) and \(\xi_{m}\) are named first-order latent variables as well. \(\gamma_{x}\), \(\gamma_{m}\), and \(\gamma_{xm}\) are the path coefficients of the first-order variables and the interaction term. \(\zeta\) is the disturbance term. Each latent variable is assumed to be indicated by at least two observed items, which follows a typical factor analysis model:
+\begin{align}
+x_{1} = \lambda_{x_{1}}\xi_{x} + \delta_{x_{1}}, && x_{2} = \lambda_{x_{2}}\xi_{x} + \delta_{x_{2}},
+\end{align}
+\begin{align}
+m_{1} = \lambda_{m_{1}}\xi_{m} + \delta_{m_{1}}, && m_{2} = \lambda_{m_{2}}\xi_{m} + \delta_{m_{2}},
+\end{align}
+where \(x_{1}\), \(x_{2}\), \(m_{1}\), \(m_{2}\) are observed indicators of \(\xi_{x}\) and \(\xi_{m}\), two for each respectively. \(\lambda\)s are the factor loadings and \(\delta\)s are the measurement errors. Kenny and Judd (1984) used mean-deviation form for all observed indicators and therefore constant terms are omitted in the above equations. In this model, \(\xi_{x}\) and \(\xi_{m}\) are assumed to have multivariate normal distributions with allowed covariance. Based on this assumption, Jöreskog and Yang (1996) demonstrated that the mean of the interaction term \(\xi_{x}\xi_{m}\) equals to the covariance between \(\xi_{x}\) and \(\xi_{m}\). Besides, \(\xi_{x}\), \(\xi_{m}\), \(\delta\)s, and \(\zeta\) are multivariate normal with means of 0 and uncorrelated with each other. Alternatively demonstrating in mathematical symbols,
+\begin{equation}
+\boldsymbol{\xi} \ \sim \ \mathcal{N}(\boldsymbol{\kappa}, \boldsymbol{\Phi}), 
+\end{equation}
+where \(\boldsymbol{\xi}\) is a vector of latent variables, and \(\boldsymbol{\kappa}\) and \(\boldsymbol{\Phi}\) are the mean vector and covariance matrix of latent variables (Jöreskog \& Yang, 1996). Specifically,
+\begin{align}
+  \boldsymbol{\kappa} = 
+  \begin{pmatrix}
+    0 \\
+    0 \\
+    \phi_{\xi_{x}\xi_{m}}
+  \end{pmatrix} &&
+  \boldsymbol{\Phi} = 
+  \begin{pmatrix}
+    \phi_{\xi_{x}} & \ & \ \\
+    \phi_{\xi_{m}\xi_{x}} & \ \phi_{\xi_{m}} \ \\
+    0 & \ 0 & \ \phi_{\xi_{x}\xi_{m}} + \phi_{\xi_{m}\xi_{x}}^2
+  \end{pmatrix}.
+\end{align}
+
+To estimate the latent interaction term \(\xi_{x}\xi_{m}\), Kenny and Judd (1984) suggested to use all possible cross product pairs of first-order latent variables' indicators, namely product indicator (PI), and they are \(x_{1}m_{1}\), \(x_{1}m_{2}\), \(x_{2}m_{1}\), \(x_{2}m_{2}\) in this case. Take \(x_{1}m_{1}\) as an example, the mathematical component of the PI will be:
+\begin{equation}
+x_{1}m_{1} = \lambda_{x_{1}}\lambda_{m_{1}}\xi_{x}\xi_{m} + \lambda_{x_{1}}\xi_{x}\epsilon_{m_{1}} + \lambda_{m_{1}}\xi_{m}\epsilon_{x_{1}} + \epsilon_{x_{1}}\epsilon_{m_{1}},
+\end{equation}
+in which the factor loading and the error term of \(x_{1}m_{1}\) can be obviously represented by two functions of parameters from the equations of original indicators. Specifically, the factor loading of \(x_{1}m_{1}\) is \(\lambda_{x_{1}}\lambda_{m_{1}}\) while the error term is \(\lambda_{x_{1}}\xi_{x}\epsilon_{m_{1}} + \lambda_{m_{1}}\xi_{m}\epsilon_{x_{1}} + \epsilon_{x_{1}}\epsilon_{m_{1}}\). It implies that the components of factor loading and error term of the formed PIs all come from existing parameters of first-order indicators, which serve as model constraints. As the number of formed PIs increases, the model constraints become extraordinarily complicated and excessive, which leads to a cumbersome model with potential convergence issue. Therefore Kenny and Judd's (1984) model is called constrained product indicator (CPI) method.
+
+As much of the past literature described while Kenny and Judd (1984) did not explicitly mention in their original work, the latent interaction term in nature is the product of two first-order latent predictors, and hence the error terms of PIs indicating the interaction term must be allowed to covary with those of first-order indicators (Cortina et al., 2021; Schoemann \& Jorgensen, 2021). Alternatively speaking, the error terms of PIs that share the first-order latent predictors may covary with the corresponding first-order indicators:
+\begin{align}
+\begin{matrix}
+x_{1}m_{1} \\ x_{1}m_{2} \\ x_{2}m_{1} \\ x_{2}m_{2} 
+\end{matrix}
+\begin{bmatrix}
+\theta_{x_{1}m_{1}} & \ a \ & \ b \ \\
+\ & \ \theta_{x_{1}m_{2}} \ & \ & \ b \ \\
+\ & \ & \ \theta_{x_{2}m_{1}} \ & \ a \ \\
+\ & \ & \ & \ \theta_{x_{2}m_{2}} \ \\
+\end{bmatrix},
+\end{align}
+where the diagonal elements are error variances of each PI. The covaried error terms are labeled by \(a\) and \(b\) where the residual covariances are constrained with the same fixed values for PIs sharing the same first-order indicator. For example, \(x_{1}m_{1}\) and \(x_{1}m_{2}\) share the first-order indicator \(x_{1}\) so that their error variances are constrained to equality.
+
+Kenny and Judd's (1984) model is estimated through maximum likelihood (ML) estimator that builds on normal distributions of observed indicators and latent variables, and any non-normality in either observed indicators or latent variables may lead to biased estimates and underestimated standard errors. Besides, Type I error rates of latent interaction effects may be inflated (Jöreskog \& Yang, 1996).
+
+Although not many substantive research used the original method of Kenny and Judd (1984) due to complicated model constraints and difficulty in implementation, many later developed latent interaction methods are mostly based on this seminal model. Kelava and Brandt (2019) in Chapter 23 of \emph{Handbook of Structural Equation Modeling} (Hoyle, 2022) categorized commonly used latent interaction methods into four types: product indicator approaches, distribution analytic approaches, Bayesian parametric approaches, and method of moments approaches. The performance of each approach evaluated by simulation studies and validated through empirical research results has been summarized in Table 23.3 of the book. Below I will briefly summarize representative methods of each category of latent interaction models.
+
+\hypertarget{product-indicator-pi-approaches}{%
+\subsection{Product Indicator (PI) Approaches}\label{product-indicator-pi-approaches}}
+
+There has been significant progress in PI methods since the foundational work of Kenny and Judd (1984). These methodologies range from fully latent approaches, which involve multiple indicators for latent products and simultaneous estimation of measurement and structural components, to partially latent approaches that use single indicators (Cortina et al., 2021).
+
+Building upon CPI, Wall and Amemiya (2001) presented that the latent covariance matrix \(\boldsymbol{\Phi}\) is based on the assumption of normally distributed latent variables. Specifically, the covariance between the first-order latent predictors and the latent interaction term can equal to 0 (i.e., \(Cov[\xi_{x}, \ \xi_{x}\xi_{m}] \ = \ 0\)) only if \(\xi_{x}\) and \(\xi_{m}\) follow normal distributions. Besides, the variance of the interaction term equivalent to \(\phi_{\xi_{x}\xi_{m}} + \phi_{\xi_{m}\xi_{x}}^2\) requires the same condition. Hence, as long as the assumption of multivariate normal distribution among first-order latent predictors is not met, CPI will not produce unbiased parameter estimates with precise standard errors. To address this issue, they proposed the Generalized Appended Product Indicator (GAPI) method in which the constraints on \(\boldsymbol{\Phi}\) are removed and each element in \(\boldsymbol{\Phi}\) is freely estimated, while the other model constraints remain the same. This innovative approach enhances the capacity to analyze interactions among non-normally distributed latent variables, improving the accuracy of parameter estimates in these contexts.
+
+Marsh et al. (2004) advanced the GAPI approach by further reducing the model constraints and only kept the mean structure in equation (6), allowing for free estimation of parameters that were previously constrained. Their model is therefore called unconstrained product indicator (UPI) method. This modification, while simplifying the model by reducing its restrictions, also leads to reduction in degrees of freedom due to increased number in freely estimated parameters. One example is that the factor loading and error term in equation (7) are freely estimated instead of being expressed in the functions of existing parameters. Through their research, Marsh et al. (2004) stated that UPI theoretically should have robustness to violated assumptions of multivariate normality since no model constraints based on these assumptions are specified in the UPI model. Their simulation studies results challenged the necessity of including complicated model constraints and stated that UPI is simpler and technically more approachable. However, a few studies have shown that UPI may produce biased parameter estimates and underestimated standard error for non-normally distributed latent variables and categorical observed indicators (Aytürk et al., 2021; Cortina et al., 2021; \emph{Latent {variable interactions with ordered-categorical indicators}}, n.d.; Pieters et al., 2022).
+
+Another disadvantage of UPI is that the number of PIs may become unmanageable with a large number of first-order indicators. Although Wu et al. (2013) discussed possible methods of reducing the number of PIs using matched-pair UPI and parceling UPI, there remains arbitrariness in selecting first-order PIs, which may lose information from unused PIs. Thus, single indicator methods have been proposed to address this problem. In an effort to enhance the estimation accuracy of latent interaction effects while maintaining methodological simplicity, Hsiao et al. (2018) introduced a reliability-adjustment product indicator (RAPI) method, wherein composite scores such as sum or mean scores are used as single indicators (SI). RAPI can capture all available information from first-order indicators and address the issue of unwieldy number of PIs. To account for measurement error, RAPI imposes error-variance constraints computed from observed first-order indicators on the factor loadings and error variances of SI. The simulation studies in Hsiao et al. (2018) demonstrated that RAPI is able to produce unbiased estimates of latent interaction effects accompanied by acceptable standard errors under conditions of small sample sizes (\(N = 100\)) and low reliability (\(\rho \ = \ .70\)) for congeneric items.
+
+The Two-Stage Path Analysis (2S-PA) method, introduced by Lai and Hsiao (2022), is an alternative SI method for estimating latent interaction effects. In contrast to conventional joint structural equation modeling (SEM) practices, which typically require simultaneous estimation of measurement and structural models and demand substantial sample sizes for satisfactory convergence rates, the 2S-PA method divides the process into two distinct stages. At the first stage, researchers use any appropriate psychometric methods to compute factor scores (e.g., expected-a-posterior scores, regression scores, Bartlett scores); these factor scores are then used as SI to indicate latent variables at the second stage, and the structural model is estimated for relations between latent variables. This separation of estimation not only enhances the stability and reliability of parameter estimation but also makes the method more accessible for studies with smaller sample sizes. A distinctive feature of the 2S-PA approach is its ability to assign specific estimated reliability to each observation, which broadens its usability to incorporate ordered categorical items and to accommodate non-normal distributions of first-order indicators. This flexibility marks a significant advancement over traditional methods, addressing a wider range of data types and distributional challenges. Consequently, the 2S-PA method offers a practically efficient alternative latent interaction model for researchers to deal with complexities of measurement error and limitation of traditional SEM models.
+
+\hypertarget{distribution-analytic-approaches}{%
+\subsection{Distribution Analytic Approaches}\label{distribution-analytic-approaches}}
+
+As mentioned in Kenny and Judd's model (1984), the distribution of the latent interaction variable is not normally distributed even though the latent predictor and moderator have normal distributions. Therefore the assumption of multivariate distribution of using maximum likelihood (ML) estimation in PI methods is violated. To address this issue, latent moderated structural equations (LMS; Klein \& Moosbrugger, 2000) and quasi-maximum-likelihood (QML; Klein \& Muthén, 2007) approach have been proposed, which do not directly involve PIs. Instead, they handle non-normality of latent dependent variables that may arise from the inclusion of latent interaction terms.
+
+Traditional SEM approaches often assume that observed variables follow normal distributions. However, A. Klein and Moosbrugger (2000) highlighted that latent interaction models typically induce non-normal distributions in their indicators due to the inclusion of product terms of latent variables. The LMS method specifically accounts for these non-normal distributions by modeling the joint indicator vector as a finite mixture of normal distributions, thus enhancing the accuracy and robustness of parameter estimates. Specifically, LMS approximates the likelihood of the non-normal first-order indicator vector (e.g., {[}\(x_{1}\), \(x_{2}\), \(m_{1}\), \(m_{2}\){]}) using a finite mixture of conditional normal distributions. This approximation is grounded on the fact that the interaction effects can be examined by using the distribution of observed indicators across different levels of latent predictor and moderator (e.g., \(\xi_{x}\)) that form the interaction term (Klein \& Moosbrugger, 2000; Marsh et al., 2004). AS for the estimation of model's unknown parameters within this mixture distribution framework, LMS employs a modified version of expectation-maximization (EM) algorithm (Dempster et al., 1977). LMS showed outstanding performance of estimating interaction effects when latent predictor variables are normally distributed, but showed biased estimates with elevated Type I error when they are moderately or severely non-normal (Aytürk et al., 2021; Cham et al., 2012b; Cortina et al., 2021; \emph{Latent {variable interactions with ordered-categorical indicators}}, n.d.).
+
+Like LMS, quasi-maximum likelihood (QML) is another distribution analytic approach that extends beyond the traditional ML estimation, especially when the strict normal assumptions of ML are not fully met. QML is particularly notable for its robustness against the non-normal distributions that typically result from the product terms of latent variables (A. G. Klein \& Muthén, 2007). The QML method involves estimating the parameters of a model by maximizing a likelihood function that is ``quasi'' because it is based on an assumed (and possibly incorrect) distribution of first-order latent variables and their observed indicators. By approximating the density function of indicators, QML is able to produce accurate estimation of model parameters even when the underlying distribution of latent variables deviates from normality. Unlike LMS which results in computational complexity, QML does not have high computational demand, while showing enhanced efficiency in parameter estimation and maintaining robustness to violation of normality assumptions.
+
+\hypertarget{bayesian-parametric-approaches}{%
+\subsection{Bayesian Parametric Approaches}\label{bayesian-parametric-approaches}}
+
+Arminger and Muthén (1998) first introduced the application of Bayesian methods on estimating nonlinear effects among latent variables, notably the Gibbs sampler and the Metropolis-Hastings algorithm. This framework allows for the use of conjugate priors informing predefined hypotheses about the parameter distributions through Markov chain Monte Carlo (MCMC) methods, and the posterior distributions of corresponding parameters will be estimated. The Bayesian method offers a robust alternative to traditional ML estimation methods that often fail to appropriately account for non-normality in their models.
+
+Lee et al. (2007) proposed a generalized structural equation modeling (GSEM) approach that uses Bayesian modeling framework to estimate latent interaction and nonlinear effects. GSEM produces estimates that have similar optimal properties to ML estimates, but with the added flexibility of incorporating prior knowledge and handling small sample sizes more effectively. The authors validated the empirical performance of GSEM through a series of simulation studies, demonstrating its effectiveness across different sample sizes and prior information scenarios. Compared to Arminger and Muthén's method (1998), which also uses a Bayesian framework but primarily focuses on simpler interaction models, GSEM extends usability to more intricate models, such as the inclusion of covariates that may influence both the independent and dependent variables, complex nonlinearities, and higher-order effects for curvilinear relationships among variables. Nevertheless, as general challenges in Bayesian methods, GSEM primarily relies on strong distributional assumptions on latent predictor variables and requires informative prior distributions in general. The choices of prior distributions need to be based on past literature or reliable empirical research; otherwise, biased parameter estimates may be produced.
+
+Asparouhov and Muthén (2021) newly introduced another Bayesian approach that can be applied for single and multilevel models with latent interaction effects. Compared to traditional ML methods that often require high computational demands and limitations when numerical integration is required in higher dimensions, this method allows for more efficient handling of the high-dimensional integration typically needed for models with multiple interactions and hierarchical data layers. Moreover, the method extends the utility of Bayesian estimation to models with categorical dependent variables and incomplete data sets. The ability to incorporate categorical outcomes and manage missing data without compromising the robustness of estimation is particularly beneficial in applied social sciences, where such data issues are prevalent.
+
+\hypertarget{method-of-moment-approaches}{%
+\subsection{Method of Moment Approaches}\label{method-of-moment-approaches}}
+
+Wall and Amemiya (2003) developed a two-stage method of moments estimator (2SMM) for estimating latent interaction effects. In the first stage, the method utilizes a standard SEM software to estimate a measurement model and obtain measurement parameters. Factor scores are then estimated from observed indicators for each individual using Bartlett's method. Assuming that the error terms are assumed to follow a normal distribution, the procedure of model estimation can be simplified using zero odd moments and specific calculations for fourth moments. Specifically, the first (i.e., mean) and third (i.e., skewness) moments equal to zero and they will not be accounted for. The second stage treats the structural model as an errors-in-variables regression, incorporating interaction terms and accounting for measurement errors. Given that the model parameters are estimated using moment conditions derived from the factor scores, the simplifications brought by method of moments significantly reduce the mathematical and computational complexity involved in handling error terms.
+
+\newpage
+\setlength{\parindent}{0.5in}
+
+\hypertarget{study-1-systematic-review-of-simulation-studies-evaluating-latent-interaction-methods}{%
+\section{Study 1: Systematic Review of Simulation Studies Evaluating Latent Interaction Methods}\label{study-1-systematic-review-of-simulation-studies-evaluating-latent-interaction-methods}}
+
+Simulation studies, typically conducted using computer-generated experiments that employ pseudo-random sampling from established probability distributions, are crucial in the field of statistical research (Boomsma, 2013; Hallgren, 2013; Morris et al., 2019). They are used particularly in assessing new methods and comparing different statistical models, which helps researchers understand the behavior of these models by comparing the model-implied results with the known and preset ``population'' parameters (Sainani, 2015). Within these simulation studies, researchers define traits of the target population, including its distribution and interrelations among variables, which provides much more possibilities of addressing methodological research questions that cannot be answered using real data. Furthermore, the resilience of various methods, how unaffected they are by deviations from their theoretical assumptions, can be evaluated across differing population and sample attributes (Hinds et al., 2018). Simulation studies have been popularly used in examining properties of estimators and procedures in SEM. Boomsma (2013) conducted a comprehensive review of published articles from 1994 to 2012 on the journal \(\textit{Structural Equation Modeling}\), and found that about 30\% articles purely conducted Monte Carlo simulation studies to evaluate various properties of advanced statistical models in their methods. Typical evaluations include Type I error rate, statistical power, and bias of parameter estimation.
+
+However, some researchers may face challenges in conducting simulation studies due to lack of understanding, whereas others may not devote sufficient attention to the study's design or the clarity of their reporting (Siepe et al., 2023). A solid design of simulation studies empowers researchers to not only undertake but also critically evaluate such studies, while encouraging use of simulation studies with increased diligence and transparency in their reporting. Acknowledging simulation studies as practical experiments underlines the necessity of employing experimental design and analytical principles. As Siepe et al. (2023) mentioned, a good quality of evidence from a simulation study in psychology depends on the study design, conduction of experiment, data analysis, and appropriate reporting. Frequent issues in the setup, analysis, and dissemination of these studies may lead to a shallow processing and misleading interpretation of the data (Burton et al., 2006). Hence, an in-depth grasp of the aims, structure, execution, analytical approaches, and reporting within simulation studies is essential. Simmons et al. (2011) pointed out that in the realm of research of pure simulation study, researchers have significantly more researcher degrees of freedom than empirical research, in terms of greater flexibility in data generation and less cost of adjusting study design. For example, researchers can freely choose data-generating models or mechanisms, evaluation objects and criteria, and content of reporting, while there could be potential issues in such flexibility (Burton et al., 2006; Feinberg \& Rubright, 2016; Hoaglin \& Andrews, 1975). Besides, some simulation studies may offer recommendations of practice for using certain methodologies or models, which may have great impact on future studies (Siepe et al., 2023).
+
+Guidelines and recommendations for conducting Monte Carlo simulation studies in general psychology and psychometric-specific research have been developed and published for years (Boomsma, 2013; Feinberg \& Rubright, 2016). In addition, Morris et al. (2019) proposed a systematic scheme called ADEMP (Aims, Data-generating mechanisms, Estimands and other targets, Methods, Performance measure) as a design and reporting structure for future simulation studies. In this study, I plan to conduct a systematic review of simulation studies about statistical methods/models for estimating latent interaction effects, and use ADEMP as a template structure to examine whether they follow best practice in study design, data generation, parameter evaluation, and report and interpretation. Given that currently there is not a systematic review that has been conducted on methodological papaers about latent interaction models, I plan to describe the characteristic and quality of existing simulation studies, and use ADEMP structure to propose a guideline for future simulation studies on latent interaction.
+
+\hypertarget{why-is-it-important-to-review-simulation-studies-of-latent-interaction-models}{%
+\subsection{Why Is It Important to Review Simulation Studies of Latent Interaction Models}\label{why-is-it-important-to-review-simulation-studies-of-latent-interaction-models}}
+
+As reviewed in earlier sections, latent interaction models are methodologically intricate, often requiring sophisticated statistical techniques and assumptions about data distribution, measurement error, and model specification. Simulation studies are uniquely positioned to test these models under controlled conditions, varying assumptions and parameters to systematically investigate their robustness and validity. Given the purpose of comparing different models, ideally researchers want to control as many conditions as possible to maximally and fairly compare models. However, it is not possible to evaluate all latent interaction models in one study under all possible conditions. Without a comprehensive synthesis of these studies, the research community risks a fragmented understanding of these models' behaviors and limitations. A systematic review can summarize and consolidate findings across simulation studies, which will consistent patterns, discrepancies, and gaps in how these models perform across different conditions and settings. This aggregation is crucial for refining model assumptions, improving estimation techniques, and enhancing the overall reliability and accuracy of conclusions drawn from real-world data. Thus, this review study is expected to guide future research to focus on less explored or inconsistent areas in latent interaction models.
+
+Current simulation studies of latent interaction models have some nuanced discrepancies in study design across studies. In the popular paper by Marsh et al.~(2004), their results indicated that the UPI model using all possible PIs (all-pair UPI) demonstrated unbiased point estimate of the interaction effect with acceptable standard error. However, the all-pair UPI has only been examined in Study 1 in which this model was only tested on parallel items (i.e., items with identical factor loading and error). Specifically, all the factor loadings of observed indicators were set to .7 and the error variances were set to the same values in their population-generating model. Besides, they used raw bias averaged through simulation cycles as the quality assessment indicator of parameter estimation, with the empirical standard deviation and standard error of estimated parameters separately reported. With the development of latent interaction research, the all-pair UPI needs to be examined in more sophisticated conditions that may be encountered in substantive research (e.g., congeneric observed items with various factor loadings and measurement errors). Besides, more evaluation criteria of estimators may need to be used for more comprehensive examination. In the supplemental material of my qualifying exam paper ``Two-Stage Path Analysis with Interaction: A Good Alternative to Current Methods of Modeling Latent'', it was found that the all-pair UPI did not perform as well as reported on congeneric items with standard bias as the evaluation criteria. This is particularly important because slight variations in model implementation and data types can lead to significantly different outcomes, affecting the validity and generalizability of the research conclusions on the behavior of a statistical model. Although the paper of Marsh et al.~(2004) was published 20 years ago, it has been regarded as a standard paper of PI methods and the all-pair UPI method has been widely researched and applied in methodological and empirical research. Thus, it is motivated to synthesize evaluations of current latent interaction models with all details of study design and manipulated conditions across existing simulation studies to identify research gap on conditions of each method.
+
+Besides, given that the focus and aim of simulation studies can largely differ, a systematic review of these simulation studies can synthesize across diverse conditions to establish how latent interaction models can be best specified and interpreted. Some research may examine models in general situations, while some research focus on specific one or two conditions. For instance, simulation studies by Muthén and Asparouhov (2003) discussed piratical use of many latent interaction models based on different data types (e.g., continuous vs.~categorical) of latent and observed variables (Muthén et al., 2003). On the other hand, Hsiao et al. (2018) instead focused on comparing two latent interaction models across various reliability measures and reliability levels. Given the complexity of real data and substantive research (e.g., data type, data quality, study design, etc), it is important to choose the most appropriate method by considering the conditions where the method shows the most promising performance. By synthesizing outcomes from all the simulation studies, a systematic review can help in crafting nuanced recommendations that address diverse research contexts. For example, they can clarify how latent variable interactions should be handled in longitudinal studies versus cross-sectional studies, or in studies with continuous or categorical indicators. The work by Preacher et al. (2010) on multilevel mediation models highlights how simulation studies can provide insights into the interplay of complex model specifications in multilevel settings. Hence, a systematic review in latent interaction models is expected to evaluating robustness and limitations of current methods and provide a guideline for empirical researchers under complex situations.
+
+\hypertarget{method-and-procedure}{%
+\subsection{Method and Procedure}\label{method-and-procedure}}
+
+\hypertarget{data-source-and-extraction}{%
+\subsubsection{Data Source and Extraction}\label{data-source-and-extraction}}
+
+The systematic review will be conducted on published peer-reviewed literature on available electronic databases of psychology studies: PsycINFO, PubMed, EMBASE, and Scopus. Google Scholar will be used as a supplemental database to comprehensively search all relevant journal articles. The search strategy and key terms will be formatted as follows: (``latent'' OR ``structural equation modeling'') AND (``interaction'' OR ``moderat\(\text{*}\)'' OR ``nonlinear'') AND (``simulat\(\text{*}\)'' OR ``monte carlo''). The strings ``moderat\(\text{*}\)'' and ``simulat\(\text{*}\)'' should capture all conjugated words, such as ``moderation'', ``moderated'', ``simulation'', and ``simulating''. The above searching strings will be searched in tile, abstract, and keyword fields of journals in each database. In order to ensure that the finalist of searched journal articles is comprehensive, the reference lists of included articles will be searched as the last step. Besides, given that the history of latent interaction methods is not too long, articles published in all years should be relevant and included for synthesis.
+
+After the initial data collection, I will use a list of inclusion criteria to exclude articles that are not in the scope of current study. The included journal articles for the next reviewing stage must: (1) have conducted at least one computer-based simulation study to evaluate one latent interaction model; (2) have reported results of simulation study; (3) have written the article in English. Assume that irrelevant articles have been excluded, the rest of articles will be manually examined, evaluated, and coded using Excel. A data collection table will be generated to include all the journal articles as a supplemental material for the future paper, while a preferred reporting items for systematic reviews and meta-analysis (PRISMA; Page et al., 2021) flow chart that shows all the process of data collection will be included in the main paper. As the main author, I will conducted the literature search and finalize the included articles, and I plan to recruit a research assistant (RA) as a secondary coder and reviewer. We will independently review the articles, code the information into data, and construct the coding sheet. Then, all the discrepancies will be labeled by comparing two coding sheets and the discrepancy rate will be computed and reported. All the articles where discrepancies of data coding appear will then be reviewed again and discussed until mutual agreement is reached (i.e., discrepancy rate is 0\%).
+
+\hypertarget{data-analysis}{%
+\subsubsection{Data Analysis}\label{data-analysis}}
+
+The collected journal articles will be coded in an Excel sheet according to ADEMP structure. Below I will provide potential variables for each component of ADEMP.
+
+\hypertarget{aims}{%
+\paragraph{Aims}\label{aims}}
+
+Aims may include study purpose and objectives of simulation studies. Possible objectives may include: (1) Evaluate a newly proposed latent interaction method/model, (2) compare and contrast multiple latent interaction methods/models, (3) Evaluate methods of parameter estimation (e.g., ML), (4) examine latent interaction method/model for difficult variable processing (e.g., missing data), (5) others.
+
+\hypertarget{data-generating-mechanisms}{%
+\paragraph{Data-generating mechanisms}\label{data-generating-mechanisms}}
+
+Data-generating mechanism may include various models for generating population data. Regarding studies about latent interaction, most structural models are represented as multiple regression models, such as equation (2). Measurement models will depend on variable types. Possible models for continuous observed first-order indicators will include continuous confirmatory factor analysis (CFA) model, classical test theory (CTT) model, and others. For categorical variables, item response theory (IRT) model, Rasch model, and graded response model (GRM) may be used.
+
+Other factors of design may include: (1) Whether the study uses real data/empirical example to inform/guide the design of the simulation study, (2) whether specific equations are provided for the population data model, (3) justification of study design, (4) sample size, (5) reliability of first-order indicators, (6) factor loadings of first-order indicators, (7) number of category and threshold value for categorical first-order indicators, (8) correlation between latent predicting variables, (9) missing data conditions (e.g., missing not at a random, missing at random, missing completely at random), (10) normality conditions of latent variables, (11) normality conditions of observed indicators.
+
+\hypertarget{estimands-and-other-targets}{%
+\paragraph{Estimands and other targets}\label{estimands-and-other-targets}}
+
+First, possible estimates for latent interaction models will include: (1) point estimates of path coefficients (first-order effects and interaction effects), (2) standard errors of path coefficients, (3) model fit indexes, (4) mean and standard deviation of model fit indexes, (5) others.
+
+Second, various model parameters will be specified or constrained depending on specific methods included in the study. Possible assumptions may include: (1) Distributions of first-order observed indicators and PIs/SIs, (2) distributions for measurement error of first-order indicators, PIs/SIs, and indicators for latent endogenous variable being predicted, (3) constraints on factor loadings (freely estimated or constrained), (4) distribution of disturbance term in the structural model.
+
+\hypertarget{methods}{%
+\paragraph{Methods}\label{methods}}
+
+Possible methods for latent interaction may include but are not limited to what have been introduced in the previous sections, depending on specific methods.
+
+As for the structure of simulation experiments, possible parameters may include whether the study: (1) specified and reported starting seed, (2) collected and reported information on non-convergence, (3) reported number of replications for each replication condition, (4) provided justification of number of replications, (5) reported softwares used to performance the simulation study.
+
+\hypertarget{performance-measure}{%
+\paragraph{Performance measure}\label{performance-measure}}
+
+All the performance measures that appear in the collected simulation studies will be recorded and coded for descriptive analysis. Possible measures will include: (1) Bias and standardized bias, (2) (relative) standard error bias, (2) coverage rate, (3) root mean squared error (RMSE), (4) Type I error rate, (5) measure of statistical power, (6) others.
+
+\newpage
+
+\hypertarget{study-2-two-stage-path-analysis-with-interaction-for-categorical-observed-indicators}{%
+\section{Study 2: Two-Stage Path Analysis with Interaction for Categorical Observed Indicators}\label{study-2-two-stage-path-analysis-with-interaction-for-categorical-observed-indicators}}
+
+In educational and social psychology research, the utilization of ordered categorical data is prevalent due to its efficacy in capturing the complex and subjective nature of human experiences (Azen \& Walker, 2021). Among various tools employed to collect such data, questionnaires and surveys usually measured in Likert scales are frequently used due to their capacity to transform subjective opinions into quantifiable data and articulate responses in a sequential manner (Croasmun \& Ostrom, 2011). This methodological approach allows for a rigorous analysis of human attitudes, bridging the gap between qualitative experiences and quantitative assessments. For instance, participants might respond by indicating their level of agreement with statements like ``I feel confident in my abilities'' using categories ranging from ``Strongly Disagree'' to ``Strongly Agree'' (Norman, 2010). Similarly, clinical assessments often rely on ordered categories to gauge the severity of symptoms, behaviors, or conditions. Diagnostic frameworks categorize mental health disorders with specifiers such as ``mild,'' ``moderate,'' or ``severe'' (American Psychiatric Association, 2013), while other assessments might rate levels of distress or impairment across various life domains. Sometimes although continuous data is available for researchers, rough categorizations of continuous variables should be used to indicate several levels, such as ranges of income and levels of grades, for discovering patterns. Ettner (1996) divided participants' income into five quantiles ranging from lowest to largest and revealed a gradient relationship where health status tends to improve with each rising income quantile. Park et al. (2002) similarly divided ages into groups such as young adults (20-39), middle-aged adults (40-59), and older adults (60+), and investigated changes in memory function across different age groups. The examples demonstrate that ordered categories offer the flexibility to impose a degree of structure and order on the data that continuous variables cannot achieve.
+
+Interaction effects, wherein the effect of predictors depends on a third variable, are suggested to model within the latent variable framework due to its ability to account for measurement error. Most of latent interaction methods have been examined with non-normally distributed first-order indicators with continuous data. Cham et al. (2012a) compared the performance of estimating the interaction effect by constrained product indicator (CPI; Jöreskog \& Yang, 1996), matched-pair UPI (Marsh et al., 2004), GAPI (Generalized Appended Product Indicator; Wall \& Amemiya, 2001), and LMS (Latent Moderated Structural Equation; Klein \& moosbrugger, 2000), with various degrees of non-normality of first-order variables' observed indicators. Their results showed that GAPI and UPI generally were able to produce unbiased estimates of the latent interaction effect with acceptable Type I error rates when sample size is larger than 500, while CPI and LMS tended to yield biased estimates. The promising performance of matched-pair UPI echoed the stemming article by Marsh et al.~(2004) that matched-pair UPI had significant potential of generating unbiased estimates and demonstrating superior statistical properties in estimating latent interaction effects. For ordered categorical first-order indicators, Aytürk et al.~(2020) first studied UPI with four matching strategies and LMS on ordered categorical indicators across sample sizes, indicators' distributions, and category conditions. They found that the UPI method with parceling strategy and LMS were able to produce reasonably unbiased estimates when the first-order indicators were ordered categorical variables with symmetric distributions. However, under non-normally distributed categorical indicators, both methods tended to generate largely overestimated interaction effects with underestimated standard errors, elevated Type I error rates, and unacceptable coverage rates. Aytürk et al.~(2020) pointed out one explanation of inadequate performance was that both UPI and LMS assume that the first-order indicators of latent predictors have continuous and multivariate normal distributions. It implied that the two popular methods among current latent interaction models, to our knowledge, cannot show satisfactory performance for ordered categorical items with non-normal distribution.
+
+Unfortunately, researchers often encounter non-normal ordered categorical data in psychology research, which poses unique challenges for latent interaction analysis. Ordered categorical data often arise from survey responses, behavioral classifications, or diagnostic categories, where the data can take on a limited number of categories but do not follow a normal distribution (Agresti \& Kateri, 2011). This deviation from normality is especially common in assessments and questionnaires, where Likert scales and similar ordinal measures are used to capture attitudes, symptoms, or behaviors (Liddell \& Kruschke, 2018). For example, an impactful study examining responses of the Center for Epidemiologic Studies Depression Scale (CES-D; Radloff, 1977) within a Japanese national survey highlighted a common pattern among depressive symptom items, such that a distinctive intersection point was found between ``rarely'' and ``some of the time'' categories (Tomitaka et al., 2018). It demonstrated that the item responses of the CES-D scale were mostly heavily right-skewed with most responses at the left extreme category. In the field of psychology research, numerous scales with ordered categorical items, including but not limited to the CES-D, are popularly utilized. It is therefore important to explore reliable methods for modeling latent interaction effects within highly non-normal categorical data for observed first-order indicators.
+
+In the current study, I plan to replicate the results in Aytürk et al.~(2020), and compare the performance of two-stage path analysis with interaction (2S-PA-Int) with that of UPI (both matched-pair and parceling strategies; Marsh et al., 2004) and LMS-cat (LMS with categorical variable; Muthén \& Muthén, 2017) on estimating interaction effects with order categorical first-order indicators. The performance of 2S-PA-Int on continuous variables has been evaluated and it shows that 2S-PA-Int is able to generate unbiased estimates of the interaction effect with minimally biased standard error, low Type I error rate, acceptable coverage rate, and low RMSE values. Given its promising performance, I am motivated to continue to evaluate 2S-PA-Int with ordered-categorical variables in this study.
+
+Below, I will introduce the three methods with technical details, and briefly discuss tentative procedures of conducting a simulation study.
+
+\hypertarget{a-general-model-of-latent-interaction}{%
+\subsection{A General Model of Latent Interaction}\label{a-general-model-of-latent-interaction}}
+
+Kenny and Judd (1984) laid the groundwork for a structural model designed to estimate latent interaction effects, including two first-order latent predictors and their interaction term:
+\begin{equation}
+y = \alpha + \gamma_{x}\xi_{x} + \gamma_{m}\xi_{m} + \gamma_{xm}\xi_{x}\xi_{m} + \zeta.
+\end{equation}
+
+In the model, \(\alpha\) is the intercept, \(\xi_{x}\) and \(\xi_{m}\) are the first-order latent predictors with their product, \(\xi_{x}\xi_{m}\), defining the interaction effect. Notably, \(\xi_{x}\) and \(\xi_{m}\) can correlate. The disturbance term, \(\zeta\), follows a normal distribution \(\zeta \sim N(0, \psi)\), where \(\psi\) is its variance reflecting unexplained variance in the dependent variable. The coefficients \(\gamma_{x}\), \(\gamma_{m}\), and \(\gamma_{xm}\) quantify the effects of the predictors and their interaction on the dependent variable, which could be either observed or latent.
+
+The measurement model for the first-order latent predictors, such as \(\xi_{x}\), is framed within the confirmatory factor analysis (CFA) approach:
+\begin{equation}
+\mathbf{x} = \boldsymbol{\tau_{x}} + \boldsymbol{\lambda_{x}}\xi_{x} + \boldsymbol{\delta_{x}}.
+\end{equation}
+
+For each indicator \(i\) ranging from 1 to \(p\) associated with \(\xi_{x}\), \(\mathbf{x}\) represents a vector of observed indicators of dimensions \(p \times 1\). The vector \(\boldsymbol{\tau_{x}}\) consists of constant intercepts, \(\boldsymbol{\lambda_{x}}\) encompasses factor loadings, and \(\boldsymbol{\delta_{x}}\) includes measurement errors, all of dimension \(p \times 1\). Each error \(\delta_{x_{i}}\) follows a normal distribution with a mean of zero and a variance \(\theta_{x_{i}}\). Under the assumption of local independence, the error variance-covariance matrix, \(\mathbf{\Theta_{\delta_{x}}}\), is diagonal, containing variances \(\theta_{x_{1}}, \theta_{x_{2}}, ..., \theta_{x_{p}}\). The same measurement framework is applicable to \(\xi_{m}\).
+
+\hypertarget{unconstrained-product-indicator}{%
+\subsection{Unconstrained Product Indicator}\label{unconstrained-product-indicator}}
+
+The unconstrained product indicator (UPI) method operates by constructing product indicators from observed first-order indicators that relate to their corresponding latent constructs. Unlike the constrained approaches that impose nonlinear constraints on parameters related to the interaction term (Jöreskog \& Yang, 1996), the UPI method does not require those constraints and thus simplify the model specification. UPI facilitates the estimation of interaction effects between latent variables directly within any commercial SEM software (e.g., the \texttt{R} package \texttt{lavaan}), enhancing accessibility for applied researchers.
+
+The structural model of UPI is the same as equation (9). Suppose \(\xi_{x}\) is indicated by three items (i.e., \(x_{1}\) \textasciitilde{} \(x_{3}\)) and \(\xi_{m}\) is indicated by six items (i.e., \(m_{1}\) \textasciitilde{} \(m_{6}\)), the measurement models are presented as:
+\begin{align}
+    \begin{bmatrix}
+        x_{1} \\
+        x_{2} \\ 
+        x_{3}
+    \end{bmatrix} =
+    \begin{bmatrix}
+        \tau_{x_{1}} \\
+        \tau_{x_{2}} \\ 
+        \tau_{x_{3}}
+    \end{bmatrix} +
+    \begin{bmatrix}
+        \lambda_{x_{1}} \\
+        \lambda_{x_{2}} \\ 
+        \lambda_{x_{3}}
+    \end{bmatrix}
+    \begin{bmatrix}
+        \xi_{x} \\
+    \end{bmatrix} +
+    \begin{bmatrix}
+        \delta_{x_{1}} \\
+        \delta_{x_{2}} \\ 
+        \delta_{x_{3}}
+    \end{bmatrix},
+\end{align}
+
+\begin{align}
+    \begin{bmatrix}
+        m_{1} \\
+        m_{2} \\ 
+        m_{3} \\
+        m_{4} \\
+        m_{5} \\
+        m_{6} 
+    \end{bmatrix} =
+    \begin{bmatrix}
+        \tau_{m_{1}} \\
+        \tau_{m_{2}} \\ 
+        \tau_{m_{3}} \\
+        \tau_{m_{4}} \\
+        \tau_{m_{5}} \\
+        \tau_{m_{6}} 
+    \end{bmatrix} +
+    \begin{bmatrix}
+        \lambda_{m_{1}} \\
+        \lambda_{m_{2}} \\ 
+        \lambda_{m_{3}} \\
+        \lambda_{m_{4}} \\
+        \lambda_{m_{5}} \\
+        \lambda_{m_{6}} \\
+    \end{bmatrix}
+    \begin{bmatrix}
+        \xi_{m} \\
+    \end{bmatrix} +
+    \begin{bmatrix}
+        \delta_{m_{1}} \\
+        \delta_{m_{2}} \\ 
+        \delta_{m_{3}} \\
+        \delta_{m_{4}} \\
+        \delta_{m_{5}} \\
+        \delta_{m_{6}} \\
+    \end{bmatrix},
+\end{align}
+where \(\tau\)s are the intercepts, \(\lambda\)s are the factor loadings, and \(\delta\)s are the error terms. In this study, we will explore the performance of two UPI models with the matching (matched-pair UPI) and parceling (parceling UPI) strategies.
+
+\hypertarget{matched-pair-upi}{%
+\subsubsection{Matched-pair UPI}\label{matched-pair-upi}}
+
+The matching strategy involves selecting indicators from the first-order indicators of \(\xi_{x}\) and \(\xi_{m}\), and pairing them up to form PIs. If the numbers of first-order indicators of \(\xi_{x}\) and \(\xi_{m}\) are equal, all the indicators will be used; Otherwise, Wu et al. (2013) recommended to select first-order indicators in the order of reliability from the latent variable with more indicators and discard the rest of indicators. For example, suppose that the sequences of \(x_{1}\) \textasciitilde{} \(x_{3}\) and \(m_{1}\) \textasciitilde{} \(m_{6}\) are sorted decreasingly by their reliability (i.e., \(x_{1}\) has the highest reliability and \(x_{3}\) has the lowest for \(\xi_{x}\); \(m_{1}\) has the highest reliability and \(m_{6}\) has the lowest for \(\xi_{m}\)), the formed PIs for the interaction term will be \(x_{1}m_{1}\), \(x_{2}m_{2}\), \(x_{3}m_{3}\). The items \(m_{4}\) \textasciitilde{} \(m_{6}\) should be discarded due to low reliability. The reliability of any single indicator (e.g., \(m_{1}\)) is:
+\begin{equation}
+\frac{\lambda_{m_{1}}^2\sigma_{\xi_{m}}^2}{\lambda_{m_{1}}^2\sigma_{\xi_{m}}^2 + \theta_{m_{1}}},
+\end{equation}
+where \(\sigma_{\xi_{m}}^2\) is the variance of \(\xi_{m}\) and \(\theta_{m_{1}}\) is the error variance of \(m_{1}\) (Aytürk et al., 2020). Then, the model for matched-pair UPI will be represented as:
+
+\begin{align}
+    \begin{bmatrix}
+        x_{1}m_{1} \\
+        x_{2}m_{2} \\
+        x_{3}m_{3}
+    \end{bmatrix} =
+    \begin{bmatrix}
+        \tau_{x_{1}m_{1}} \\
+        \tau_{x_{2}m_{2}} \\ 
+        \tau_{x_{3}m_{3}}
+    \end{bmatrix} + 
+    \begin{bmatrix}
+        \lambda_{x_{1}m_{1}} \\
+        \lambda_{x_{2}m_{2}} \\ 
+        \lambda_{x_{3}m_{3}} 
+    \end{bmatrix}
+    \begin{bmatrix}
+        \xi_{x}\xi_{m} \\
+    \end{bmatrix} +
+    \begin{bmatrix}
+        \delta_{x_{1}m_{1}} \\
+        \delta_{x_{2}m_{2}} \\ 
+        \delta_{x_{3}m_{3}}
+    \end{bmatrix}.
+\end{align}
+
+Due to the nature of discrete data for first-order indicators, the indicators do not follow multivariate normal assumptions and their error variances are not homogeneous. However, UPI is robust to violations of multivariate normal distributions of the first-order latent variables, the disturbance term, and the measurement errors of first-order indicators, since these parameters are freely estimated in UPI. The mean of the latent interaction term is equal to the covariance between the first-order latent variables (i.e., \(E[\xi_{x}\xi_{m}] = Corr[\xi_{x}, \xi_{m}]\) where \(Corr[\cdot]\) is the correlation term; Jöreskog \& Yang, 1996). Although UPI is theoretically less statistically powerful than CPI in the condition of non-normal first-order indicators, Marsh et al.~(2004) showed that the performance of UPI on simulated non-normal data was acceptable with unbiased estimates of interaction effects and reasonable standard errors.
+
+\hypertarget{parceling-upi}{%
+\subsubsection{Parceling UPI}\label{parceling-upi}}
+
+According to the original idea of Wu et al. (2013), another strategy of dealing with unequal numbers of first-order indicators is to take average of two or more indicators from the same source latent construct and form parcels. The number of parcels will be equal to the number of indicators from the latent variable with fewer indicators. Parcels can be formed based on considerations such as thematic consistency among indicators, item-to-total correlations, or factor loadings. In this study, we follow the factorial algorithm (Rogers \& Schmitt, 2004) in the study design of Aytürk et al.~(2020) by taking the average of the indicators with the highest and lowest reliability until all indicators have been used for parceling. In the example of \(m_{1}\) \textasciitilde{} \(m_{6}\), three parcels will be created to match three items of \(\xi_{x}\) and the measurement model will be represented as:
+\begin{align}
+    \begin{bmatrix}
+        p_{m_{1}m_{6}} \\
+        p_{m_{2}m_{5}} \\ 
+        p_{m_{3}m_{4}}
+    \end{bmatrix} =
+    \begin{bmatrix}
+        \tau_{p_{m_{1}m_{6}}} \\
+        \tau_{p_{m_{2}m_{5}}} \\ 
+        \tau_{p_{m_{3}m_{4}}}
+    \end{bmatrix} +
+    \begin{bmatrix}
+        \lambda_{p_{m_{1}m_{6}}} \\
+        \lambda_{p_{m_{2}m_{5}}} \\ 
+        \lambda_{p_{m_{3}m_{4}}}
+    \end{bmatrix}
+    \begin{bmatrix}
+        \xi_{x}\xi_{m} \\
+    \end{bmatrix} +
+    \begin{bmatrix}
+        \delta_{p_{m_{1}m_{6}}} \\
+        \delta_{p_{m_{2}m_{5}}} \\ 
+        \delta_{p_{m_{3}m_{4}}}
+    \end{bmatrix},
+\end{align}
+where \(p_{m_{1}m_{6}}\), \(p_{m_{2}m_{5}}\), \(p_{m_{3}m_{4}}\) are three formed parcels according to the factorial algorithm, in which \(m_{1}\) has the highest reliability and \(m_{6}\) has the lowest reliability, \(m_{2}\) has the second highest reliability and \(m_{5}\) has the second lowest reliability, and \(m_{3}\) has the third highest reliability and \(m_{4}\) has the third lowest reliability. Then, the parcels are matched to the indicators of another first-order latent variable according to the order of reliability. For instance, \(p_{m_{1}m_{6}}\) will be matched to \(x_{1}\), and so on. The model is represented as:
+\begin{align}
+    \begin{bmatrix}
+        x_{1}p_{m_{1}m_{6}} \\
+        x_{2}p_{m_{2}m_{5}} \\ 
+        x_{3}p_{m_{3}m_{4}}
+    \end{bmatrix} =
+    \begin{bmatrix}
+        \tau_{x_{1}p_{m_{1}m_{6}}} \\
+        \tau_{x_{2}p_{m_{2}m_{5}}} \\ 
+        \tau_{x_{3}p_{m_{3}m_{4}}}
+    \end{bmatrix} +
+    \begin{bmatrix}
+        \lambda_{x_{1}p_{m_{1}m_{6}}} \\
+        \lambda_{x_{2}p_{m_{2}m_{5}}} \\ 
+        \lambda_{x_{3}p_{m_{3}m_{4}}}
+    \end{bmatrix}
+    \begin{bmatrix}
+        \xi_{x}\xi_{m} \\
+    \end{bmatrix} +
+    \begin{bmatrix}
+        \delta_{x_{1}p_{m_{1}m_{6}}} \\
+        \delta_{x_{2}p_{m_{2}m_{5}}} \\ 
+        \delta_{x_{3}p_{m_{3}m_{4}}}
+    \end{bmatrix},
+\end{align}
+
+For UPI with matching and parceling strategies, the first-order indicators will be simulated as continuous variables and standardized. Additionally, they will be mean-centered before forming PIs to enhance model convergence rates and reduce model complexity (Marsh et al., 2004). Alternatively speaking, the formed PIs are treated and estimated as continuous variables, which are liberal to multivariate normal distributions (Cham et al., 2012)
+
+\hypertarget{latent-moderated-structural-equation}{%
+\subsection{Latent Moderated Structural Equation}\label{latent-moderated-structural-equation}}
+
+The LMS method, developed by Klein and Moosbrugger (2000), introduces a generalized interaction model that directly models the interaction effect using maximum likelihood estimation (ML) with the Expectation-Maximization (EM) algorithm. LMS does not form PIs for the interaction term and hence largely reduces model complexity for specification. The measurement models for the first-order latent variables are the same as those of UPI as demonstrated in equations (11) \textasciitilde{} (12).
+
+LMS estimates the interaction effect by analyzing distributions of first-order indicators. LMS uses the Cholesky decomposition method to decompose the \(p \times 1\) vector of latent variables, \(\mathbf{\xi}\), into a \(p \times p\) lower triangular matrix \(\mathbf{A}\) and a \(p \times 1\) vector \(\mathbf{z}\) of independently distributed variables with standard normal distributions, as \(p\) is the number of first-order latent predictors. Using the example of \(\xi_{x}\) and \(\xi_{m}\)
+\begin{equation}
+\mathbf{\xi} = \mathbf{A}\mathbf{z},
+\end{equation}
+where
+\begin{align}
+  \mathbf{\xi} =   
+    \begin{pmatrix}
+        \xi_{x} \\
+        \xi_{m}
+      \end{pmatrix},
+\end{align}
+\begin{align}
+  \mathbf{A} =   
+    \begin{pmatrix}
+        a_{xx} & 0 \\
+        a_{xm} & a_{mm}
+      \end{pmatrix},
+\end{align}
+and
+\begin{align}
+  \mathbf{z} =   
+    \begin{pmatrix}
+        z_{x} \\
+        z_{m}
+      \end{pmatrix}.
+\end{align}
+
+The decomposition of \(\xi\) variables into independent \(z\) variables is integral to LMS as it addresses the non-normal distribution of the interaction effect. The structural equation of LMS, adapted from equation (9), is:
+\begin{equation}
+y = \alpha + \mathbf{\Gamma}\mathbf{\xi} + \mathbf{\xi}^T\mathbf{\Omega}\mathbf{\xi} + \zeta,
+\end{equation}
+where \(\mathbf{\Gamma}\) is a \((1 \times p)\) vector of first-order path coefficients of \(\mathbf{\xi}\), and \(\mathbf{\Omega}\) is a \((p \times p)\) upper-diagnol matrix of the interaction effects' coefficients. In the example of \(\mathbf{\xi} = (\xi_{x}, \ \xi_{m})^T\) (\(T\) represents transpose), the expanded structural equation can be shown as:
+\begin{align}
+    y &= \alpha + (\gamma_{x} \ \gamma_{m})
+        \begin{pmatrix}
+          \xi_{x} \\           
+          \xi_{m}
+        \end{pmatrix} +
+        (\xi_{x} \ \xi_{m})
+        \begin{pmatrix}
+          0 & \gamma_{xm} \\           
+          0 & 0
+        \end{pmatrix}
+        \begin{pmatrix}
+          \xi_{x} \\           
+          \xi_{m}
+        \end{pmatrix} + 
+    \zeta.
+  \end{align}
+
+By substituting the \(\mathbf{\xi}\) vector into the structural model of LMS, the structrual model can be further expanded to:
+\begin{align}
+\eta &= \gamma_0 + \mathbf{\Gamma} \mathbf{A} \mathbf{z} + \mathbf{z}^{\text{T}} \mathbf{A}^{\text{T}} \mathbf{\Omega} \mathbf{A} \mathbf{z} + \zeta \nonumber \\
+     &= \gamma_0 + \mathbf{\Gamma} \mathbf{A} 
+\begin{pmatrix}
+     z_{1} \\
+     0
+\end{pmatrix}
++ \mathbf{\Gamma} \mathbf{A}
+\begin{pmatrix}
+     0 \\
+     z_{2}
+\end{pmatrix}
++ 
+\begin{pmatrix}
+     z_{1} \\
+     0
+\end{pmatrix}^{\text{T}}
+\mathbf{A}^{\text{T}} \mathbf{\Omega} \mathbf{A}
+\begin{pmatrix}
+     z_{1} \\
+     0
+\end{pmatrix}
++ 
+\begin{pmatrix}
+     z_{1} \\
+     0
+\end{pmatrix}^{\text{T}}
+\mathbf{A}^{\text{T}} \mathbf{\Omega} \mathbf{A}
+\begin{pmatrix}
+     0 \\
+     z_{2}
+\end{pmatrix}
++
+\zeta \nonumber \\
+     &= 
+\begin{pmatrix}
+\gamma_0 + \mathbf{\Gamma} \mathbf{A} 
+\begin{pmatrix}
+     z_{1} \\
+     0
+\end{pmatrix}
++
+\begin{pmatrix}
+     z_{1} \\
+     0
+\end{pmatrix}^{\text{T}}
+\mathbf{A}^{\text{T}} \mathbf{\Omega} \mathbf{A}
+\begin{pmatrix}
+     z_{1} \\
+     0
+\end{pmatrix}
+\end{pmatrix}
++
+\begin{pmatrix}
+\mathbf{\Gamma}\mathbf{A} + 
+\begin{pmatrix}
+     z_{1} \\
+     0
+\end{pmatrix}^{\text{T}}
+\mathbf{A}^{\text{T}} \mathbf{\Omega} \mathbf{A}
+\end{pmatrix}
+\begin{pmatrix}
+     0 \\
+     z_{2}
+\end{pmatrix}
++ \zeta,
+\end{align}
+wherein the interaction effect demonstrates that the dependent measure \(\eta\) is linearly related to \(z_{2}\) but non-linearly related to \(z_{1}\), and hence \(\eta\) is not normally distributed. LMS then estimates the model by finding the maximum likelihood solution of the mixture distribution of the first-order indicators and \(\eta\) using the EM algorithm with numerical integration (Klein \& Moosbrugger, 2000).
+
+The assumptions of LMS in Klein and Moosbrugger's work include: (1) the first-order indicators are multivariate normal; (2) The errors of first-order indicators are normally and independently distributed with means of 0 (which is violated for order categorical items); (3) The disturbance term (i.e., \(\zeta\)) in the structural equation is normally distributed with a mean of 0, and independent of latent variables and The errors of first-order indicators. Since LMS is estimated using maximum likelihood method that is based on normal distribution, it has been reported that LMS could generate biased estimates of the interaction effect when the first-order items did not follow normal distributions, for either continuous or ordered categorical indicators (Cham et al., 2012a; Cheung et al., 2021; Cheung \& Lau, 2017; \emph{Latent {variable interactions with ordered-categorical indicators}}, n.d.; Marsh et al., 2004; Maslowsky et al., 2015). Aytürk et al. (2021) have shown that LMS with categorical variables in \texttt{Mplus} is able to generate unbiased estimates for both first-order and interaction effects across sample size, interaction effect size, missing data conditions, and numbers of item response category, but could produce highly biased measurement parameters such as factor loadings and item category thresholds.
+
+\hypertarget{two-stage-path-analysis-with-interaction}{%
+\subsection{Two-Stage Path Analysis with Interaction}\label{two-stage-path-analysis-with-interaction}}
+
+The two-stage path analysis with interaction (2S-PA-Int) model is extended based on the 2S-PA model proposed by Lai and Hsiao (2022). By separating the estimation of measurement and structural models, 2S-PA simplifies model specification with reduced convergence issue while accounting for measurement errors in observed first-order indicators. At the first stage, factor scores are estimated from a measurement model within the confirmatory factor analysis framework, and the corresponding measurement errors are obtained as the error constraints. Then the factor scores serve as single indicators (SIs) to indicate their respective latent constructs, and the impact of latent exogenous variables on endogenous variables can be estimated as path coefficients. The standard errors of measurement for each factor scores should be used as error variance constraints in the model specification. Similar to UPI, 2S-PA is also a product indicator method in which the product of two latent variables' factor scores is the single indicator (SI) of the latent interaction effect.
+
+Using the example of \(\xi_{x}\) and \(\xi_{m}\) , the factor scores will be obtained from equations (11) and (12). Then the factor scores are SIs of their corresponding latent variables:
+\begin{align}
+    \begin{bmatrix}
+        \tilde{x}_{j} \\ 
+        \tilde{m}_{j} \\
+        \widetilde{xm}_{j} 
+    \end{bmatrix} = 
+    \begin{bmatrix}
+        \tau_{\tilde{x}_{j}} \\
+        \tau_{\tilde{m}_{j}} \\ 
+        \tau_{\widetilde{xm}_{j}}
+    \end{bmatrix} + 
+    \begin{bmatrix}
+        \lambda_{\tilde{x}_{j}} & 0 & 0 \\
+        0 & \lambda_{\tilde{m}_{j}} & 0 \\ 
+        0 & 0 & \lambda_{\widetilde{xm}_{j}} 
+    \end{bmatrix} 
+    \begin{bmatrix}
+        \xi_{x_{j}} \\  
+        \xi_{m_{j}} \\
+        \xi_{x_{j}}\xi_{m_{j}}
+    \end{bmatrix} +
+    \begin{bmatrix}
+        \delta_{\tilde{x}_{j}} \\
+        \delta_{\tilde{m}_{j}} \\ 
+        \delta_{\widetilde{xm}_{j}}
+    \end{bmatrix},
+\end{align}
+where for each observation \(j\) from \(j = 1, 2, ..., n\), \(\tilde{x}_{j}\), \(\tilde{m}_{j}\) are factor scores that are SIs of \(\xi_{x}\) and \(\xi_{m}\). The PI \(\widetilde{xm}_{j}\) is the SI of the latent interaction term created by multiplying the SIs of \(\xi_{x}\) and \(\xi_{m}\). The structural model of 2S-PA-Int is the same as equation (9).
+
+Researchers can use multiple ways to calculate factor scores. According to the study 1 in Lai and Hsiao (2022), a one-factor confirmatory factor (CFA) model can be fitted to ordered categorical items using maximum likelihood estimation to obtain factor scores. Alternatively, researchers can use a unidimensional item response model with the expected-a-posterior (EAP) method for binary or multiple categorical items instead.
+
+The 2S-PA-Int method has the potential to account for non-normal categorical variables due to its ability to model observation-specific standard errors of factor scores. Take the factor score \(\tilde{x}_{j}\) as an example, it is assumed that its error term follows a normal distribution \(\delta_{\tilde{x}_{j}} \ \sim \ N(0, \ \theta_{\tilde{x}_{j}})\) where \(\theta_{\tilde{x}_{j}}\) is the estimated error variance. For continuous variables, 2S-PA is similar to the conventional structural equation modeling (SEM) approach where model parameters (like factor loadings, path coefficients, and measurement error variances) are assumed to be constant across the sample. The assumption of parameter constancy leads to a single likelihood function that is used to estimate the model parameters for all observations and simplifies the model estimation process. However, it may not always be appropriate especially in complex datasets where heterogeneity among individuals is expected. For ordered categorical data, the measurement error cannot be assumed to be constant across observations because the relationship between the observed categories and the underlying latent variables they are intended to measure is not linear, and the precision of measurement can vary across the spectrum of the latent trait. For example, in a 5-point Likert scale measuring agreement, the difference between ``strongly agree'' and ``agree'' might not represent the same magnitude of change in the underlying attitude as the difference between ``neutral'' and ``agree.'' In the case of ordered categorical variables, 2S-PA uses definition variables to fixed specific values that may vary across individuals or groups since the variance of the measurement error can vary across observations' levels of underlying latent construct, and the likelihood function depends on the observation-specific standard error of measurement.
+
+Since latent variables do not have meaningful units in nature, it is suggested to scale the variance of latent variables to unit when fitting the measurement model (i.e., \(\sigma_{\xi_{x}}^2 \ = \ 1\). In the example that factor scores using the EAP method from item response models, let \(\hat{\sigma}_{\tilde{x}_{j}}\) be the estimates standard error of \(\tilde{x}_{j}\) for the individual \(j\). The estimated variance of the true score, also the estimated observation-specific reliability, can be computed as \(\hat{\rho}_{\tilde{x}_{j}} = \sigma_{\xi_{x}}^2 \ - \ \hat{\sigma}_{\tilde{x}_{j}}^2 = 1 \ - \ \hat{\sigma}_{\tilde{x}_{j}}^2\), where \(\hat{\rho}_{\tilde{x}_{j}}\) represents the reliability. This reliability is used as a constraint on the factor loading of \(\tilde{x}_{j}\) (i.e., \(\lambda_{\tilde{x}_{j}} = \hat{\rho}_{\tilde{x}_{j}} = 1 \ - \ \hat{\sigma}_{\tilde{x}_{j}}^2\)), and the error variance constraint is set as \(\theta_{\tilde{x}_{j}} = \hat{\sigma}_{\tilde{x}_{j}}^2\hat{\rho}_{\tilde{x}_{j}} = \hat{\sigma}_{\tilde{x}_{j}}^2(1 \ - \ \hat{\sigma}_{\tilde{x}_{j}}^2)\) accordingly. The parameter constraints for the factor score of \(\xi_{m}\) can be obtained in the similar way. Assuming that the error variance of \(\xi_{m}\) has been calculated as \(\theta_{\tilde{m}_{j}}\), the error variance constraint for the PI of the interaction term can be calculated as the equation (6) \textasciitilde{} (8) in Hsiao et al.~(2018):
+\begin{equation}
+\theta_{\widetilde{xm}_{j}} =  \hat{\rho}_{\tilde{x}_{j}}^2\theta_{\tilde{m}_{j}} +
+                        \hat{\rho}_{\tilde{m}_{j}}^2\theta_{\tilde{x}_{j}} +
+                        \theta_{\tilde{m}_{j}}\theta_{\tilde{x}_{j}}. 
+\end{equation}
+
+\hypertarget{method-and-simulation-design}{%
+\subsection{Method and Simulation Design}\label{method-and-simulation-design}}
+
+Based on the study design of Aytürk et al.~(2020) and Hsiao et al. (2021), I intend to compare the performance of UPI with two strategies of forming PIs, LMS for categorical items, and 2S-PA-Int, on estimating latent interaction effects. The observed first-order indicators (e.g., \(x_{ij}\)) will be generated from a graded response model (Samejima, 1969) with differential factor loadings:
+\begin{equation}
+x_{ij}^* = \lambda_{x_{i}}\xi_{x_{j}} + \delta_{x_{ij}},
+\end{equation}
+where \(x_{ij}^*\) is the score of underlying latent continuous variable for each observed categorical item \(i\). \(\delta_{x_{ij}}\) is the individual-specific error term for each observed indicator \(i\) and follows standard logistic distribution, assuming the item factor model is estimated with a cumulative logit link (Wirth \& Edwards, 2007). Given \(x_{ij}^*\), the observed categorical item \(x_{ij}\) can be created with multiple categories with ordinal categories:
+\begin{equation}
+  x_{ij} =
+    \begin{cases}
+      0 & \text{if $x_{ij}^* < \beta_{x_{i1}}$}\\
+      k & \text{if $\beta_{x_{ik}} \le x_{ij}^* < \beta_{x_{i(k + 1)}}$}\\
+      K - 1 & \text{if $\beta_{x_{i(K - 1)}} \le x_{ij}^*$}
+    \end{cases},      
+\end{equation}
+where \(\beta_{ik}\) is the threshold parameter between the \(k\)th and \((k + 1)\)th category for \(k = 1, 2,...,K\). The framework for observed categorical items of \(\xi_{m_{j}}\) is similar to \(\xi_{x_{j}}\).
+
+I will use \texttt{R\ 4.3.2} (R Core Team, 2022) to conduct the simulation studies in this project. To simulate the population dataset, the first-order latent variables \(\xi_{x_{j}}\) and \(\xi_{m_{j}}\) will be first simulated with standard normal distributions (i.e., \(N[0, \ 1]\)). The population structural model is the same as the equation (9), where the path coefficients are set to fixed values (i.e., \(\gamma_{x} = 0.3\), \(\gamma_{m} = 0.3\) and \(\gamma_{xm} = 0.3\)). The disturbance term \(\zeta\) will be simulated with normal distribution and a mean of 0. When the correlation between \(\xi_{x_{j}}\) and \(\xi_{m_{j}}\) is 0, the variance of disturbance (i.e., \(\psi\)) will be 0.73. The interaction term will be computed as the product of \(\xi_{x_{j}}\) and \(\xi_{m_{j}}\), and the exogenous variable \(y\) will be simulated with a distribution of \(N(0, \ \psi)\).
+
+Next, the observed ordered categorical indicators will be generated according to the equations (26) \textasciitilde{} (27). Three items will be simulated for \(\xi_{x_{j}}\) (i.e., \(x_{1j}\) \textasciitilde{} \(x_{3j}\)) and 12 items for \(\xi_{m_{j}}\) (i.e., \(m_{1j}\) \textasciitilde{} \(m_{12j}\)). Regarding factor loadings, I plan to adapt the design in Aytürk et al.~(2020) in which the unstandardized factor loadings are decreasing in magnitude with equally-spaced intervals across indicators. Specifically, the factor loadings for \(x_{1j}\) \textasciitilde{} \(x_{3j}\) are set to (.60, .70, .80), and those for \(m_{1j}\) \textasciitilde{} \(m_{12j}\) are set to (.30, .35, .40, .45, .50, .55, .60, .65, .70, .75, .80, .85). The reliability measure for categorical indicators can be computed using Green and Yang (2009) alternative reliability estimate, \(\omega_{cat}\), for unidimensional categorical items. Flora (2020) presented the way of computing \(\omega_{cat}\) using the function \texttt{reliability} from the R package \texttt{semTools} (Jorgensen et al., 2022), and the output of estimate \texttt{omega} and \texttt{omega2} is based on Green and Yang (2009) method. Hence, the scale internal consistency can be obtained using \texttt{reliability} function.
+
+To better approximate the real substantive study, \(x_{1j}\) \textasciitilde{} \(x_{3j}\) will be simulated with 2 categories (i.e., \(K = 2\)), which means that they are binary indicators, and \(m_{1j}\) \textasciitilde{} \(m_{12j}\) will be simulated with 5 categories (i.e., \(K = 4\)), which means that they are indicators with multiple categories. In the case of symmetric distribution, the thresholds for \(x_{1j}\) \textasciitilde{} \(x_{3j}\) will be set to 0 so that the success probability of indicators is .5, calculated by the R function \texttt{plogis}. For \(m_{1j}\) \textasciitilde{} \(m_{12j}\), \(k\)s are simulated for symmetric distribution and skewed distribution.
+the threshold values will be centered around 0. Specifically, \(\mathbf{\beta_{m_{1}}}\) is a threshold vector of (-1.5, -.5, .5, 1.5) across indicators. For the skewed condition, the thresholds for \(x_{1j}\) \textasciitilde{} \(x_{3j}\) will be set to -2.2 and the success probability of indicators is .9; the threshold vector for \(m_{1j}\) \textasciitilde{} \(m_{12j}\) is set to (.05, .75, 1.55, 2.55) across indicators and the distributions of simulated observed indicators are apparently right-skewed.
+
+The final dataset should be composed of 15 observed indicators of \(\xi_{x_{j}}\) and \(\xi_{m_{j}}\), and one exogenous observed variable \(y_{j}\) predicted by \(\xi_{x}\), \(\xi_{m}\), and the interaction term \(\xi_{x_{j}}\xi_{m_{j}}\). Note that for UPI and LMS, the subscript \(j\) can be removed because they assume the same likelihood function for each observation.
+
+The 2S-PA-Int method will be implemented by user-defined function based on the R package \texttt{lavaan} (Rosseel, 2012) and \texttt{OpenMx} (Boker et al., 2023), and estimated using maximum likelihood (\texttt{ML}). The factor scores using the EAP method can be calculated using the function \texttt{fscores} with the argument \texttt{full.scores.SE\ =\ TRUE} from the \texttt{mirt} package (Chalmers, 2012). The UPI method will be implemented using the function \texttt{IndProd} in the R package \texttt{semTools}, and the \texttt{sem} function in \texttt{lavaan}. The UPI models will be estimated using maximum likelihood with robust standard error (\texttt{MLR}). Since there is not a reliable R package for LMS, the LMS model will be estimated in \texttt{Mplus} (Muthén \& Muthén, 1998-2024) using the Gauss-Hermite quadrature integration algorithm with 16 integration points. The robust standard errors will be used as well.
+
+To investigate Type I error rate of latent interaction effect, a condition of \(\gamma_{xm} = 0\) will be added in the study design to compare with \(\gamma_{xm} = 0.3\). The latent variables \(\xi_{x}\) and \(\xi_{m}\) are assumed to follow standard normal distributions (i.e., \(N \sim [0,1]\)) and they are allowed to correlate with three levels of correlation (i.e., \(Corr[\xi_{x}, \xi_{m}] = 0, \ 0.3, \ 0.6\)). Three sample size conditions (i.e., 100, 250, and 500) will be included in the study design to examine the impact of sample size on the estimation of latent interaction effect across methods, according to the study design of Hsiao et al.~(2021). Besides, past studies have examined the impact of reliability of observed indicators, I plan to manipulate the reliability of underlying continuous indicators (i.e., \(x_{ij}^*\)) with three levels: 0.7, 0.8, and 0.9. According to the equation (13) of composite reliability, and given that the factor loadings are fixed values, I can adjust the error variances of each observed continuous indicator before categorizing them. Suppose the items \(x_{1j}\) \textasciitilde{} \(x_{3j}\) are manipulated to have a reliability of 0.7, the sum of error variances will be 1.89. To achieve congeneric items, the distribution of error variance proportions will be 44\%, 33\%, and 23\%, and the specific error variances of \(x_{1j}\) \textasciitilde{} \(x_{3j}\) will be 0.83, 0.62, and 0.44. For \(m_{1j}\) \textasciitilde{} \(m_{12j}\), the distribution of error variance proportions can be 5\%, 3\%, 12\%, 6\%, 10\%, 2\%, 15\%, 9\%, 8\%, 11\%, 7\%, 12\%.
+
+In summary, the tentative study design will be a \(2 \times 2 \times 3 \times 3\) study with two effect sizes of the interaction effect, two distributions of indicators, three sample sizes, and three reliability levels between the latent predictor and the latent moderator. The Monte Carlo Simulation will be structured and conducted using the R package \texttt{SimDesign} (Chalmers \& Adkins, 2020), and the tentative number of replication will be 2,000 for each condition. Across all the models, the standardized point estimate of the interaction effect (i.e., \(\hat{\gamma}_{xm}\)) with standard error (i.e., \(\hat{SE}[\hat{\gamma}_{xm}]\)) will be compared.
+
+\hypertarget{evaluation-criteria}{%
+\subsection{Evaluation Criteria}\label{evaluation-criteria}}
+
+For each method, I will compute convergence rate, standardized bias, relative standard error (SE) bias, root mean squared error (RMSE), empirical Type I error, and empirical statistical power, and compare these indices to examine the performance of each method on estimating latent interaction effect.
+
+\hypertarget{convergence-rate}{%
+\subsubsection{Convergence Rate}\label{convergence-rate}}
+
+For each replication, the program may or may not produce an error, such as non positive definite variance-variance matrix or negative variance estimates, depending on the random simulated sample. The convergence rate will be calculated as the proportion of replications that do not generate any error messages out of all replications.
+Sometimes extreme parameter values and standard errors will appear especially in small sample size (i.e., \(N \ = \ 100\)) even though no error messages are generated, and robust versions of bias, relative SE bias, and RMSE values will be used.
+
+\hypertarget{standardized-bias}{%
+\subsubsection{Standardized Bias}\label{standardized-bias}}
+
+The standardized bias will be used to evaluate how far an estimate is from its true value in standard error units. It is defined using the raw bias and standard error of a point estimate:
+
+\begin{equation}
+B(\gamma_{xm}) = R^{-1}\Sigma^{R}_{r = 1}(\hat{\gamma}_{xm_{r}} - \gamma_{xm}),
+\end{equation}
+
+\begin{equation}
+SB = \frac{B(\gamma_{xm})}{SE_{\gamma_{xm}}},
+\end{equation}
+where R will be the total number of replications for \(r\) = 1, 2, \ldots, 2,000. \(\hat{\gamma}_{xm_{r}}\) is the estimated interaction effect in each replication \(r\) and \(\gamma_{xm}\) is the population parameter set at 0.3. \(B(\hat{\gamma}_{xm})\) is the averaged deviation \(\hat{\gamma}_{xm}\) from the population parameter, and \(SE_{\hat{\gamma}_{xm}}\) is the empirical standard error of \(\hat{\gamma}_{xm}\) across replications. An absolute value of \(SB \le 0.40\) will be considered acceptable for each replication condition (Collins et al., 2001).
+
+\hypertarget{robust-relative-standard-error-se-bias}{%
+\subsubsection{Robust Relative Standard Error (SE) Bias}\label{robust-relative-standard-error-se-bias}}
+
+The robust relative SE bias will be computed as:
+\begin{equation}
+Robust\ Relative\ SE\ Bias = \frac{MDN(\widehat{SE_{r}}) - MAD}{MAD},
+\end{equation}
+where \(MDN\) will be the median of the estimated SE values and \(MAD\) will be the empirical median-absolute-deviation of SE values. An absolute value of robust relative SE bias within 10\% range will be considered acceptable (HOOGLAND \& BOOMSMA, 1998).
+
+\hypertarget{root-mean-squared-erorr-rmse}{%
+\subsubsection{Root Mean Squared Erorr (RMSE)}\label{root-mean-squared-erorr-rmse}}
+
+The RMSE is defined as the squared root of the sum of squared bias:
+\begin{equation}
+RMSE = \sqrt{R^{-1}\Sigma^{R}_{r = 1}(\hat{\gamma}_{xm_{r}} - \gamma_{xm})^2}.
+\end{equation}
+RMSE measures the average difference between calculated interaction estimates and their true value, which can account for both bias, the systematic deviation from the true value, and variability, the spread of estimates across replications. In a 2,000 replication simulation, lower RMSE indicates greater accuracy in estimating \(\hat{\gamma}_{xm}\). RMSE provides the most informative comparison across methodologies when key factors, including sample size, model complexity, and disturbance level, are held constant in the simulation.
+
+\hypertarget{empirical-type-i-error-and-statistical-power}{%
+\subsubsection{Empirical Type I Error and Statistical Power}\label{empirical-type-i-error-and-statistical-power}}
+
+The empirical Type I error rate will be computed as the proportion of replications in which the Wald test rejects the true null hypothesis \(H_{0}: \ \gamma_{xm} \ = \ 0\) at the significance level \(\alpha \ = \ .05\) for the condition \(\hat{\gamma}_{xm} \ = \ 0\). The empirical power will be computed similarly for the condition \(\gamma_{xm} \ \neq \ 0\).
+
+\newpage
+
+\hypertarget{study-3-two-stage-path-analysis-with-corrected-standard-error}{%
+\section{Study 3: Two-Stage Path Analysis with Corrected Standard Error}\label{study-3-two-stage-path-analysis-with-corrected-standard-error}}
+
+The two-stage path analysis (2S-PA) approach, as a review, separates the model specification and estimation into two steps (Lai \& Hsiao, 2022). At the first stage, factor scores are obtained using any appropriate psychometric methods across observations, and the corresponding estimated standard errors of measurement are computed for each observation. Different types of factor scores can be used at the first stage, such as expected-a-posterior (EAP) scores, regression scores, and composite scores. At the second stage, the factor scores from the first stage are analyzed in a path model while incorporating the measurement error to correct for biases. Below I will review the statistical model of 2S-PA with two types of factor scores.
+
+Assume that \(\tilde{x}_{j}\) and \(\tilde{m}_{j}\) are estimated factor scores obtained in stage 1 for observation \(j\) from two sets of observed indicators \(x_{1j}\) \textasciitilde{} \(x_{3j}\) and \(m_{1j}\) \textasciitilde{} \(m_{3j}\). At stage 2, the structural is composed of two parts:
+
+\begin{equation}
+    \begin{cases}
+      \boldsymbol{\tilde{\xi}_{j}} = \boldsymbol{\Lambda_{j}}^\text{*}\boldsymbol{\xi_{j}} + \boldsymbol{\varepsilon_{j}}^\text{*} \\
+      \boldsymbol{\xi_{j}} = \boldsymbol{\alpha} + \boldsymbol{\Gamma}\boldsymbol{\xi_{j}} + \boldsymbol{\zeta_{j}}, 
+    \end{cases}       
+\end{equation}
+where \(\boldsymbol{\tilde{\xi}_{j}}\) is a \(q \times 1\) vector of factor scores (i.e., \(\boldsymbol{\tilde{\xi}_{j}} \ = \ [\tilde{x}_{j}, \ \tilde{m}_{j}]^T\)), and \(\boldsymbol{\xi_{j}}\) is the corresponding \(q \times 1\) vector of latent constructs indicated by their factor scores for each observation. \(\boldsymbol{\Lambda_{j}}^\text{*}\) and \(\boldsymbol{\varepsilon_{j}}^\text{*}\) are factor loadings and error terms of the factor score indicators. Note that \(\boldsymbol{\varepsilon_{j}}^\text{*}\) follows normal distribution, \(\boldsymbol{\varepsilon_{j}}^\text{*} \sim N(0, \ \boldsymbol{\Theta_{j}}^\text{*})\), where \(\boldsymbol{\Theta_{j}}^\text{*}\) is a \(q \times q\) covariance matrix of measurement error for the factor score indicators. \(\boldsymbol{\zeta_{j}}\) is the disturbance term of the endogenous latent variable in the structural model with a distribution of \(\boldsymbol{\zeta_{j}} \sim N(0, \ \boldsymbol{\psi})\) where \(\psi\) is the variance of disturbance. Under the conditions that each factor scores are computed by separate unidimensional factor models or by using Bartlett method (Bartlett, 1937), \(\boldsymbol{\Lambda_{j}}^\text{*}\) will be a diagonal matrix. For example,
+
+\begin{align}
+\boldsymbol{\Lambda_{j}}^\text{*} = 
+    \begin{bmatrix}
+        \lambda_{x_{j}}^\text{*} & 0 \\
+        0 & \lambda_{m_{j}}^\text{*} \\ 
+    \end{bmatrix}.
+\end{align}
+
+As mentioned before, factor scores have different types. The first type is obtained using the regression method (Thurstone, 1935). Taking the group of \(x\) indicators as an example to demonstrate the computation of factor score, the estimation of observation-specific factor scores based on observed indicators can be represented as \(\boldsymbol{\tilde{\xi}_{x_{j}}} = \boldsymbol{A_{x_{j}}} \boldsymbol{x}_{j}\) where \(\boldsymbol{A_{x_{j}}}\) is the factor score weighting matrix using the regression method and \(\boldsymbol{x_{j}} \ = \ [x_{1j}, \ x_{2j}, \ x_{3j}]^T\). From existing literature (e.g., Devlieger et al., 2016), the formula of the factor score weighting matrix is \(\boldsymbol{A_{x_{j}}} = Var(\xi_{x_{j}})\boldsymbol{\lambda_{x_{j}}}^T\boldsymbol{\Sigma}_{\boldsymbol{x_{j}}}^{-1}\), wherein \(Var(\xi_{x_{j}})\) is the variance of latent variable \(\xi_{x_{j}}\), \(\boldsymbol{\lambda_{x_{j}}}^T\) is the transposed vector of factor loadings implied by a CFA model for observed indicators such that \(\boldsymbol{x_{j}} \ = \ \boldsymbol{\lambda_{x_{j}}}\xi_{x_{j}} + \boldsymbol{\varepsilon_{x_{j}}}\), and \({\Sigma}_{\boldsymbol{x_{j}}}^{-1}\) is an inverse matrix of variance-covariance of observed indicators. Thus, the estimated factor scores can be represented using the weighting matrix, such that \(\boldsymbol{\tilde{\xi}_{x_{j}}} \ = \ \boldsymbol{A_{x_{j}}} \boldsymbol{\lambda_{x_{j}}}\xi_{x_{j}} + \boldsymbol{A_{x_{j}}}\boldsymbol{\varepsilon_{x_{j}}}\). Further more, the reliability measure of the estimated factor scores can be computed as the proportion of true score variance over the total variance, such that \(\rho_{\boldsymbol{\tilde{\xi}_{x_{j}}}} \ = \ (\boldsymbol{A_{x_{j}}} \boldsymbol{\lambda_{x_{j}}})^2Var(\xi_{x_{j}})/[(\boldsymbol{A_{x_{j}}} \boldsymbol{\lambda_{x_{j}}})^2Var(\xi_{x_{j}}) \ + \ \boldsymbol{A_{x_{j}}}\boldsymbol{\Theta_{x_{j}}}\boldsymbol{A_{x_{j}}}^T]\) with \(\boldsymbol{\Theta_{x_{j}}}\) being the unique factor covariance matrix (Lai \& Hsiao, 2023).
+
+As for Bartlett factor scores (Bartlett, 1937), the factor loadings of estimated factor scores on the corresponding latent variables are constrained to 1 (e.g., \(\lambda_{x_{j}}^\text{*} \ = \ 1\)). Accordingly, the score matrix for Bartlett scores now changes to \(\boldsymbol{A_{x_{j}}} = (\boldsymbol{\lambda_{x_{j}}}^T\boldsymbol{\Theta_{x_{j}}}^{-1}\boldsymbol{\lambda_{x_{j}}})^{-1}\boldsymbol{\lambda_{x_{j}}}^T\boldsymbol{\Theta_{x_{j}}}^{-1}\) and the error variance-covariance matrix of estimated factor scores becomes \((\boldsymbol{\lambda_{x_{j}}}^T\boldsymbol{\Theta_{x_{j}}}^{-1}\boldsymbol{\lambda_{x_{j}}})^{-1}\).
+
+\hypertarget{the-issue-of-using-reliability-as-known}{%
+\subsection{The Issue of Using Reliability as Known}\label{the-issue-of-using-reliability-as-known}}
+
+Currently, 2S-PA treats the standard error of measurement of factor scores from stage 1 as known and uses the standard error of measurement as error-constraints on the structural coefficients in the stage 2 estimation. However, the factor loading matrix and error variance-covariance matrix of the factor scores obtained in the stage 1 can have uncertainty and should be accounted for in the second stage.
+
+The second part in the equation (32) is the structural model used to estimate the structural parameters that describe the relations between the latent constructs, where \(\boldsymbol{\alpha}\) is the constant intercept, \(\boldsymbol{\Gamma}\) is the structural coefficients, and \(\boldsymbol{\zeta_{j}}\) is the disturbance term for the endogenous latent construct. However, currently the estimation of structural parameters in 2S-PA assumes that the measurement error (reliability) from stage 1 is known. Alternatively speaking, the error constraints on \(\boldsymbol{\Lambda_{j}}^\text{*}\) and \(\boldsymbol{\Theta_{j}}^\text{*}\) are fixed values, which do not account for uncertainty in the estimation of measurement model at stage 1. Meijer et al. (2021) points out that treating the estimates as the true values (i.e, population values) may result in underestimated standard errors of the structural parameter estimators. Rosseel and Loh (2022) also mentioned that the uncertainty from the first stage could not be ignored and should be reflected in the structural model.
+
+To account for the uncertainty at stage 1, we proposed to obtain corrected standard errors using a method similar to the one discussed in Meijer et al. (2021), as can be incorporated in the estimation of parameters in the structural model at stage 2:
+
+\begin{equation}
+\hat{V}_{\boldsymbol{\gamma},\ c} = \hat{V}_{\boldsymbol{\gamma}} + J_{\boldsymbol{\gamma}}(\hat{\boldsymbol{\omega}})\hat{V}_{\boldsymbol{\hat{\boldsymbol{\omega}}}}J_{\boldsymbol{\gamma}}(\hat{\boldsymbol{\omega}})^T,
+\end{equation}
+
+where \(\hat{V}_{\boldsymbol{\gamma}}\) is a variance-covariance matrix of structural parameters, in which \(\boldsymbol{\gamma}\) is a vector of individual structural parameters in the matrix, in the structural model that ignores uncertainty in the stage 1. In a simple regression model (e.g., \(\xi_{m}\) is predicted by \(\xi_{x}\)), \(\boldsymbol{\gamma}\) has only one parameter \(\gamma_{xm}\). \(\hat{V}_{\boldsymbol{\hat{\omega}}}\) is a variance-covariance matrix of the measurement parameters of the factor scores. Assuming factor scores of \(x\) indicators and \(m\) indicators have been computed as \(\tilde{\xi}_{x_{j}}\) and \(\tilde{\xi}_{m_{j}}\), the vector of measurement parameters will be \(\boldsymbol{\hat{\omega}} \ = \ (\lambda_{x_{j}}^\text{*}, \ \lambda_{m_{j}}^\text{*}, \ \theta_{x_{j}}^\text{*}, \ \theta_{m_{j}}^\text{*})\) for regression factor scores. As for Bartlett scores, \(\boldsymbol{\hat{\omega}} \ = \ (\theta_{x_{j}}^\text{*}, \ \theta_{m_{j}}^\text{*})\) since the factor loadings have been constrained to \(1\).
+
+\(\hat{V}_{\boldsymbol{\hat{\omega}}}\) is the variance-covariance matrix of estimated measurement error from stage 1. \(J_{\boldsymbol{\gamma}}(\boldsymbol{\hat{\omega}})\) is the Jacobian matrix of \(\boldsymbol{\gamma}\) with respect to \(\boldsymbol{\hat{\omega}}\), which maps changes in the parameter \(\boldsymbol{\hat{\omega}}\) to changes in \(\boldsymbol{\gamma}\) and hence accounts for the uncertainty in \(\boldsymbol{\hat{\omega}}\). Specifically, the Jacobian matrix can be represented as:
+
+\begin{align}
+J_{\boldsymbol{\gamma}}(\boldsymbol{\hat{\omega}}) = 
+\begin{bmatrix}
+\frac{\partial \boldsymbol{\gamma}}{\partial \hat{\omega}_{1}} &...& \frac{\partial \boldsymbol{\gamma}}{\partial \hat{\omega}_{k}},
+\end{bmatrix}
+\end{align}
+where \(\partial\) is the first-order partial derivative. Mathematically, it represents the differential of \(\boldsymbol{\gamma}\) at every point of measurement parameters \(\hat{\omega}\) for \(\hat{\omega}_{1}, \ \hat{\omega}_{2}, \ ... \ ,\hat{\omega}_{k}\) where \(\boldsymbol{\gamma}\) is differentiable.
+
+In the case of simple regression example where \(\boldsymbol{\gamma} \ = \ \gamma_{xm}\), the formula of \(J_{\boldsymbol{\gamma}}(\boldsymbol{\hat{\omega}})\) for regression factor scores can be expanded as:
+
+\begin{align}
+J_{\boldsymbol{\gamma}}(\boldsymbol{\hat{\omega}}) = 
+\begin{bmatrix}
+\frac{\partial \gamma_{xm}}{\partial \lambda_{x_{j}}^*} & \frac{\partial \gamma_{xm}}{\partial \lambda_{m_{j}}^*} & \frac{\partial \gamma_{xm}}{\partial \theta_{x_{j}}^*} & \frac{\partial \gamma_{xm}}{\partial \theta_{m_{j}}^*}
+\end{bmatrix},
+\end{align}
+and
+
+\begin{align}
+J_{\boldsymbol{\gamma}}(\boldsymbol{\hat{\omega}}) = 
+\begin{bmatrix}
+\frac{\partial \gamma_{xm}}{\partial \theta_{x_{j}}^*} & \frac{\partial \gamma_{xm}}{\partial \theta_{m_{j}}^*}
+\end{bmatrix}
+\end{align}
+for Bartlett scores. For more complicated structural models where \(\boldsymbol{\gamma}\) has multiple elements of structural parameters, \(J_{\boldsymbol{\gamma}}(\boldsymbol{\hat{\omega}})\) will have multiple rows where each row representing one parameter.
+
+Each element in the Jacobian matrix \(J_{\boldsymbol{\gamma}}(\boldsymbol{\hat{\omega}})\) represents the partial derivatives of each \(\gamma\) with respect to each \(\hat{\omega}\) and reflects how changes in the measurement parameters of factor scores in \(\hat{\omega}_{1}\) \textasciitilde{} \(\hat{\omega}_{k}\) will affect the estimation of structural parameters. Thus, the term \(J_{\gamma}(\hat{\omega}) \hat{V}_{\omega} J_{\gamma}(\hat{\omega})^T\) in general captures the contribution of the uncertainty of measurement parameters at stage 1 to the uncertainty in the estimator of the structural model at stage 2. \(\hat{V}_{\gamma,\ c}\) represents the estimated structural parameters adjusting for the uncertainty in \(\boldsymbol{\hat{\omega}}\), namely corrected estimators.
+
+Rosseel and Loh (2022) introduced another new two-step method of estimating SEM models, called ``structural-after-measurement'', in which the measurement model is estimated first and then the structural model. The two-step corrected standard errors are available in SAM models, and it was shown that SAM is advantageous in generating unbiased parameter estimates with reasonable standard errors with robustness against misspecifications and small sample sizes. Similar to 2S-PA, the mechanism of two-step estimation largely avoids convergence issue and reduces model complexity. Their SAM method has two variants, local SAM and global SAM. Given the promising performance of SAM, I plan to compare the performance of 2S-PA with corrected standard errors with SAM models. Below I will briefly review local and global SAM, while more technical details are available in Rosseel and Loh (2022).
+
+\hypertarget{general-idea-of-sam-framework}{%
+\subsection{General Idea of SAM Framework}\label{general-idea-of-sam-framework}}
+
+The general idea of SAM framework is using estimated parameters from measurement models (step 1), and then use these parameters as fixed values or obtained information to estimate the structural parameters in step 2. To keep consistency of notation using in Rosseel and Loh (2022), \(\boldsymbol{\omega_{1}}\) will be used to represent parameters from measurement models and \(\boldsymbol{\omega_{2}}\) is for structural parameters.
+
+\begin{equation}
+\boldsymbol{\omega_{1}} = (\boldsymbol{\nu}, \boldsymbol{\Lambda}, \boldsymbol{\Theta}),
+\end{equation}
+where \(\boldsymbol{\nu}\) is a vector of the constant intercepts, \(\boldsymbol{\Lambda}\) is a vector of the factor loadings, and \(\boldsymbol{\Theta}\) is a variance-covariance matrix of measurement error, for observed indicators.
+
+\begin{equation}
+\boldsymbol{\omega_{2}} = (\boldsymbol{\alpha}, \boldsymbol{B}, \boldsymbol{\Psi}),
+\end{equation}
+where \(\boldsymbol{\alpha}\) is a vector of the constant intercepts, \(\boldsymbol{B}\) is a vector of the regression/path coefficients, and \(\boldsymbol{\Psi}\) is a variance-covariance matrix of disturbances, for latent variables.
+
+As Rosseel and Loh (2022) mentioned, the goal of using two-step estimation is to use the estimators \(\boldsymbol{\hat{\omega}_{1}}\) as a mere mean to obtain reliable estimates for \(\boldsymbol{\hat{\omega}_{2}}\) with reasonable standard errors.
+
+\hypertarget{local-sam}{%
+\subsubsection{Local SAM}\label{local-sam}}
+
+Local SAM involves computing the measurement parameters, such as factor loadings and measurement errors, and using them to derive and estimate the mean vector (i.e., \(E(\xi)\)) and covariance matrix (i.e., \(Cov(\xi)\)) of the latent variables. The derivation utilizes summary statistics of observed indicators and transforms them through a mapping matrix \(M\), which effectively bridges the observed data with the latent construct space. This process benefits from reducing biases in parameter estimates due to model misspecification and helps to alleviate issues with model convergence, especially in smaller samples or more complex models.
+
+Specifically, the observed indicators can be estimated using a CFA model, such that
+
+\begin{equation}
+\boldsymbol{y} = \boldsymbol{\nu} + \boldsymbol{\Lambda}\boldsymbol{\xi} + \boldsymbol{\varepsilon}
+\end{equation},
+and the relations between latent variables \(\boldsymbol{\xi}\) and observed indicators \(\boldsymbol{y}\) can be connected by the mapping matrix, where
+
+\begin{equation}
+\boldsymbol{\xi} = \boldsymbol{M}(\boldsymbol{y} - \boldsymbol{\nu} - \boldsymbol{\varepsilon})
+\end{equation}.
+The dimension of \(\boldsymbol{M}\) is the number of latent variables by the number of observed indicators. The choices of \(\boldsymbol{M}\) can be the maximum-likehlihood (ML) discrepancy function, weighted least squares (WLS) function, or unweighted least squared (ULS) function. Details of rationales of choosing the mapping matrix are available in Rosseel and Loh (2022).
+
+Hence, the estimation of the mean vector and the variance-covariance matrix of latent variables can be expresses as:
+
+\begin{equation}
+\boldsymbol{\widehat{E(\boldsymbol{\xi})}} = \widehat{\boldsymbol{M}}(\bar{\boldsymbol{y}} - \hat{\boldsymbol{\nu}})
+\end{equation},
+and
+\begin{equation}
+\boldsymbol{\widehat{Var(\boldsymbol{\xi})}} = \widehat{\boldsymbol{M}}(\boldsymbol{S} - \hat{\boldsymbol{\Theta}})\widehat{\boldsymbol{M}}^T
+\end{equation},
+where \(\boldsymbol{S}\) is the sample variance-covariance matrix.
+
+Then the estimates \(\boldsymbol{\widehat{E(\boldsymbol{\xi})}}\) and \(\boldsymbol{\widehat{Var(\boldsymbol{\xi})}}\) estimated from step 1 will be used to estimate parameters in \(\boldsymbol{\omega_{2}}\).
+
+\hypertarget{global-sam}{%
+\subsubsection{Global SAM}\label{global-sam}}
+
+Global SAM starts by estimating the measurement model parameters as listed in the equation (38). Once these parameters are established, they are kept constant throughout the subsequent analysis. This is in contrast to Local SAM, where the estimation of structural parameters is based on derived statistics (i.e., \(\boldsymbol{\widehat{E[\boldsymbol{\xi}]}}\) and \(\boldsymbol{\widehat{Var[\boldsymbol{\xi}]}}\)) from the measurement model. In Global SAM, after fixing the measurement model parameters, the entire structural model, including these fixed parameters, is estimated. This approach does not require the intermediate calculation of the latent variables' mean vector and covariance matrix as in Local SAM. Alternatively speaking, the calculations of \(\boldsymbol{\widehat{E(\boldsymbol{\xi})}}\) and \(\boldsymbol{\widehat{Var(\boldsymbol{\xi})}}\) are implicitly estimated (Rosseel \& Loh, 2022). Instead, the parameters of the structural model in the equation (39) are directly estimated while treating the measurement part parameters as known constants. Global SAM is particularly advantageous in complex SEM frameworks characterized by intricate variable dependencies, offering a thorough analysis by utilizing the stability of the pre-estimated measurement model. Compared to local SAM, global SAM is more generalized as it can be fitted to any models that can be fitted with traditional SEM models.
+
+\hypertarget{current-study}{%
+\subsection{Current Study}\label{current-study}}
+
+In this study, I plan to evaluate 2S-PA with corrected standard errors by accounting for measurement uncertainty from stage 1 estimation, and compare the performance of traditional structural equation modeling (SEM), local and global structural-after-measurement (SAM) models, and 2S-PA without correcting standard errors through the Monte Carlo simulation experiments.
+
+\hypertarget{methods-and-study-design}{%
+\subsection{Methods and Study Design}\label{methods-and-study-design}}
+
+I will use \texttt{R\ 4.3.2} (R Core Team, 2022) to conduct the simulation studies in this project. Specifically, the SEM and 2S-PA models will be implemented through the R package \texttt{lavaan} (Rosseel, 2012) and user-defined functions, while SAM models will be implemented using \texttt{sam} function in \texttt{lavaan}. The simulation design will be structured and conducted using the R package \texttt{SimDesign} (Chalmers \& Adkins, 2020).
+
+\hypertarget{model-1-simple-regression-model}{%
+\subsubsection{Model 1: Simple Regression Model}\label{model-1-simple-regression-model}}
+
+The first model I intend to assess is a simple regression model with two latent variables, \(\xi_{x}\) and \(\xi_{m}\), where \(\xi_{m}\) is predicted by \(\xi_{x}\):
+
+\begin{equation}
+\xi_{m_{j}} = \gamma_{0} + \gamma_{1}\xi_{x_{j}} + \zeta_{j},
+\end{equation}
+where \(\xi_{x_{j}}\) is simulated with standard normal distribution, and \(\zeta_{j}\) is simulated with a normal distribution following \(N \sim (0, 1 - \gamma_{1}^2)\). The variance of \(\xi_{m_{j}}\) can be computed from pre-defined variance of \(\zeta_{j}\), as discussed later. The indicators are then generated by the confirmatory factor analysis (CFA) model:
+\begin{equation}
+\begin{gathered}
+x_{ij} =  \tau_{x_{ij}} + \lambda_{x_{ij}}\xi_{x_{j}} + \delta_{x_{ij}};\\
+m_{ij} =  \tau_{m_{ij}} + \lambda_{m_{ij}}\xi_{m_{j}} + \delta_{m_{ij}},
+\end{gathered}
+\end{equation}
+where each observation-specific observed indicator is represented by \(x_{ij}\) and \(m_{ij}\) that are simulated as continuous variables with normally distributed error. \(\delta_{x_{ij}}\) and \(\delta_{m_{ij}}\) are observation-specific error term for each observed indicator. \(\delta_{x_{ij}}\), \(\delta_{m_{ij}}\) and \(\zeta_{j}\) are assumed to have multivariate normal distributions and be mutually independent. \(\tau_{x_{ij}}\) and \(\tau_{m_{ij}}\) are their corresponding constant intercepts and assumed to be 0. As there are two methods of computing factor scores, I plan to use both methods in this study, and hence the 2S-PA model will have two variants to be included in the simulation study, one for the regression scores (2S-PA-reg) and one for the Bartlett scores (2S-PA-Bar).
+
+Reliability in factor scores is crucial because it impacts the accuracy of measuring latent constructs, which affects the validity and interpretability of SEM results (Brown, 2015). High reliability in factor scores ensures consistent and stable measurements, reducing the impact of measurement error and enhancing the statistical power of the analysis. As discussed earlier, reliability of estimated factor scores is a function of factor loadings and measurement errors in observed indicators. Therefore, I plan to manipulate the level of error variances of observed indicators (and hence reliability of observed indicators) to explore how reliability of observed indicators will affect the estimation of structural parameters across methods. The error variances will be varied across items to achieve three different levels of reliability of observed indicators: \(\rho \ = \ 0.7, \ 0.8, \ 0.9\) where \(\rho\) is the reliability measure. For each reliability level, the error variances will be systematically varied to have different proportions. Suppose that three observed indicators will be generated for each latent variable (i.e., \(x_{1j}\) \textasciitilde{} \(x_{3j}\) for \(\xi_{x_{j}}\); \(m_{1j}\) \textasciitilde{} \(m_{3j}\) for \(\xi_{m_{j}}\)) and the factor loadings of two sets of indicators are set to {[}.8, .7, .6{]} for \(x_{1j}\) \textasciitilde{} \(x_{3j}\) and {[}.75, .65, .50{]} for \(m_{1j}\) \textasciitilde{} \(m_{3j}\), the proportions can be manipulated as: 44\(\%\) of the total error variance for the first indicator, 33\(\%\) for the second, and 23\(\%\) for the third, for \(x\) and \(m\) indicators. Any appropriate reliability measure can be used as an estimator of reliability, and I will use composite reliability in this study, where \(\rho = \Sigma(\lambda)^2/(\Sigma[\lambda]^2 + \theta)\). Assuming that \(\rho = .70\), the total error variance for \(x_{1j}\) \textasciitilde{} \(x_{3j}\) will be 1.89 and for \(m_{1j}\) \textasciitilde{} \(m_{3j}\) will be 1.55 using the formula of composite reliability. After adjusting the proportions of items, the the error variances of three indicators would be manipulated as \([0.83, \ 0.62, \ 0.44]\) for \(x_{1j}\) \textasciitilde{} \(x_{3j}\), and \([0.68, \ 0.51, \ 0.36]\) for \(m_{1j}\) \textasciitilde{} \(m_{3j}\). The sample sizes will be manipulated to have 100, 250, and 500 observations to represent small, medium, and large sample size.
+
+Furthermore, sample size is a prevalent experiment condition in most SEM research (Fan et al., 1999; Wolf et al., 2013), since sample size is related to multiple important statistical properties of SEM, such as statistical power and convergence issue (Kline, 2016). Past research has proposed some rule-of-thumbs of suggested sample size, such as ``sample size \(\ge 100\)'' for simple path model in general recommendation (Boomsma, 1982). However, Wolf et al. (2013) pointed out that there is not a ``gold rule'' for a single number of the best sample size, and the determination of sample size should take into accout the number of indicators, number of factors, and complexity or types of SEM models. Given that Lai and Hsiao (2022) adopted the design of ``sample size per indicator'', I plan to continue to use this design to simultaneously explore the effect of sample size and number of indicators on the performance of the 2S-PA models. The ratio of sample size per indicator will be set to \(N/i = 6, \ 12, \ 100\), and the tentative numbers of indicators will be \(i = 6, \, 12, \ 24\). Specifically, the number of indicators will be split to 3 and 3 for two latent variables in this model (i.e., \(i = 3\) for \(\xi_{x_{j}}\)). Then, the range of sample sizes will be 36 \(\sim\) 2,400.
+
+The intercept \(\gamma_{0}\) will be set to 0 and \(\gamma_{1}\) will be set to 0 or .39 as null effect or medium effect, for the structural parameters.
+
+In summary, the current study will have a \(3 \times 3 \times 2\) design with three levels of the ratio of sample sizes per observed indicator, three reliability levels of observed indicators, and two levels of the effect size of the path coefficient. The Monte Carlo simulation will tentatively have 2,000 replications for each condition.
+
+\hypertarget{model-2-mediation-model}{%
+\subsubsection{Model 2: Mediation Model}\label{model-2-mediation-model}}
+
+Given that median analysis is popular in psychological research (Agler \& De Boeck, 2017; Rucker et al., 2011), I plan to evaluate the performance of 2S-PA with corrected standard errors in an expanded model from the equation (44) by including a mediator \(\xi_{z_{j}}\), where:
+
+\begin{equation}
+\begin{gathered}
+\xi_{z_{j}} =  \gamma_{0}' +  \gamma_{1}'\xi_{x_{j}} + \zeta_{j}';\\
+\xi_{m_{j}} = \gamma_{0}'' + \gamma_{1}''\xi_{x_{j}} + \gamma_{2}''\xi_{z_{j}} + \zeta_{j}'',
+\end{gathered}
+\end{equation}
+where \(\xi_{z_{j}}\) mediates the path from \(\xi_{x_{j}}\) to \(\xi_{m_{j}}\). \(\gamma_{0}'\), \(\gamma_{1}'\), \(\zeta_{j}'\) are the structural parameters of the path from \(\xi_{x_{j}}\) to \(\xi_{z_{j}}\), where as \(\gamma_{0}''\), \(\gamma_{1}''\), \(\gamma_{2}''\), \(\zeta_{j}''\) are those from \(\xi_{x_{j}}\) and \(\xi_{m_{j}}\) to \(\xi_{m_{j}}\). The indirect effect is defined as the product of the path coefficients \(\gamma_{1}' \times \gamma_{2}''\). The error variances will be manipulated using the same way for \(\xi_{x_{j}}\) and \(\xi_{m_{j}}\)'s indicators.
+
+Based on the study design in Lai and Hsiao (2022), \(\gamma_{0}'\) and \(\gamma_{0}''\) are set 0. \(\gamma_{1}''\) is fixed to .15 as a small direct effect of \(\xi_{x_{j}}\) on \(\xi_{m_{j}}\), while each of \(\gamma_{1}'\) and \(\gamma_{2}''\) is set to either 0 or .39 as null effect and medium effect. The indirect effect will be either 0 or .1521. Hence the possible configurations of path coefficients (i.e., \(\gamma_{1}'\), \(\gamma_{2}''\), \(\gamma_{1}''\), \(\gamma_{1}' \times \gamma_{2}''\)) will be {[}0, 0, .15, 0{]}, {[}0, .39, .15, 0{]}, {[}.39, 0, .15, 0{]}, and {[}.39, .39, .15, .1521{]}.
+
+The other designs will be similar to the study of model 1. In summary, the study of mediation model will have a \(3 \times 3 \times 4\) design with three levels of the ratio of sample sizes per observed indicator, three reliability levels of observed indicators, and four levels of the effect sizes of the path coefficients.
+
+\hypertarget{evaluation-criteria-1}{%
+\subsection{Evaluation Criteria}\label{evaluation-criteria-1}}
+
+Across all the models, the standardized point estimate of the path coefficients with standard error will be compared. For study 1, the point estimate of \(\hat{\gamma}_{1}\) with its standard error \(\hat{SE}(\hat{\gamma}_{1})\) will be obtained for model evaluation and comparisons. As for study 2, the point estimates of all the four path coefficients with standard errors will be obtained and compared.
+
+The main evaluation criteria will include convergence rate, empirical Type I error, and empirical statistical power, which are used to examine the performance of each method on estimating path coefficients. The specific details of evaluation criteria have been described in Study 2.
+
+\newpage
+
+\hypertarget{references}{%
+\section{References}\label{references}}
+
+\hypertarget{refs}{}
+\begin{CSLReferences}{1}{0}
+\leavevmode\vadjust pre{\hypertarget{ref-aglerInterpretationUseMediation2017}{}}%
+Agler, R., \& De Boeck, P. (2017). On the {interpretation} and {use} of {mediation}: {Multiple perspectives} on {mediation Analysis}. \emph{Front. Psychol.}, \emph{8}. \url{https://doi.org/10.3389/fpsyg.2017.01984}
+
+\leavevmode\vadjust pre{\hypertarget{ref-agrestiCategoricalDataAnalysis2011}{}}%
+Agresti, A., \& Kateri, M. (2011). Categorical {data analysis}. In M. Lovric (Ed.), \emph{International {Encyclopedia} of {Statistical Science}} (pp. 206--208). Springer. \url{https://doi.org/10.1007/978-3-642-04898-2_161}
+
+\leavevmode\vadjust pre{\hypertarget{ref-aguinisEffectSizePower2005}{}}%
+Aguinis, H., Beaty, J. C., Boik, R. J., \& Pierce, C. A. (2005). Effect {size} and {power} in {assessing moderating effects} of {categorical variables using multiple regression}: {A} 30-{year review}. \emph{Journal of Applied Psychology}, \emph{90}(1), 94--107. \url{https://doi.org/10.1037/0021-9010.90.1.94}
+
+\leavevmode\vadjust pre{\hypertarget{ref-aikenMultipleRegressionTesting1991b}{}}%
+Aiken, L. S., \& West, S. G. (1991). \emph{Multiple regression: {Testing} and interpreting interactions} (pp. xi, 212). Sage Publications, Inc.
+
+\leavevmode\vadjust pre{\hypertarget{ref-armingerBayesianApproachNonlinear1998a}{}}%
+Arminger, G., \& Muthén, B. O. (1998). A {Bayesian} approach to nonlinear latent variable models using the {Gibbs} sampler and the {Metropolis-Hastings} algorithm. \emph{Psychometrika}, \emph{63}(3), 271--300. \url{https://doi.org/10.1007/BF02294856}
+
+\leavevmode\vadjust pre{\hypertarget{ref-asparouhovBayesianEstimationSingle2021}{}}%
+Asparouhov, T., \& Muthén, B. (2021). Bayesian estimation of single and multilevel models with latent variable interactions. \emph{Structural Equation Modeling}, \emph{28}(2), 314--328. \url{https://doi.org/10.1080/10705511.2020.1761808}
+
+\leavevmode\vadjust pre{\hypertarget{ref-ayturkExploringPerformanceLatent2021}{}}%
+Aytürk, E., Cham, H., Jennings, P. A., \& Brown, J. L. (2021). Exploring the {performance} of {latent moderated structural equations approach} for {ordered-categorical items}. \emph{Structural Equation Modeling: A Multidisciplinary Journal}, \emph{28}(3), 410--422. \url{https://doi.org/10.1080/10705511.2020.1810047}
+
+\leavevmode\vadjust pre{\hypertarget{ref-azenCategoricalDataAnalysis2021}{}}%
+Azen, R., \& Walker, C. M. (2021). \emph{Categorical {data analysis} for the {behavioral} and {social sciences}} (2nd ed.). Routledge. \url{https://doi.org/10.4324/9780429330308}
+
+\leavevmode\vadjust pre{\hypertarget{ref-bartlettStatisticalConceptionMental1937}{}}%
+Bartlett, M. S. (1937). The statistical conception of mental factors. \emph{British Journal of Psychology. General Section}, \emph{28}(1), 97--104. \url{https://doi.org/10.1111/j.2044-8295.1937.tb00863.x}
+
+\leavevmode\vadjust pre{\hypertarget{ref-openmx}{}}%
+Boker, S. M., Neale, M. C., Maes, H. H., Spiegel, M., Brick, T. R., Estabrook, R., Bates, T. C., Gore, R. J., Hunter, M. D., Pritikin, J. N., Zahery, M., \& Kirkpatrick, R. M. (2023). \emph{OpenMx: Extended structural equation modelling}. \url{https://CRAN.R-project.org/package=OpenMx}
+
+\leavevmode\vadjust pre{\hypertarget{ref-bollenStructuralEquationsLatent1989d}{}}%
+Bollen, K. A. (1989). \emph{Structural equations with latent variables} (pp. xiv, 514). John Wiley \& Sons. \url{https://doi.org/10.1002/9781118619179}
+
+\leavevmode\vadjust pre{\hypertarget{ref-boomsmaRobustnessLISRELSmall1982}{}}%
+Boomsma, A. (1982). The robustness of {LISREL} against small sample sizes in factor analysis models. \emph{Part I}, \emph{1}.
+
+\leavevmode\vadjust pre{\hypertarget{ref-boomsmaReportingMonteCarlo2013}{}}%
+Boomsma, A. (2013). Reporting {Monte Carlo studies} in {structural equation modeling}. \emph{Structural Equation Modeling: A Multidisciplinary Journal}, \emph{20}(3), 518--540. \url{https://doi.org/10.1080/10705511.2013.797839}
+
+\leavevmode\vadjust pre{\hypertarget{ref-brownConfirmatoryFactorAnalysis2015}{}}%
+Brown, T. A. (2015). \emph{Confirmatory factor analysis for applied research, 2nd ed} (pp. xvii, 462). The Guilford Press.
+
+\leavevmode\vadjust pre{\hypertarget{ref-burtonDesignSimulationStudies2006}{}}%
+Burton, A., Altman, D. G., Royston, P., \& Holder, R. L. (2006). The design of simulation studies in medical statistics. \emph{Stat Med}, \emph{25}(24), 4279--4292. \url{https://doi.org/10.1002/sim.2673}
+
+\leavevmode\vadjust pre{\hypertarget{ref-busemeyerAnalysisMultiplicativeCombination1983a}{}}%
+Busemeyer, J. R., \& Jones, L. E. (1983). Analysis of multiplicative combination rules when the causal variables are measured with error. \emph{Psychological Bulletin}, \emph{93}(3), 549--562. \url{https://doi.org/10.1037/0033-2909.93.3.549}
+
+\leavevmode\vadjust pre{\hypertarget{ref-carrollMeasurementErrorNonlinear2006}{}}%
+Carroll, R. J., Ruppert, D., Stefanski, L. A., \& Crainiceanu, C. M. (2006). \emph{Measurement error in nonlinear models: {A} modern perspective, second edition} (2nd ed.). {Chapman and Hall/CRC}. \url{https://doi.org/10.1201/9781420010138}
+
+\leavevmode\vadjust pre{\hypertarget{ref-mirt}{}}%
+Chalmers, R. P. (2012). {mirt}: A multidimensional item response theory package for the {R} environment. \emph{Journal of Statistical Software}, \emph{48}(6), 1--29. \url{https://doi.org/10.18637/jss.v048.i06}
+
+\leavevmode\vadjust pre{\hypertarget{ref-simdesign}{}}%
+Chalmers, R. P., \& Adkins, M. C. (2020). Writing effective and reliable {Monte Carlo} simulations with the {SimDesign} package. \emph{The Quantitative Methods for Psychology}, \emph{16}(4), 248--280. \url{https://doi.org/10.20982/tqmp.16.4.p248}
+
+\leavevmode\vadjust pre{\hypertarget{ref-chamEstimatingLatentVariable2012a}{}}%
+Cham, H., West, S. G., Ma, Y., \& Aiken, L. S. (2012a). Estimating latent variable interactions with non-normal observed data: {A} comparison of four approaches. \emph{Multivariate Behav Res}, \emph{47}(6), 840--876. \url{https://doi.org/10.1080/00273171.2012.732901}
+
+\leavevmode\vadjust pre{\hypertarget{ref-chamEstimatingLatentVariable2012b}{}}%
+Cham, H., West, S. G., Ma, Y., \& Aiken, L. S. (2012b). Estimating {latent variable interactions with non-normal observed Data}: {A comparison} of {four approaches}. \emph{Multivariate Behav Res}, \emph{47}(6), 840--876. \url{https://doi.org/10.1080/00273171.2012.732901}
+
+\leavevmode\vadjust pre{\hypertarget{ref-cheungTestingModerationBusiness2021}{}}%
+Cheung, G. W., Cooper-Thomas, H. D., Lau, R. S., \& Wang, L. C. (2021). Testing {moderation} in {business} and {psychological studies} with {latent moderated structural equations}. \emph{J Bus Psychol}, \emph{36}(6), 1009--1033. \url{https://doi.org/10.1007/s10869-020-09717-0}
+
+\leavevmode\vadjust pre{\hypertarget{ref-cheungAccuracyParameterEstimates2017}{}}%
+Cheung, G. W., \& Lau, R. S. (2017). Accuracy of {parameter estimates} and {confidence intervals} in {moderated mediation models}: {A comparison} of {regression} and {latent moderated structural equations}. \emph{Organizational Research Methods}, \emph{20}(4), 746--769. \url{https://doi.org/10.1177/1094428115595869}
+
+\leavevmode\vadjust pre{\hypertarget{ref-collinsComparisonInclusiveRestrictive2001}{}}%
+Collins, L. M., Schafer, J. L., \& Kam, C. M. (2001). \href{https://www.ncbi.nlm.nih.gov/pubmed/11778676}{A comparison of inclusive and restrictive strategies in modern missing data procedures}. \emph{Psychol Methods}, \emph{6}(4), 330--351.
+
+\leavevmode\vadjust pre{\hypertarget{ref-cortinaHowAreWe2021a}{}}%
+Cortina, J. M., Markell-Goldstein, H. M., Green, J. P., \& Chang, Y. (2021). How are we testing interactions in latent variable models? {Surging} forward or fighting shy? \emph{Organizational Research Methods}, \emph{24}(1), 26--54. \url{https://doi.org/10.1177/1094428119872531}
+
+\leavevmode\vadjust pre{\hypertarget{ref-croasmunUsingLikertTypeScales2011}{}}%
+Croasmun, J. T., \& Ostrom, L. (2011). Using {Likert-type scales} in the {social sciences}. \emph{Journal of Adult Education}, \emph{40}(1), 19--22.
+
+\leavevmode\vadjust pre{\hypertarget{ref-dawsonModerationManagementResearch2014}{}}%
+Dawson, J. F. (2014). Moderation in {management research}: {What}, {why}, {when}, and {how}. \emph{J Bus Psychol}, \emph{29}(1), 1--19. \url{https://doi.org/10.1007/s10869-013-9308-7}
+
+\leavevmode\vadjust pre{\hypertarget{ref-dempsterMaximumLikelihoodIncomplete1977}{}}%
+Dempster, A. P., Laird, N. M., \& Rubin, D. B. (1977). Maximum {Likelihood} from {Incomplete Data} via the {EM Algorithm}. \emph{Journal of the Royal Statistical Society. Series B (Methodological)}, \emph{39}(1), 1--38. \url{https://www.jstor.org/stable/2984875}
+
+\leavevmode\vadjust pre{\hypertarget{ref-ettnerNewEvidenceRelationship1996}{}}%
+Ettner, S. L. (1996). New evidence on the relationship between income and health. \emph{J Health Econ}, \emph{15}(1), 67--85. \url{https://doi.org/10.1016/0167-6296(95)00032-1}
+
+\leavevmode\vadjust pre{\hypertarget{ref-fairchildEvaluatingMediationModeration2010a}{}}%
+Fairchild, A. J., \& McQuillin, S. D. (2010). Evaluating mediation and moderation effects in school psychology: {A} presentation of methods and review of current practice. \emph{Journal of School Psychology}, \emph{48}(1), 53--84. \url{https://doi.org/10.1016/j.jsp.2009.09.001}
+
+\leavevmode\vadjust pre{\hypertarget{ref-fanEffectsSampleSize1999}{}}%
+Fan, X., Thompson, B., \& Wang, L. (1999). Effects of sample size, estimation methods, and model specification on structural equation modeling fit indexes. \emph{Structural Equation Modeling: A Multidisciplinary Journal}, \emph{6}(1), 56--83. \url{https://doi.org/10.1080/10705519909540119}
+
+\leavevmode\vadjust pre{\hypertarget{ref-feinbergConductingSimulationStudies2016}{}}%
+Feinberg, R. A., \& Rubright, J. D. (2016). Conducting {simulation studies} in {psychometrics}. \emph{Educational Measurement: Issues and Practice}, \emph{35}(2), 36--49. \url{https://doi.org/10.1111/emip.12111}
+
+\leavevmode\vadjust pre{\hypertarget{ref-fisicaroPowerReliabilityCase1992}{}}%
+Fisicaro, S. A., \& Lautenschlager, G. J. (1992). Power and {reliability}: {The case} of {homogeneous true score regression across treatments}. \emph{Educational and Psychological Measurement}, \emph{52}(3), 505--511. \url{https://doi.org/10.1177/0013164492052003001}
+
+\leavevmode\vadjust pre{\hypertarget{ref-floraYourCoefficientAlpha2020}{}}%
+Flora, D. B. (2020). Your {coefficient Alpha is probably wrong}, but {which coefficient Omega is right}? {A tutorial} on {using R} to {obtain better reliability estimates}. \emph{Advances in Methods and Practices in Psychological Science}, \emph{3}(4), 484--501. \url{https://doi.org/10.1177/2515245920951747}
+
+\leavevmode\vadjust pre{\hypertarget{ref-greenReliabilitySummedItem2009}{}}%
+Green, S. B., \& Yang, Y. (2009). Reliability of {summed item scores using structural equation modeling}: {An alternative} to {coefficient Alpha}. \emph{Psychometrika}, \emph{74}(1), 155--167. \url{https://doi.org/10.1007/s11336-008-9099-3}
+
+\leavevmode\vadjust pre{\hypertarget{ref-hallgrenConductingSimulationStudies2013}{}}%
+Hallgren, K. A. (2013). \href{https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4110976}{Conducting {simulation studies} in the {R programming environment}}. \emph{Tutor Quant Methods Psychol}, \emph{9}(2), 43--60.
+
+\leavevmode\vadjust pre{\hypertarget{ref-hindsSystematicReviewQuality2018}{}}%
+Hinds, A. M., Sajobi, T. T., Sebille, V., Sawatzky, R., \& Lix, L. M. (2018). A systematic review of the quality of reporting of simulation studies about methods for the analysis of complex longitudinal patient-reported outcomes data. \emph{Qual Life Res}, \emph{27}(10), 2507--2516. \url{https://doi.org/10.1007/s11136-018-1861-0}
+
+\leavevmode\vadjust pre{\hypertarget{ref-hoaglinReportingComputationBasedResults1975}{}}%
+Hoaglin, D. C., \& Andrews, D. F. (1975). The {reporting} of {computation-based results} in {statistics}. \emph{The American Statistician}, \emph{29}(3), 122--126. \url{https://doi.org/10.1080/00031305.1975.10477393}
+
+\leavevmode\vadjust pre{\hypertarget{ref-hooglandRobustnessStudiesCovariance1998}{}}%
+HOOGLAND, J. J., \& BOOMSMA, A. (1998). Robustness studies in covariance structure modeling: {An} overview and a meta-analysis. \emph{Sociological Methods \& Research}, \emph{26}(3), 329--367. \url{https://doi.org/10.1177/0049124198026003003}
+
+\leavevmode\vadjust pre{\hypertarget{ref-hoyleHandbookStructuralEquation2022}{}}%
+Hoyle, R. H. (2022). \emph{Handbook of {structural equation modeling}}. Guilford Publications.
+
+\leavevmode\vadjust pre{\hypertarget{ref-hsiaoEvaluationTwoMethods2018a}{}}%
+Hsiao, Y.-Y., Kwok, O.-M., \& Lai, M. H. C. (2018). Evaluation of two methods for modeling measurement errors when testing interaction effects with observed composite scores. \emph{Educ Psychol Meas}, \emph{78}(2), 181--202. \url{https://doi.org/10.1177/0013164416679877}
+
+\leavevmode\vadjust pre{\hypertarget{ref-hsiaoModelingMeasurementErrors2021}{}}%
+Hsiao, Y.-Y., Kwok, O.-M., \& Lai, M. H. C. (2021). Modeling measurement errors of the exogenous composites from congeneric measures in interaction models. \emph{Struct Equ Modeling}, \emph{28}(2), 250--260. \url{https://doi.org/10.1080/10705511.2020.1782206}
+
+\leavevmode\vadjust pre{\hypertarget{ref-joreskogStatisticalAnalysisSets1971}{}}%
+Jöreskog, K. G. (1971). Statistical analysis of sets of congeneric tests. \emph{Psychometrika}, \emph{36}(2), 109--133. \url{https://doi.org/10.1007/BF02291393}
+
+\leavevmode\vadjust pre{\hypertarget{ref-Jreskog1996NonlinearSE}{}}%
+Jöreskog, K. G., \& Yang, F. (1996). \emph{Nonlinear structural equation models: {The Kenny-Judd} model with {Interaction} effects}.
+
+\leavevmode\vadjust pre{\hypertarget{ref-semtools}{}}%
+Jorgensen, T. D., Pornprasertmanit, S., Schoemann, A. M., \& Rosseel, Y. (2022). \emph{\texttt{semTools}: {U}seful tools for structural equation modeling}. \url{https://CRAN.R-project.org/package=semTools}
+
+\leavevmode\vadjust pre{\hypertarget{ref-kelavaNonlinearDynamicLatent2019}{}}%
+Kelava, A., \& Brandt, H. (2019). A {Nonlinear Dynamic Latent Class Structural Equation Model}. \emph{Structural Equation Modeling: A Multidisciplinary Journal}, \emph{26}(4), 509--528. \url{https://doi.org/10.1080/10705511.2018.1555692}
+
+\leavevmode\vadjust pre{\hypertarget{ref-kennyEstimatingNonlinearInteractive1984a}{}}%
+Kenny, D. A., \& Judd, C. M. (1984). Estimating the nonlinear and interactive effects of latent variables. \emph{Psychological Bulletin}, \emph{96}(1), 201--210. \url{https://doi.org/10.1037/0033-2909.96.1.201}
+
+\leavevmode\vadjust pre{\hypertarget{ref-kleinQuasimaximumLikelihoodEstimation2007}{}}%
+Klein, A. G., \& Muthén, B. O. (2007). Quasi-maximum likelihood estimation of structural equation models with multiple interaction and quadratic effects. \emph{Multivariate Behavioral Research}, \emph{42}(4), 647--673. \url{https://doi.org/10.1080/00273170701710205}
+
+\leavevmode\vadjust pre{\hypertarget{ref-kleinMaximumLikelihoodEstimation2000a}{}}%
+Klein, A., \& Moosbrugger, H. (2000). Maximum likelihood estimation of latent interaction effects with the {LMS} method. \emph{Psychometrika}, \emph{65}(4), 457--474. \url{https://doi.org/10.1007/BF02296338}
+
+\leavevmode\vadjust pre{\hypertarget{ref-klinePrinciplesPracticeStructural2016}{}}%
+Kline, R. B. (2016). \emph{Principles and practice of structural equation modeling, 4th ed} (pp. xvii, 534). Guilford Press.
+
+\leavevmode\vadjust pre{\hypertarget{ref-laiTwostagePathAnalysis2022b}{}}%
+Lai, M. H. C., \& Hsiao, Y.-Y. (2022). Two-stage path analysis with definition variables: {An} alternative framework to account for measurement error. \emph{Psychol Methods}, \emph{27}(4), 568--588. \url{https://doi.org/10.1037/met0000410}
+
+\leavevmode\vadjust pre{\hypertarget{ref-ayturkLatentVariableInteractions2020}{}}%
+\emph{Latent {variable interactions with ordered-categorical indicators}: {Comparisons} of {unconstrained product indicator} and {latent moderated structural equations approaches}}. (n.d.).
+
+\leavevmode\vadjust pre{\hypertarget{ref-leeBayesianMethodsAnalyzing2007}{}}%
+Lee, S.-Y., Song, X.-Y., \& Tang, N.-S. (2007). Bayesian methods for analyzing structural equation models with covariates, interaction, and quadratic latent variables. \emph{Structural Equation Modeling}, \emph{14}(3), 404--434. \url{https://doi.org/10.1080/10705510701301511}
+
+\leavevmode\vadjust pre{\hypertarget{ref-liddellAnalyzingOrdinalData2018}{}}%
+Liddell, T. M., \& Kruschke, J. K. (2018). Analyzing ordinal data with metric models: {What} could possibly go wrong? \emph{Journal of Experimental Social Psychology}, \emph{79}, 328--348. \url{https://doi.org/10.1016/j.jesp.2018.08.009}
+
+\leavevmode\vadjust pre{\hypertarget{ref-marshStructuralEquationModels2004a}{}}%
+Marsh, H. W., Wen, Z., \& Hau, K.-T. (2004). Structural equation models of latent interactions: Evaluation of alternative estimation strategies and indicator construction. \emph{Psychol Methods}, \emph{9}(3), 275--300. \url{https://doi.org/10.1037/1082-989X.9.3.275}
+
+\leavevmode\vadjust pre{\hypertarget{ref-maslowskyEstimatingInterpretingLatent2015a}{}}%
+Maslowsky, J., Jager, J., \& Hemken, D. (2015). Estimating and interpreting latent variable interactions: {A} tutorial for applying the latent moderated structural equations method. \emph{Int J Behav Dev}, \emph{39}(1), 87--96. \url{https://doi.org/10.1177/0165025414552301}
+
+\leavevmode\vadjust pre{\hypertarget{ref-meijerHowMeasurementError2021}{}}%
+Meijer, E., Oczkowski, E., \& Wansbeek, T. (2021). How measurement error affects inference in linear regression. \emph{Empir Econ}, \emph{60}(1), 131--155. \url{https://doi.org/10.1007/s00181-020-01942-z}
+
+\leavevmode\vadjust pre{\hypertarget{ref-morrisUsingSimulationStudies2019}{}}%
+Morris, T. P., White, I. R., \& Crowther, M. J. (2019). Using simulation studies to evaluate statistical methods. \emph{Statistics in Medicine}, \emph{38}(11), 2074--2102. \url{https://doi.org/10.1002/sim.8086}
+
+\leavevmode\vadjust pre{\hypertarget{ref-muthenModelingInteractionsLatent2003}{}}%
+Muthén, B., Asparouhov, T., \& Muthén, M. (2003). Modeling interactions between latent and observed continuous variables using maximum-likelihood estimation in {Mplus}. \emph{Mplus Web Notes}, \emph{6}.
+
+\leavevmode\vadjust pre{\hypertarget{ref-newsomChangesAdolescentResponse2003}{}}%
+Newsom, C. R., Archer, R. P., Trumbetta, S., \& Gottesman, I. I. (2003). Changes in adolescent response patterns on the {MMPI}/{MMPI-A} across four decades. \emph{Journal of Personality Assessment}, \emph{81}(1), 74--84. \url{https://doi.org/10.1207/S15327752JPA8101_07}
+
+\leavevmode\vadjust pre{\hypertarget{ref-normanLikertScalesLevels2010}{}}%
+Norman, G. (2010). Likert scales, levels of measurement and the "laws" of statistics. \emph{Adv Health Sci Educ Theory Pract}, \emph{15}(5), 625--632. \url{https://doi.org/10.1007/s10459-010-9222-y}
+
+\leavevmode\vadjust pre{\hypertarget{ref-osborneFourAssumptionsMultiple2002}{}}%
+Osborne, J. W., \& Waters, E. (2002). {Four assumptions of multiple regression that researchers should always test}. \emph{Practical Assessment, Research, and Evaluation}, \emph{8}(1). \url{https://doi.org/10.7275/r222-hv23}
+
+\leavevmode\vadjust pre{\hypertarget{ref-parkModelsVisuospatialVerbal2002}{}}%
+Park, D. C., Lautenschlager, G., Hedden, T., Davidson, N. S., Smith, A. D., \& Smith, P. K. (2002). Models of visuospatial and verbal memory across the adult life span. \emph{Psychology and Aging}, \emph{17}(2), 299--320. \url{https://doi.org/10.1037/0882-7974.17.2.299}
+
+\leavevmode\vadjust pre{\hypertarget{ref-pietersSixMethodsLatent2022}{}}%
+Pieters, C., Pieters, R., \& Lemmens, A. (2022). Six {methods} for {latent moderation analysis} in {marketing research}: {A comparison} and {guidelines}. \emph{Journal of Marketing Research}, \emph{59}(5), 941--962. \url{https://doi.org/10.1177/00222437221077266}
+
+\leavevmode\vadjust pre{\hypertarget{ref-preacherGeneralMultilevelSEM2010}{}}%
+Preacher, K. J., Zyphur, M. J., \& Zhang, Z. (2010). A general multilevel {SEM} framework for assessing multilevel mediation. \emph{Psychol Methods}, \emph{15}(3), 209--233. \url{https://doi.org/10.1037/a0020141}
+
+\leavevmode\vadjust pre{\hypertarget{ref-R-base}{}}%
+R Core Team. (2022). \emph{R: A language and environment for statistical computing}. R Foundation for Statistical Computing. \url{https://www.R-project.org/}
+
+\leavevmode\vadjust pre{\hypertarget{ref-rogersParameterRecoveryModel2004}{}}%
+Rogers, W. M., \& Schmitt, N. (2004). Parameter {recovery} and {model fit using multidimensional composites}: {A comparison} of {four empirical parceling algorithms}. \emph{Multivariate Behavioral Research}, \emph{39}(3), 379--412. \url{https://doi.org/10.1207/S15327906MBR3903_1}
+
+\leavevmode\vadjust pre{\hypertarget{ref-lavaan}{}}%
+Rosseel, Y. (2012). {lavaan}: An {R} package for structural equation modeling. \emph{Journal of Statistical Software}, \emph{48}(2), 1--36. \url{https://doi.org/10.18637/jss.v048.i02}
+
+\leavevmode\vadjust pre{\hypertarget{ref-rosseelStructuralMeasurementApproach2022}{}}%
+Rosseel, Y., \& Loh, W. W. (2022). A structural after measurement approach to structural equation modeling. \emph{Psychol Methods}. \url{https://doi.org/10.1037/met0000503}
+
+\leavevmode\vadjust pre{\hypertarget{ref-ruckerMediationAnalysisSocial2011}{}}%
+Rucker, D. D., Preacher, K. J., Tormala, Z. L., \& Petty, R. E. (2011). Mediation {analysis} in {social psychology}: {Current practices} and {new recommendations}. \emph{Social and Personality Psychology Compass}, \emph{5}(6), 359--371. \url{https://doi.org/10.1111/j.1751-9004.2011.00355.x}
+
+\leavevmode\vadjust pre{\hypertarget{ref-sainaniWhatComputerSimulation2015}{}}%
+Sainani, K. L. (2015). What is {computer simulation}? \emph{PM R}, \emph{7}(12), 1290--1293. \url{https://doi.org/10.1016/j.pmrj.2015.10.010}
+
+\leavevmode\vadjust pre{\hypertarget{ref-samejimaEstimationLatentAbility1969}{}}%
+Samejima, F. (1969). Estimation of latent ability using a response pattern of graded scores. \emph{Psychometrika Monograph Supplement}, \emph{34}(4, Pt. 2), 100--100.
+
+\leavevmode\vadjust pre{\hypertarget{ref-schoemannTestingInterpretingLatent2021}{}}%
+Schoemann, A. M., \& Jorgensen, T. D. (2021). Testing and interpreting latent variable interactions using the {semTools} package. \emph{Psych}, \emph{3}(3), 322--335. \url{https://doi.org/10.3390/psych3030024}
+
+\leavevmode\vadjust pre{\hypertarget{ref-siepeSimulationStudiesMethodological2023}{}}%
+Siepe, B. S., Bartoš, F., Pawel, S., \& Boulesteix, A.-L. (2023). \emph{Simulation {studies} for {methodological research} in {psychology}}.
+
+\leavevmode\vadjust pre{\hypertarget{ref-simmonsFalsePositivePsychologyUndisclosed2011}{}}%
+Simmons, J. P., Nelson, L. D., \& Simonsohn, U. (2011). False-{positive psychology}: {Undisclosed Flexibility} in {data collection} and {analysis allows presenting anything} as {significant}. \emph{Psychol Sci}, \emph{22}(11), 1359--1366. \url{https://doi.org/10.1177/0956797611417632}
+
+\leavevmode\vadjust pre{\hypertarget{ref-thurstoneVectorsMindMultiplefactor1935}{}}%
+Thurstone, L. L. (1935). \emph{The vectors of mind: {Multiple-factor} analysis for the isolation of primary traits} (pp. xi, 274). University of Chicago Press. \url{https://doi.org/10.1037/10018-000}
+
+\leavevmode\vadjust pre{\hypertarget{ref-tomitakaDistributionItemResponses2018}{}}%
+Tomitaka, S., Kawasaki, Y., Ide, K., Akutagawa, M., Ono, Y., \& Furukawa, T. A. (2018). Distribution of item responses and total item scores for the {Center} for {Epidemiologic Studies Depression Scale} ({CES-D}): {Data} from the {Irish longitudinal study} on {ageing} ({TILDA}). \emph{PLOS ONE}, \emph{13}(8), e0202607. \url{https://doi.org/10.1371/journal.pone.0202607}
+
+\leavevmode\vadjust pre{\hypertarget{ref-wallGeneralizedAppendedProduct2001a}{}}%
+Wall, M. M., \& Amemiya, Y. (2001). Generalized appended aroduct indicator procedure for nonlinear structural equation analysis. \emph{Journal of Educational and Behavioral Statistics}, \emph{26}(1), 1--30. \url{https://doi.org/10.3102/10769986026001001}
+
+\leavevmode\vadjust pre{\hypertarget{ref-wallMethodMomentsTechnique2003}{}}%
+Wall, M. M., \& Amemiya, Y. (2003). A method of moments technique for fitting interaction effects in structural equation models. \emph{British Journal of Mathematical and Statistical Psychology}, \emph{56}(1), 47--63. \url{https://doi.org/10.1348/000711003321645331}
+
+\leavevmode\vadjust pre{\hypertarget{ref-whismanDesigningTestingInterpreting2005}{}}%
+Whisman, M. A., \& McClelland, G. H. (2005). Designing, {testing}, and {interpreting interactions} and {moderator effects} in {family research}. \emph{Journal of Family Psychology}, \emph{19}(1), 111--120. \url{https://doi.org/10.1037/0893-3200.19.1.111}
+
+\leavevmode\vadjust pre{\hypertarget{ref-wirthItemFactorAnalysis2007}{}}%
+Wirth, R. J., \& Edwards, M. C. (2007). Item factor analysis: {Current} approaches and future directions. \emph{Psychological Methods}, \emph{12}(1), 58--79. \url{https://doi.org/10.1037/1082-989X.12.1.58}
+
+\leavevmode\vadjust pre{\hypertarget{ref-wolfSampleSizeRequirements2013}{}}%
+Wolf, E. J., Harrington, K. M., Clark, S. L., \& Miller, M. W. (2013). Sample {Size Requirements} for {Structural Equation Models}: {An Evaluation} of {Power}, {Bias}, and {Solution Propriety}. \emph{Educational and Psychological Measurement}, \emph{73}(6), 913--934. \url{https://doi.org/10.1177/0013164413495237}
+
+\leavevmode\vadjust pre{\hypertarget{ref-wuComparisonStrategiesForming2013}{}}%
+Wu, Y., Wen, Z., Marsh, H., \& Hau, K.-T. (2013). A comparison of strategies for forming product indicators for unequal numbers of items in structural equation models of latent interactions. \emph{Structural Equation Modeling: A Multidisciplinary Journal}, \emph{20}, 551--567. \url{https://doi.org/10.1080/10705511.2013.824772}
+
+\end{CSLReferences}
+
+
+\end{document}
