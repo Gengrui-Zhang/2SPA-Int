@@ -90,3 +90,7 @@ fit_tspa <- tspa(model = "ReadingScore ~ b1*IM + b2*EM + b3*IM:EM
                  se = list(IM = fs_dat$fs_IM_se[1],
                            EM = fs_dat$fs_EM_se[1]))
 summary(fit_tspa, fit.measure = TRUE, standardized = TRUE)
+
+# Write data for Mplus
+write.table(PIRLS_Data, file = here("Paper", "PIRLS2006", "PIRLS_Data.dat"),
+            sep = " ", row.names = FALSE, col.names = FALSE, na = ".")

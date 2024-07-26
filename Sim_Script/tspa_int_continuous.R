@@ -3,25 +3,18 @@ set.seed(seed_value)
 
 library(semTools)
 library(lavaan)
-library(semPlot)
 library(SimDesign)
-library(MASS)
 library(mnormt)
 library(dplyr)
 library(tidyverse)
-# library(MBESS)
 library(semlrtp)
-# Directly call functions (call R2spa)
-source("/Users/jimmy_z/R Projects/2S-PA-Int/R/get_fscore.R")
-source("/Users/jimmy_z/R Projects/2S-PA-Int/R/get_fsint.R")
-source("/Users/jimmy_z/R Projects/2S-PA-Int/R/upi.R")
-source("/Users/jimmy_z/R Projects/2S-PA-Int/R/rapi_new.R")
-source("/Users/jimmy_z/R Projects/2S-PA-Int/R/tspa_old.R")
-source("/Users/jimmy_z/R Projects/2S-PA-Int/R/parseInteractionTerms.R")
-source("/Users/jimmy_z/R Projects/2S-PA-Int/R/parseIndicators.R")
+library(here)
+
+# Source Function
+r_scripts <- list.files(here("R"), pattern = "\\.R$", full.names = TRUE)
+lapply(r_scripts, source)
 
 # Data Generation
-
 # Helper Function
 generate_sem_data <- function(N, model, Alpha, Phi, Lambda, Gamma, Theta, SD_y) {
   # Generate scores for observed items: x1 - x3, m1 - m3
@@ -420,5 +413,3 @@ Match_07012024 <- runSimulation(design = DESIGNFACTOR,
                                 control = list(allow_na = TRUE),
                                 parallel = TRUE,
                                 ncores = min(4L, parallel::detectCores() - 1))
-
-Match_07012024$seed_value <- seed_value
