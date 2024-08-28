@@ -23,13 +23,8 @@ library(dplyr)
 library(mnormt)
 library(here)
 library(semlrtp)
-source("/Users/jimmy_z/R Projects/2S-PA-Int/R/get_fscore.R")
-source("/Users/jimmy_z/R Projects/2S-PA-Int/R/get_fsint.R")
-source("/Users/jimmy_z/R Projects/2S-PA-Int/R/upi.R")
-source("/Users/jimmy_z/R Projects/2S-PA-Int/R/rapi_new.R")
-source("/Users/jimmy_z/R Projects/2S-PA-Int/R/tspa_old.R")
-source("/Users/jimmy_z/R Projects/2S-PA-Int/R/parseInteractionTerms.R")
-source("/Users/jimmy_z/R Projects/2S-PA-Int/R/parseIndicators.R")
+r_scripts <- list.files(here("R"), pattern = "\\.R$", full.names = TRUE)
+lapply(r_scripts, source)
 ```
 
 # Introduction

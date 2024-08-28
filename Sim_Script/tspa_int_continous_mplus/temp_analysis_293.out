@@ -1,0 +1,618 @@
+Mplus VERSION 8.8 (Mac)
+MUTHEN & MUTHEN
+08/20/2024  10:47 PM
+
+INPUT INSTRUCTIONS
+
+  TITLE: Data Analysis for SEM with Latent Interaction
+
+  DATA:
+    FILE = /Users/jimmy_z/desktop/Temp_Data/temp_data_293.dat;
+    FORMAT = FREE;
+
+  VARIABLE:
+    NAMES ARE x1 x2 x3 m1 m2 m3 y;
+    USEVARIABLES ARE x1 x2 x3 m1 m2 m3 y;
+
+  ANALYSIS:
+    TYPE = RANDOM;
+    ESTIMATOR = MLR;
+    ALGORITHM = INTEGRATION;
+    INTEGRATION = MONTECARLO;
+
+  MODEL:
+    eta1 BY x1 x2 x3;
+    eta2 BY m1 m2 m3;
+    eta3 | eta1 XWITH eta2;
+    y ON eta1 eta2 eta3;
+
+  OUTPUT:
+    STANDARDIZED;
+    TECH1;
+    TECH4;
+
+
+
+
+
+INPUT READING TERMINATED NORMALLY
+
+
+
+Data Analysis for SEM with Latent Interaction
+
+SUMMARY OF ANALYSIS
+
+Number of groups                                                 1
+Number of observations                                         250
+
+Number of dependent variables                                    7
+Number of independent variables                                  0
+Number of continuous latent variables                            3
+
+Observed dependent variables
+
+  Continuous
+   X1          X2          X3          M1          M2          M3
+   Y
+
+Continuous latent variables
+   ETA1        ETA2        ETA3
+
+
+Estimator                                                      MLR
+Information matrix                                        OBSERVED
+Optimization Specifications for the Quasi-Newton Algorithm for
+Continuous Outcomes
+  Maximum number of iterations                                 100
+  Convergence criterion                                  0.100D-05
+Optimization Specifications for the EM Algorithm
+  Maximum number of iterations                                 500
+  Convergence criteria
+    Loglikelihood change                                 0.100D-02
+    Relative loglikelihood change                        0.100D-05
+    Derivative                                           0.100D-02
+Optimization Specifications for the M step of the EM Algorithm for
+Categorical Latent variables
+  Number of M step iterations                                    1
+  M step convergence criterion                           0.100D-02
+  Basis for M step termination                           ITERATION
+Optimization Specifications for the M step of the EM Algorithm for
+Censored, Binary or Ordered Categorical (Ordinal), Unordered
+Categorical (Nominal) and Count Outcomes
+  Number of M step iterations                                    1
+  M step convergence criterion                           0.100D-02
+  Basis for M step termination                           ITERATION
+  Maximum value for logit thresholds                            15
+  Minimum value for logit thresholds                           -15
+  Minimum expected cell size for chi-square              0.100D-01
+Optimization algorithm                                         EMA
+Integration Specifications
+  Type                                                  MONTECARLO
+  Number of integration points                                2000
+  Dimensions of numerical integration                            2
+  Adaptive quadrature                                           ON
+  Monte Carlo integration seed                                   0
+Cholesky                                                       OFF
+
+Input data file(s)
+  /Users/jimmy_z/desktop/Temp_Data/temp_data_293.dat
+Input data format  FREE
+
+
+
+UNIVARIATE SAMPLE STATISTICS
+
+
+     UNIVARIATE HIGHER-ORDER MOMENT DESCRIPTIVE STATISTICS
+
+         Variable/         Mean/     Skewness/   Minimum/ % with                Percentiles
+        Sample Size      Variance    Kurtosis    Maximum  Min/Max      20%/60%    40%/80%    Median
+
+     X1                    0.113      -0.205      -4.210    0.40%      -1.211     -0.228      0.251
+             250.000       2.290      -0.284       4.083    0.40%       0.604      1.426
+     X2                    0.031      -0.053      -3.603    0.40%      -1.092     -0.247      0.061
+             250.000       1.590      -0.312       2.915    0.40%       0.336      1.111
+     X3                    0.131      -0.049      -2.866    0.40%      -0.853     -0.117      0.153
+             250.000       1.095      -0.329       2.742    0.40%       0.440      0.977
+     M1                    0.025      -0.097      -4.667    0.40%      -1.346     -0.285      0.063
+             250.000       2.327       0.463       5.735    0.40%       0.444      1.287
+     M2                    0.114       0.067      -3.681    0.40%      -1.203     -0.288      0.151
+             250.000       2.073      -0.181       3.961    0.40%       0.435      1.327
+     M3                    0.030      -0.132      -3.201    0.40%      -0.949     -0.145      0.088
+             250.000       1.194      -0.130       3.588    0.40%       0.352      0.988
+     Y                     0.121       0.423      -1.685    0.40%      -0.746     -0.130      0.076
+             250.000       0.940      -0.046       3.042    0.40%       0.283      0.880
+
+
+THE MODEL ESTIMATION TERMINATED NORMALLY
+
+
+
+MODEL FIT INFORMATION
+
+Number of Free Parameters                       24
+
+Loglikelihood
+
+          H0 Value                       -2725.763
+          H0 Scaling Correction Factor      0.9982
+            for MLR
+
+Information Criteria
+
+          Akaike (AIC)                    5499.526
+          Bayesian (BIC)                  5584.041
+          Sample-Size Adjusted BIC        5507.959
+            (n* = (n + 2) / 24)
+
+
+
+MODEL RESULTS
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ ETA1     BY
+    X1                 1.000      0.000    999.000    999.000
+    X2                 0.833      0.129      6.431      0.000
+    X3                 0.683      0.118      5.810      0.000
+
+ ETA2     BY
+    M1                 1.000      0.000    999.000    999.000
+    M2                 1.278      0.200      6.393      0.000
+    M3                 0.809      0.140      5.758      0.000
+
+ Y          ON
+    ETA1               0.455      0.092      4.934      0.000
+    ETA2               0.378      0.083      4.525      0.000
+    ETA3               0.297      0.096      3.112      0.002
+
+ ETA2     WITH
+    ETA1              -0.058      0.080     -0.729      0.466
+
+ Intercepts
+    X1                 0.113      0.096      1.183      0.237
+    X2                 0.031      0.080      0.383      0.702
+    X3                 0.131      0.066      1.978      0.048
+    M1                 0.025      0.097      0.264      0.792
+    M2                 0.115      0.091      1.259      0.208
+    M3                 0.030      0.069      0.439      0.661
+    Y                  0.139      0.063      2.213      0.027
+
+ Variances
+    ETA1               0.908      0.200      4.543      0.000
+    ETA2               0.702      0.193      3.642      0.000
+
+ Residual Variances
+    X1                 1.381      0.165      8.368      0.000
+    X2                 0.961      0.143      6.713      0.000
+    X3                 0.672      0.087      7.704      0.000
+    M1                 1.612      0.177      9.090      0.000
+    M2                 0.926      0.179      5.180      0.000
+    M3                 0.735      0.090      8.166      0.000
+    Y                  0.615      0.071      8.650      0.000
+
+
+QUALITY OF NUMERICAL RESULTS
+
+     Condition Number for the Information Matrix              0.185E-01
+       (ratio of smallest to largest eigenvalue)
+
+
+STANDARDIZED MODEL RESULTS
+
+
+STDYX Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ ETA1     BY
+    X1                 0.630      0.057     11.140      0.000
+    X2                 0.629      0.068      9.289      0.000
+    X3                 0.622      0.060     10.433      0.000
+
+ ETA2     BY
+    M1                 0.551      0.062      8.949      0.000
+    M2                 0.744      0.061     12.194      0.000
+    M3                 0.620      0.061     10.137      0.000
+
+ Y          ON
+    ETA1               0.447      0.067      6.641      0.000
+    ETA2               0.327      0.072      4.553      0.000
+    ETA3               0.245      0.065      3.793      0.000
+
+ ETA2     WITH
+    ETA1              -0.073      0.099     -0.739      0.460
+
+ Intercepts
+    X1                 0.075      0.064      1.172      0.241
+    X2                 0.024      0.063      0.383      0.702
+    X3                 0.125      0.064      1.965      0.049
+    M1                 0.017      0.064      0.264      0.792
+    M2                 0.080      0.063      1.260      0.208
+    M3                 0.028      0.063      0.438      0.662
+    Y                  0.143      0.064      2.252      0.024
+
+ Variances
+    ETA1               1.000      0.000    999.000    999.000
+    ETA2               1.000      0.000    999.000    999.000
+
+ Residual Variances
+    X1                 0.603      0.071      8.472      0.000
+    X2                 0.604      0.085      7.090      0.000
+    X3                 0.613      0.074      8.277      0.000
+    M1                 0.697      0.068     10.277      0.000
+    M2                 0.447      0.091      4.923      0.000
+    M3                 0.616      0.076      8.117      0.000
+    Y                  0.655      0.078      8.416      0.000
+
+
+STDY Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ ETA1     BY
+    X1                 0.630      0.057     11.140      0.000
+    X2                 0.629      0.068      9.289      0.000
+    X3                 0.622      0.060     10.433      0.000
+
+ ETA2     BY
+    M1                 0.551      0.062      8.949      0.000
+    M2                 0.744      0.061     12.194      0.000
+    M3                 0.620      0.061     10.137      0.000
+
+ Y          ON
+    ETA1               0.447      0.067      6.641      0.000
+    ETA2               0.327      0.072      4.553      0.000
+    ETA3               0.245      0.065      3.793      0.000
+
+ ETA2     WITH
+    ETA1              -0.073      0.099     -0.739      0.460
+
+ Intercepts
+    X1                 0.075      0.064      1.172      0.241
+    X2                 0.024      0.063      0.383      0.702
+    X3                 0.125      0.064      1.965      0.049
+    M1                 0.017      0.064      0.264      0.792
+    M2                 0.080      0.063      1.260      0.208
+    M3                 0.028      0.063      0.438      0.662
+    Y                  0.143      0.064      2.252      0.024
+
+ Variances
+    ETA1               1.000      0.000    999.000    999.000
+    ETA2               1.000      0.000    999.000    999.000
+
+ Residual Variances
+    X1                 0.603      0.071      8.472      0.000
+    X2                 0.604      0.085      7.090      0.000
+    X3                 0.613      0.074      8.277      0.000
+    M1                 0.697      0.068     10.277      0.000
+    M2                 0.447      0.091      4.923      0.000
+    M3                 0.616      0.076      8.117      0.000
+    Y                  0.655      0.078      8.416      0.000
+
+
+STD Standardization
+
+                                                    Two-Tailed
+                    Estimate       S.E.  Est./S.E.    P-Value
+
+ ETA1     BY
+    X1                 0.953      0.105      9.086      0.000
+    X2                 0.793      0.097      8.172      0.000
+    X3                 0.651      0.073      8.903      0.000
+
+ ETA2     BY
+    M1                 0.838      0.115      7.285      0.000
+    M2                 1.071      0.111      9.619      0.000
+    M3                 0.678      0.082      8.258      0.000
+
+ Y          ON
+    ETA1               0.433      0.072      6.014      0.000
+    ETA2               0.316      0.073      4.313      0.000
+    ETA3               0.237      0.064      3.679      0.000
+
+ ETA2     WITH
+    ETA1              -0.073      0.099     -0.739      0.460
+
+ Intercepts
+    X1                 0.113      0.096      1.183      0.237
+    X2                 0.031      0.080      0.383      0.702
+    X3                 0.131      0.066      1.978      0.048
+    M1                 0.025      0.097      0.264      0.792
+    M2                 0.115      0.091      1.259      0.208
+    M3                 0.030      0.069      0.439      0.661
+    Y                  0.139      0.063      2.213      0.027
+
+ Variances
+    ETA1               1.000      0.000    999.000    999.000
+    ETA2               1.000      0.000    999.000    999.000
+
+ Residual Variances
+    X1                 1.381      0.165      8.368      0.000
+    X2                 0.961      0.143      6.713      0.000
+    X3                 0.672      0.087      7.704      0.000
+    M1                 1.612      0.177      9.090      0.000
+    M2                 0.926      0.179      5.180      0.000
+    M3                 0.735      0.090      8.166      0.000
+    Y                  0.615      0.071      8.650      0.000
+
+
+R-SQUARE
+
+    Observed                                        Two-Tailed
+    Variable        Estimate       S.E.  Est./S.E.    P-Value
+
+    X1                 0.397      0.071      5.570      0.000
+    X2                 0.396      0.085      4.645      0.000
+    X3                 0.387      0.074      5.217      0.000
+    M1                 0.303      0.068      4.475      0.000
+    M2                 0.553      0.091      6.097      0.000
+    M3                 0.384      0.076      5.068      0.000
+    Y                  0.345      0.078      4.441      0.000
+
+
+TECHNICAL 1 OUTPUT
+
+
+     PARAMETER SPECIFICATION
+
+
+           NU
+              X1            X2            X3            M1            M2
+              ________      ________      ________      ________      ________
+                    1             2             3             4             5
+
+
+           NU
+              M3            Y
+              ________      ________
+                    6             0
+
+
+           LAMBDA
+              ETA1          ETA2          ETA3          Y
+              ________      ________      ________      ________
+ X1                 0             0             0             0
+ X2                 7             0             0             0
+ X3                 8             0             0             0
+ M1                 0             0             0             0
+ M2                 0             9             0             0
+ M3                 0            10             0             0
+ Y                  0             0             0             0
+
+
+           THETA
+              X1            X2            X3            M1            M2
+              ________      ________      ________      ________      ________
+ X1                11
+ X2                 0            12
+ X3                 0             0            13
+ M1                 0             0             0            14
+ M2                 0             0             0             0            15
+ M3                 0             0             0             0             0
+ Y                  0             0             0             0             0
+
+
+           THETA
+              M3            Y
+              ________      ________
+ M3                16
+ Y                  0             0
+
+
+           ALPHA
+              ETA1          ETA2          ETA3          Y
+              ________      ________      ________      ________
+                    0             0             0            17
+
+
+           BETA
+              ETA1          ETA2          ETA3          Y
+              ________      ________      ________      ________
+ ETA1               0             0             0             0
+ ETA2               0             0             0             0
+ ETA3               0             0             0             0
+ Y                 18            19            20             0
+
+
+           PSI
+              ETA1          ETA2          ETA3          Y
+              ________      ________      ________      ________
+ ETA1              21
+ ETA2              22            23
+ ETA3               0             0             0
+ Y                  0             0             0            24
+
+
+     STARTING VALUES
+
+
+           NU
+              X1            X2            X3            M1            M2
+              ________      ________      ________      ________      ________
+                0.113         0.031         0.131         0.025         0.114
+
+
+           NU
+              M3            Y
+              ________      ________
+                0.030         0.000
+
+
+           LAMBDA
+              ETA1          ETA2          ETA3          Y
+              ________      ________      ________      ________
+ X1             1.000         0.000         0.000         0.000
+ X2             1.000         0.000         0.000         0.000
+ X3             1.000         0.000         0.000         0.000
+ M1             0.000         1.000         0.000         0.000
+ M2             0.000         1.000         0.000         0.000
+ M3             0.000         1.000         0.000         0.000
+ Y              0.000         0.000         0.000         1.000
+
+
+           THETA
+              X1            X2            X3            M1            M2
+              ________      ________      ________      ________      ________
+ X1             1.145
+ X2             0.000         0.795
+ X3             0.000         0.000         0.547
+ M1             0.000         0.000         0.000         1.163
+ M2             0.000         0.000         0.000         0.000         1.037
+ M3             0.000         0.000         0.000         0.000         0.000
+ Y              0.000         0.000         0.000         0.000         0.000
+
+
+           THETA
+              M3            Y
+              ________      ________
+ M3             0.597
+ Y              0.000         0.000
+
+
+           ALPHA
+              ETA1          ETA2          ETA3          Y
+              ________      ________      ________      ________
+                0.000         0.000         0.000         0.121
+
+
+           BETA
+              ETA1          ETA2          ETA3          Y
+              ________      ________      ________      ________
+ ETA1           0.000         0.000         0.000         0.000
+ ETA2           0.000         0.000         0.000         0.000
+ ETA3           0.000         0.000         0.000         0.000
+ Y              0.000         0.000         0.000         0.000
+
+
+           PSI
+              ETA1          ETA2          ETA3          Y
+              ________      ________      ________      ________
+ ETA1           0.050
+ ETA2           0.000         0.050
+ ETA3           0.000         0.000         0.000
+ Y              0.000         0.000         0.000         0.470
+
+
+TECHNICAL 4 OUTPUT
+
+
+     ESTIMATES DERIVED FROM THE MODEL
+
+
+           ESTIMATED MEANS FOR THE LATENT VARIABLES
+              ETA1          ETA2          ETA3          Y
+              ________      ________      ________      ________
+                0.000         0.000        -0.058         0.121
+
+
+           S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              ETA1          ETA2          ETA3          Y
+              ________      ________      ________      ________
+                0.000         0.000         0.080         0.061
+
+
+           EST./S.E. FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              ETA1          ETA2          ETA3          Y
+              ________      ________      ________      ________
+                0.000         0.000        -0.729         1.982
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED MEANS FOR THE LATENT VARIABLES
+              ETA1          ETA2          ETA3          Y
+              ________      ________      ________      ________
+                1.000         1.000         0.466         0.048
+
+
+           ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              ETA1          ETA2          ETA3          Y
+              ________      ________      ________      ________
+ ETA1           0.908
+ ETA2          -0.058         0.702
+ ETA3           0.000         0.000         0.640
+ Y              0.391         0.238         0.190         0.939
+
+
+           S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              ETA1          ETA2          ETA3          Y
+              ________      ________      ________      ________
+ ETA1           0.200
+ ETA2           0.080         0.193
+ ETA3           0.000         0.000         0.225
+ Y              0.081         0.084         0.063         0.082
+
+
+           EST./S.E. FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              ETA1          ETA2          ETA3          Y
+              ________      ________      ________      ________
+ ETA1           4.543
+ ETA2          -0.729         3.642
+ ETA3           0.000         0.000         2.841
+ Y              4.843         2.854         3.043        11.449
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED COVARIANCE MATRIX FOR THE LATENT VARIABLES
+              ETA1          ETA2          ETA3          Y
+              ________      ________      ________      ________
+ ETA1           0.000
+ ETA2           0.466         0.000
+ ETA3           1.000         1.000         0.005
+ Y              0.000         0.004         0.002         0.000
+
+
+           ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              ETA1          ETA2          ETA3          Y
+              ________      ________      ________      ________
+ ETA1           1.000
+ ETA2          -0.073         1.000
+ ETA3           0.000         0.000         1.000
+ Y              0.423         0.294         0.246         1.000
+
+
+           S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              ETA1          ETA2          ETA3          Y
+              ________      ________      ________      ________
+ ETA1           0.000
+ ETA2           0.099         0.000
+ ETA3           0.000         0.000         0.000
+ Y              0.066         0.079         0.065         0.000
+
+
+           EST./S.E. FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              ETA1          ETA2          ETA3          Y
+              ________      ________      ________      ________
+ ETA1         999.000
+ ETA2          -0.739       999.000
+ ETA3           0.000         0.000       999.000
+ Y              6.377         3.723         3.768       999.000
+
+
+           TWO-TAILED P-VALUE FOR ESTIMATED CORRELATION MATRIX FOR THE LATENT VARIABLES
+              ETA1          ETA2          ETA3          Y
+              ________      ________      ________      ________
+ ETA1           0.000
+ ETA2           0.460         0.000
+ ETA3           1.000         1.000         0.000
+ Y              0.000         0.000         0.000         0.000
+
+
+     Beginning Time:  22:47:29
+        Ending Time:  22:48:43
+       Elapsed Time:  00:01:14
+
+
+
+MUTHEN & MUTHEN
+3463 Stoner Ave.
+Los Angeles, CA  90066
+
+Tel: (310) 391-9971
+Fax: (310) 391-8971
+Web: www.StatModel.com
+Support: Support@StatModel.com
+
+Copyright (c) 1998-2022 Muthen & Muthen

@@ -44,6 +44,10 @@ output            : papaja::apa6_pdf
 library("papaja")
 library(dplyr)
 library(tidyr)
+library(stringr)
+library(here)
+library(tidyverse)
+library(semTools)
 r_refs("r-references.bib")
 ```
 
@@ -54,11 +58,7 @@ knitr::opts_chunk$set(cache.extra = knitr::rand_seed)
 ```
 
 ```{r message=FALSE, warning=FALSE}
-library(dplyr)
-library(papaja)
-library(stringr)
-
-sim <- readRDS("/Users/jimmy_z/R Projects/2S-PA-Int/Sim_Data/Match_06022024.rds")
+sim <- readRDS(here("Sim_Data", "Match_07012024.rds"))
 sim_results <- sim %>% 
   dplyr::select(-c(REPLICATIONS:WARNINGS)) %>%
   mutate(across(where(is.numeric), round, 4),
@@ -660,6 +660,20 @@ power_table <- apa_table(power_wide,
             note = "$\\textit{N}$ = sample size; $Corr(\\xi_{x}, \\xi_{m})$ = correlation between $\\xi_{x}$ and $\\xi_{m}$; $\\rho$ = reliability level; RAPI = reliability-adjusted product indicator method; Matched-Pair UPI = matched-pair product unconstrained indicator method; 2S-PA-Int = two-stage path analysis with interaction method. Note that the methods are grouped in the second-order header for comparing statistical power under the same conditions.")
 
 power_table
+```
+
+# Empirical Demonstration Using Real Data
+
+In this section, we demonstrate the use and comparison of the three latent interaction methods mentioned in the previous sections by replicating the results of an interaction model studied by Park (2011). In Park's (2011) study, the interaction effect between intrinsic motivation and extrinsic motivation on reading performance was examined using hierarchical linear modeling. The author found a significant interaction effect, indicating that the effect of intrinsic motivation on prediction of participants' reading scores would depend on the effect of extrinsic motivation. Park (2011) computed factor scores for two motivation constructs and used as explained variables, without analyzing motivation items for interaction effects. Thus, in this demonstration, we are motivated to focus on observed items by applying latent interaction methods, and further compare the results with the original study. 
+
+Data were collected from the Progress in International Reading Literacy Study conducted in 2006 (PIRLS 2006), an international study that assesses the reading literacy of fourth-grade students (Mullis et al., 2007). As Park (2011) used in the original study, only the U.S. sample was considered in the current demonstration, which represented fourth-grade students across 50 states and the District of Columbia. The total number of recruited participants in the U.S. sample was initially 5,190. After eliminating participants who provided missing responses to any observed motivation items, the final sample size was 4,900. Since multilevel and multi-group aspects are not the main focus of this demonstration, we only perform and report student-level analysis. 
+
+There were 6 observed items in the model, 3 for intrinsic motivation (i.e., "I read only if I have to", "I think reading is boring", "I enjoy reading") and 3 for extrinsic motivation (i.e., "I like talking about books with other people", "I would be happy if someone gave me a book as a present", "I need to read well for my future"). All the items were scored using the four-point Likert scale, from 0 for "disagree a lot" to 3 for "agree a lot". In order to avoid computation confusion and maintain interpretation consistency, four items were recoded so that all the items are positively oriented, meaning that higher scores indicate higher reading motivation. To replicate the findings in Park (2011), we hypothesized that both extrinsic and intrinsic motivation predict students' reading performance and there exists significant interaction between two types of reading motivation. The entire demonstration of three latent interaction methods was completed in R, and the methods were compared on the point estimates of path coefficients with their standard error and significance. PIRLS 2006 data used five plausible values to accurately assess reading performance of students, which could address the issue of ignoring remarkable amount of uncertainty in estimating individual characteristics (Martin et al., 2007). To follow the guidelines from the official technical report of PIRLS 2006, we fitted the model on each plausible value as the dependent variable for each latent interaction method, and combined estimates using Rubin's rules. Specifically, taking UPI as the example, the point estimate of the interaction effect, $\hat{\beta}_{3}$, was combined by taking the average of five effects under five plausible values (i.e., $\hat{\beta}_{3} = $).
+
+Table 7 lists the point estimates of three path coefficients, standard errors, and p-values for the three methods, even though first-order effects (i.e., $\beta_{1}$ and $\beta_{2}$) were not the focus of this research. It was found that the latent interaction effect between extrinsic and intrinsic motivation was significant for the three methods ($p$ < .001 for $\beta_{3}$ using UPI, RAPI, and 2S-PA-Int). 
+
+```{r example, message=FALSE, warning=FALSE}
+
 ```
 
 # Discussion

@@ -129,6 +129,8 @@ extract_res <- function (condition, dat, fixed_objects = NULL) {
     std_col <- standardizedSolution(fit_reg)
     reg_est <- std_col[std_col$label == "c2", "est.std"]
     reg_se <- std_col[std_col$label == "c2", "se"]
+    usd_col <- parameterEstimates(fit_reg, standardized = FALSE)
+    reg_se_usd <- usd_col[usd_col$label == "c2", "se"]
     reg_lrtp <- lrtp(fit_reg)
     reg_lrtp_ci <- as.data.frame(reg_lrtp) %>%
       filter(op == "~" & label == "c2") %>%
@@ -143,6 +145,7 @@ extract_res <- function (condition, dat, fixed_objects = NULL) {
   if (lavInspect(fit_rapi, what = "converged")) {
     rapi_est <- coef(fit_rapi, type = "user")["beta3"]
     rapi_se <- sqrt(vcov(fit_rapi, type = "user")["beta3", "beta3"])
+    rapi_se_usd <- sqrt(vcov(fit_rapi)["b3", "b3"])
     rapi_lrtp <- lrtp(fit_rapi)
     rapi_lrtp_ci <- as.data.frame(rapi_lrtp) %>%
       filter(op == "~" & label == "b3") %>%
@@ -158,6 +161,7 @@ extract_res <- function (condition, dat, fixed_objects = NULL) {
   if (lavInspect(fit_upi, what = "converged")) {
     upi_est <- coef(fit_upi, type = "user")["beta3"]
     upi_se <- sqrt(vcov(fit_upi, type = "user")["beta3", "beta3"])
+    upi_se_usd <- sqrt(vcov(fit_upi)["b3", "b3"])
     upi_lrtp <- lrtp(fit_upi)
     upi_lrtp_ci <- as.data.frame(upi_lrtp) %>%
       filter(op == "~" & label == "b3") %>%
@@ -186,6 +190,7 @@ extract_res <- function (condition, dat, fixed_objects = NULL) {
   if (lavInspect(fit_tspa, what = "converged")) {
     tspa_est <- coef(fit_tspa, type = "user")["beta3"]
     tspa_se <- sqrt(vcov(fit_tspa, type = "user")["beta3", "beta3"])
+    tspa_se_usd <- sqrt(vcov(fit_tspa)["b3", "b3"])
     tspa_lrtp <- lrtp(fit_tspa)
     tspa_lrtp_ci <- as.data.frame(tspa_lrtp) %>%
       filter(op == "~" & label == "b3") %>%
@@ -195,14 +200,14 @@ extract_res <- function (condition, dat, fixed_objects = NULL) {
     tspa_se <- NA
   }
   # Extract parameter estimates and standard errors
-  paret <- c(reg_est, reg_se, reg_lrtp_ci$ci.lower, reg_lrtp_ci$ci.upper,
-             rapi_est, rapi_se, rapi_lrtp_ci$ci.lower, rapi_lrtp_ci$ci.upper,
-             upi_est, upi_se, upi_lrtp_ci$ci.lower, upi_lrtp_ci$ci.upper,
-             tspa_est, tspa_se, tspa_lrtp_ci$ci.lower, tspa_lrtp_ci$ci.upper)
-  names(paret) <- c("reg_yint_est", "reg_yint_se", "reg_lrtp_ci_lower", "reg_lrtp_ci_upper",
-                    "rapi_yint_est", "rapi_yint_se", "rapi_lrtp_ci_lower", "rapi_lrtp_ci_upper",
-                    "upi_yint_est", "upi_yint_se", "upi_lrtp_ci_lower", "upi_lrtp_ci_upper",
-                    "tspa_yint_est", "tspa_yint_se", "tspa_lrtp_ci_lower", "tspa_lrtp_ci_upper")
+  paret <- c(reg_est, reg_se, reg_se_usd, reg_lrtp_ci$ci.lower, reg_lrtp_ci$ci.upper,
+             rapi_est, rapi_se, rapi_se_usd, rapi_lrtp_ci$ci.lower, rapi_lrtp_ci$ci.upper,
+             upi_est, upi_se, upi_se_usd, upi_lrtp_ci$ci.lower, upi_lrtp_ci$ci.upper,
+             tspa_est, tspa_se, tspa_se_usd, tspa_lrtp_ci$ci.lower, tspa_lrtp_ci$ci.upper)
+  names(paret) <- c("reg_yint_est", "reg_yint_se", "reg_yint_se_usd", "reg_lrtp_ci_lower", "reg_lrtp_ci_upper",
+                    "rapi_yint_est", "rapi_yint_se", "rapi_yint_se_usd", "rapi_lrtp_ci_lower", "rapi_lrtp_ci_upper",
+                    "upi_yint_est", "upi_yint_se", "upi_yint_se_usd", "upi_lrtp_ci_lower", "upi_lrtp_ci_upper",
+                    "tspa_yint_est", "tspa_yint_se", "tspa_yint_se_usd", "tspa_lrtp_ci_lower", "tspa_lrtp_ci_upper")
   return(paret)
 }
 
@@ -213,7 +218,8 @@ evaluate_res <- function (condition, results, fixed_objects = NULL) {
 
   # Separate estimates and se
   results_est <- as.data.frame(results[colnames(results)[grepl("_est", colnames(results))]])
-  results_se <- as.data.frame(results[colnames(results)[grepl("_se", colnames(results))]])
+  results_se <- as.data.frame(results[colnames(results)[grepl("_se$", colnames(results))]])
+  results_se_usd <- as.data.frame(results[colnames(results)[grepl("_se_usd", colnames(results))]])
   lrtp_ci_lower <- as.data.frame(results[colnames(results)[grepl("_ci_lower", colnames(results))]])
   lrtp_ci_upper <- as.data.frame(results[colnames(results)[grepl("_ci_upper", colnames(results))]])
 
@@ -296,8 +302,9 @@ evaluate_res <- function (condition, results, fixed_objects = NULL) {
   }
 
   # Helper function for calculating coverage rate, Type I error rate, and power
-  ci_stats <- function(est, est_se, par, stats_type, lrt_lo_95 = NULL, lrt_hi_95 = NULL) {
+  ci_stats <- function(est, est_se, est_se_usd, par, stats_type, lrt_lo_95 = NULL, lrt_hi_95 = NULL) {
     est_se <- as.matrix(est_se)
+    est_se_usd <- as.matrix(est_se_usd)
     est <- as.matrix(est)
 
     # Calculate the confidence intervals
@@ -311,6 +318,17 @@ evaluate_res <- function (condition, results, fixed_objects = NULL) {
       ci_est[[i]] <- cbind(lo.95[,i], hi.95[,i])
     }
 
+    # Calculate the confidence intervals
+    lo.95.usd <- est - qnorm(.975) * est_se_usd
+    hi.95.usd <- est + qnorm(.975) * est_se_usd
+    ci_est_usd <- vector("list", length = ncol(est))
+    names(ci_est_usd) <- colnames(est)
+    
+    # Construct confidence intervals for each method
+    for (i in seq_len(ncol(est))) {
+      ci_est_usd[[i]] <- cbind(lo.95.usd[,i], hi.95.usd[,i])
+    }
+    
     # Extract LRT CIs
     if (!is.null(lrt_lo_95) && !is.null(lrt_hi_95)) {
       lrt_lo_95 <- as.matrix(lrt_lo_95)
@@ -327,11 +345,11 @@ evaluate_res <- function (condition, results, fixed_objects = NULL) {
     if (stats_type == "Coverage") {
       return(sapply(ci_est, function(ci) mean(ci[,1] <= par & ci[,2] >= par)))
     } else if (stats_type == "TypeI") {
-      return(sapply(ci_est, function(ci) mean(ci[,1] > 0 | ci[,2] < 0)))
+      return(sapply(ci_est_usd, function(ci) mean(ci[,1] > 0 | ci[,2] < 0)))
     } else if (stats_type == "Lrt_TypeI") {
       return(sapply(ci_lrt, function(ci) mean(ci[,1] > 0 | ci[,2] < 0)))
     } else if (stats_type == "Power") {
-      return(sapply(ci_est, function(ci) (1 - mean(ci[,1] < 0 & ci[,2] > 0))))
+      return(sapply(ci_est_usd, function(ci) (1 - mean(ci[,1] < 0 & ci[,2] > 0))))
     } else if (stats_type == "Lrt_Power") {
       return(sapply(ci_lrt, function(ci) (1 - mean(ci[,1] < 0 & ci[,2] > 0))))
     } else {
@@ -361,13 +379,33 @@ evaluate_res <- function (condition, results, fixed_objects = NULL) {
                               results_se,
                               pop_par,
                               type = "median"),
-    coverage = ci_stats(results_est, results_se, pop_par, "Coverage"),
-    type1 = ci_stats(results_est, results_se, pop_par, "TypeI"),
-    type1_lrt = ci_stats(results_est, results_se, pop_par, "Lrt_TypeI",
+    coverage = ci_stats(results_est, 
+                        results_se,
+                        results_se_usd,
+                        pop_par, 
+                        "Coverage"),
+    type1 = ci_stats(results_est, 
+                     results_se, 
+                     results_se_usd,
+                     pop_par, 
+                     "TypeI"),
+    type1_lrt = ci_stats(results_est, 
+                         results_se, 
+                         results_se_usd,
+                         pop_par, 
+                         "Lrt_TypeI",
                          lrt_lo_95 = lrtp_ci_lower,
                          lrt_hi_95 = lrtp_ci_upper),
-    power = ci_stats(results_est, results_se, pop_par, "Power"),
-    power_lrt = ci_stats(results_est, results_se, pop_par, "Lrt_Power",
+    power = ci_stats(results_est, 
+                     results_se,
+                     results_se_usd,
+                     pop_par, 
+                     "Power"),
+    power_lrt = ci_stats(results_est, 
+                         results_se, 
+                         results_se_usd,
+                         pop_par, 
+                         "Lrt_Power",
                          lrt_lo_95 = lrtp_ci_lower,
                          lrt_hi_95 = lrtp_ci_upper),
     rmse = RMSE(na.omit(results_est),
@@ -401,15 +439,15 @@ evaluate_res <- function (condition, results, fixed_objects = NULL) {
 
 # Run 2000 replications
 
-Match_07012024 <- runSimulation(design = DESIGNFACTOR,
-                                replications = 2000,
+Match_07292024 <- runSimulation(design = DESIGNFACTOR,
+                                replications = 5,
                                 generate = GenData,
                                 analyse = extract_res,
                                 summarise = evaluate_res,
                                 fixed_objects = FIXED_PARAMETER,
                                 save = TRUE,
                                 save_results = TRUE,
-                                filename = "Match_07012024",
+                                filename = "Match_07292024",
                                 control = list(allow_na = TRUE),
                                 parallel = TRUE,
                                 ncores = min(4L, parallel::detectCores() - 1))
