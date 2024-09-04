@@ -1,0 +1,8 @@
+\begin{figure*}[hbt]
+\ifnextchar[{\eatarg}{}
+[h]
+\centering
+\includegraphics[width=0.8\textwidth]{/Users/jimmy_z/R Projects/2SPA-Int/Paper/Qual 1 Paper Draft/PIRL_Plot.png}
+\caption{Structural Model of Illustrative Example from Park (2011).}
+\caption*{\textit{Note. The model includes two first-order latent variables, intrinsic motivation and extrinsic motivation, depicted as ellipses. Their latent interaction term was depicted as a filled black circle. The dependent variable was observed and rendered as a rectangle.}}
+\end{figure*}

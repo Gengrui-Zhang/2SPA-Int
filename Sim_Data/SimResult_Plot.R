@@ -22,21 +22,42 @@ process_data <- function(data) {
     relocate(REPLICATIONS, .after = last_col()) %>%
     mutate(N_lab = as_factor(paste0("italic(N) == ", N)),
            gammaint_lab = as_factor(paste0("\\beta_{xm} == ", gamma_xm)),
-           cor_xm_lab = as_factor(paste0("Correlation_XM == ", cor_xm)),
-           rel_lab = as_factor(paste0("Reliability == ", rel)))
+           cor_xm_lab = as_factor(paste0("corr[XM] == ", cor_xm)),
+           rel_lab = as_factor(paste0("rho == ", rel)))
 
   return(sim_results)
 }
 
-plot_results <- function(data, x_var, y_var, x_label, y_label, y_limits = NULL, color_var = "method") {
+# Plot function
+plot_results <- function(data, x_var, y_var, x_label, y_label, y_limits = NULL, color_var = "method", shape_var = "method", point_size = 3, add_lines = FALSE) {
   plot <- data %>%
-    ggplot(aes(x = factor(!!sym(x_var)), y = !!sym(y_var), color = !!sym(color_var))) +
-    geom_boxplot() +
+    ggplot(aes(x = factor(!!sym(x_var)), y = !!sym(y_var), color = !!sym(color_var), shape = !!sym(shape_var))) +
+    geom_point(position = position_jitterdodge(jitter.width = 0.2, dodge.width = 0.75), size = point_size, alpha = 0.8) +
     facet_grid(cor_xm_lab ~ rel_lab, labeller = label_parsed) +
-    labs(x = x_label, y = y_label)
+    scale_shape_manual(values = c("reg" = 17, "rapi" = 16, "upi" = 18, "tspa" = 15),
+                       labels = c("reg" = "MMR", "rapi" = "RAPI", "upi" = "Matched-Pair UPI", "tspa" = "2S-PA-Int")) +
+    scale_color_manual(values = c("reg" = "pink", "rapi" = "#E69F00", "upi" = "#F0E442", "tspa" = "#009E73"),
+                       labels = c("reg" = "MMR", "rapi" = "RAPI", "upi" = "Matched-Pair UPI", "tspa" = "2S-PA-Int")) +
+    labs(x = x_label, y = y_label, color = "Method", shape = "Method") +
+    theme_minimal() +
+    theme(legend.title = element_text(size = 12, face = "bold"),
+          legend.text = element_text(size = 10),
+          legend.position = "right")
+  
+  if (add_lines) {
+    plot <- plot + 
+      geom_line(aes(group = !!sym(shape_var), linetype = !!sym(shape_var)), 
+                position = position_dodge(width = 0.75), 
+                size = 0.7, alpha = 0.6) +
+      scale_linetype_manual(name = "Line",  # Set the legend name to "Line"
+                            values = c("reg" = "dotted", "rapi" = "solid", "upi" = "dashed", "tspa" = "twodash"),
+                            labels = c("reg" = "MMR", "rapi" = "RAPI", "upi" = "Matched-Pair UPI", "tspa" = "2S-PA-Int"))
+  }
+  
   if (!is.null(y_limits)) {
     plot <- plot + ylim(y_limits)
   }
+  
   return(plot)
 }
 
@@ -53,9 +74,9 @@ write_csv(power_pd, "Sim_Data/power_07012024.csv")
 
 # Plot the results
 type1_plot <- read.csv("Sim_Data/type1_07012024.csv")
-type1_plot <- type1_plot %>% filter(method != "reg")
+# type1_plot <- type1_plot %>% filter(method != "reg")
 power_plot <- read.csv("Sim_Data/power_07012024.csv")
-power_plot <- power_plot %>% filter(method != "reg")
+# power_plot <- power_plot %>% filter(method != "reg")
 
 # Standard Bias
 sd_bias_plot <- plot_results(power_plot,
@@ -63,7 +84,8 @@ sd_bias_plot <- plot_results(power_plot,
                              "std_bias",
                              "Sample Size (N)",
                              "Standardized Bias",
-                             c(-0.5, 0.5))
+                             c(-0.5, 0.5),
+                             add_lines = TRUE)
 sd_bias_plot <- sd_bias_plot +
   geom_hline(yintercept = c(-0.4, 0.4), linetype = "dashed", color = "red")
 
@@ -86,6 +108,14 @@ cov_bias_plot <- plot_results(power_plot,
 cov_bias_plot <- cov_bias_plot +
   geom_hline(yintercept = c(0.91), linetype = "dashed", color = "red")
 
+# RMSE
+rmse_bias_plot <- plot_results(power_plot,
+                               "N",
+                               "rmse",
+                               "Sample Size (N)",
+                               "Root Mean Squre Error",
+                               add_lines = TRUE)
+
 # Type I error rate
 type1_bias_plot <- plot_results(type1_plot,
                               "N",
@@ -102,17 +132,3 @@ power_bias_plot <- plot_results(power_plot,
                                 "Statistical Power")
 power_bias_plot <- power_bias_plot +
   geom_hline(yintercept = c(0.8), linetype = "dashed", color = "red")
-
-# RMSE
-rmse_bias_plot <- plot_results(power_plot,
-                                "N",
-                                "rmse",
-                                "Sample Size (N)",
-                                "Root Mean Squre Error")
-
-# Convergence Rate
-sim_plots %>%
-  ggplot(aes(x = factor(N), y = convergence_rate, color = method)) +
-  geom_boxplot() +
-  facet_grid(cor_xm_lab ~ rel_lab, labeller = label_parsed) +
-  labs(x = "Sample Size (N)", y = "Convergence Rate")
