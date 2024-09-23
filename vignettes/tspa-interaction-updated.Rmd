@@ -23,6 +23,7 @@ library(dplyr)
 library(mnormt)
 library(here)
 library(semlrtp)
+library(modsem)
 r_scripts <- list.files(here("R"), pattern = "\\.R$", full.names = TRUE)
 lapply(r_scripts, source)
 ```
@@ -201,6 +202,15 @@ summary(fit_upi, fit.measure = TRUE, standardized = TRUE)
 # Matched-pair
 fit_upi_matched <- upi(mod_upi, df, mode = "match")
 summary(fit_upi_matched, fit.measure = TRUE, standardized = TRUE)
+
+# Using modsem
+mod_upi <- '# Measurement Model
+              X =~ x1 + x2 + x3
+              M =~ m1 + m2 + m3
+            # Structural Model
+              Y ~ b1 * X + b2 * M + b3 * X:M'
+mod_upi <- modsem_pi(mod_upi, data = df, method = "uca", match = T)
+summary(mod_upi)
 ```
 
 ### LRT Based P-value

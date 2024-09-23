@@ -733,13 +733,30 @@ mod_upi <- "
           EM =~ ASBGRST2_recode + ASBGRST3_recode + ASBGRST5_recode
 
           DV ~ b1*IM + b2*EM + b3*IM:EM
-
+         
+          # Variance
           IM ~~ v1*IM
           EM ~~ v2*EM
-          beta1 := b1*sqrt(v1)
-          beta2 := b2*sqrt(v2)
-          beta3 := b3*sqrt(v1)*sqrt(v2)
+          IM:EM ~~ v3*IM:EM
+          
+          # Covariance
+          IM ~~ cov_12*EM
+          IM ~~ cov_13*IM:EM
+          EM ~~ cov_23*IM:EM
+          
+          # Disturbance
+    			DV ~~ dist_y*DV
+          d1 :=  dist_y + (b1^2 * v1 + b2^2 * v2 + b3^2 * v3 + 
+                          2 * b1 * b2 * cov_12 + 
+                          2 * b1 * b3 * cov_13 + 
+                          2 * b2 * b3 * cov_23)
+          
+          beta1 := b1*sqrt(v1)/sqrt(d1)
+          beta2 := b2*sqrt(v2)/sqrt(d1)
+          beta3 := b3*sqrt(v1)*sqrt(v2)/sqrt(d1)
           "
+
+
 # Fit the model using upi()
 beta1_upi <- c()
 beta2_upi <- c()

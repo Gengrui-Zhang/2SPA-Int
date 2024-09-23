@@ -1,6 +1,3 @@
-seed_value <- 66234
-set.seed(seed_value)
-
 library(semTools)
 library(lavaan)
 library(SimDesign)
@@ -14,35 +11,7 @@ library(here)
 r_scripts <- list.files(here("R"), pattern = "\\.R$", full.names = TRUE)
 lapply(r_scripts, source)
 
-# Data Generation
-# Helper Function
-generate_sem_data <- function(N, model, Alpha, Phi, Lambda, Gamma, Theta, SD_y) {
-  # Generate scores for observed items: x1 - x3, m1 - m3
-  eta_scores <- rmnorm(N, mean = Alpha, varcov = Phi) # Simulate latent scores
-  # Generate eta scores with interaction
-  eta_scores_int <- cbind(eta_scores, eta_scores[,1]*eta_scores[,2])
-  delta <- rmnorm(N, mean = rep(0, length(diag(Theta))), varcov = Theta) # Errors/Residuals of Indicators
-  item_scores <- tcrossprod(eta_scores, Lambda) + delta # Item/Indicator scores
-
-  y_scores <- tcrossprod(eta_scores_int, Gamma) + rnorm(N, 0, SD_y) # Y scores / DV scores
-
-  # Parsing formula
-  indicator_terms <- unlist(strsplit(gsub(" ", "",
-                                          unlist(strsplit(model, "\n"))[grep("=~",
-                                                                             unlist(strsplit(model, "\n")))]),
-                                     split = "=~"))
-  indicator_vars <- indicator_terms[grepl("+", indicator_terms, fixed = TRUE) == "FALSE"]
-  indicator_num <- as.vector(unlist(lapply(strsplit(indicator_terms[grepl("+", indicator_terms, fixed = TRUE) == "TRUE"],
-                                                    split = "+", fixed = TRUE), length)))
-
-  df <- as.data.frame(cbind(item_scores, y_scores))
-  names <- list()
-  for (n in seq(length(indicator_vars))) {
-    names[[n]] <- tolower(paste0(indicator_vars[n], seq(indicator_num[n])))
-  }
-  colnames(df) <- c(unlist(names), "Y")
-  return(df)
-}
+# ========================================= Simulation Conditions =========================================
 
 DESIGNFACTOR <- createDesign(
   N = c(100, 250, 500),
@@ -73,8 +42,37 @@ FIXED_PARAMETER <- list(model = '
                         gamma_m = 0.3
 )
 
+# ========================================= Data Generation =========================================
+# Helper Function
+generate_sem_data <- function(N, model, Alpha, Phi, Lambda, Gamma, Theta, SD_y) {
+  # Generate scores for observed items: x1 - x3, m1 - m3
+  eta_scores <- rmnorm(N, mean = Alpha, varcov = Phi) # Simulate latent scores
+  # Generate eta scores with interaction
+  eta_scores_int <- cbind(eta_scores, eta_scores[,1]*eta_scores[,2])
+  delta <- rmnorm(N, mean = rep(0, length(diag(Theta))), varcov = Theta) # Errors/Residuals of Indicators
+  item_scores <- tcrossprod(eta_scores, Lambda) + delta # Item/Indicator scores
 
-GenData <- function (condition, fixed_objects = NULL) {
+  y_scores <- tcrossprod(eta_scores_int, Gamma) + rnorm(N, 0, SD_y) # Y scores / DV scores
+
+  # Parsing formula
+  indicator_terms <- unlist(strsplit(gsub(" ", "",
+                                          unlist(strsplit(model, "\n"))[grep("=~",
+                                                                             unlist(strsplit(model, "\n")))]),
+                                     split = "=~"))
+  indicator_vars <- indicator_terms[grepl("+", indicator_terms, fixed = TRUE) == "FALSE"]
+  indicator_num <- as.vector(unlist(lapply(strsplit(indicator_terms[grepl("+", indicator_terms, fixed = TRUE) == "TRUE"],
+                                                    split = "+", fixed = TRUE), length)))
+
+  df <- as.data.frame(cbind(item_scores, y_scores))
+  names <- list()
+  for (n in seq(length(indicator_vars))) {
+    names[[n]] <- tolower(paste0(indicator_vars[n], seq(indicator_num[n])))
+  }
+  colnames(df) <- c(unlist(names), "Y")
+  return(df)
+}
+
+generate_dat <- function (condition, fixed_objects = NULL) {
   N <- condition$N # Sample size
   mu_x <- fixed_objects$mu_x
   mu_m <- fixed_objects$mu_m
@@ -116,61 +114,109 @@ GenData <- function (condition, fixed_objects = NULL) {
   )
 }
 
-extract_res <- function (condition, dat, fixed_objects = NULL) {
+# ========================================= Data Analysis =========================================
 
+analyze_mmr <- function(condition, dat, fixed_objects = NULL) {
+  
   # Fit using moderated multiple regression
-  dat_reg <- dat %>%
+  dat_mmr <- dat %>%
     mutate(x_c = rowSums(dat[c("x1", "x2", "x3")]) - mean(rowSums(dat[c("x1", "x2", "x3")])),
            m_c = rowSums(dat[c("m1", "m2", "m3")]) - mean(rowSums(dat[c("m1", "m2", "m3")])),
-           xm = x_c*m_c)
-  fit_reg <- sem(model = "Y ~ c0*x_c + c1*m_c + c2*xm",
-                 data = dat_reg)
-  if (lavInspect(fit_reg, what = "converged")) {
-    std_col <- standardizedSolution(fit_reg)
-    reg_est <- std_col[std_col$label == "c2", "est.std"]
-    reg_se <- std_col[std_col$label == "c2", "se"]
-    usd_col <- parameterEstimates(fit_reg, standardized = FALSE)
-    reg_se_usd <- usd_col[usd_col$label == "c2", "se"]
-    reg_lrtp <- lrtp(fit_reg)
-    reg_lrtp_ci <- as.data.frame(reg_lrtp) %>%
-      filter(op == "~" & label == "c2") %>%
-      select(ci.lower, ci.upper)
-  } else {
-    reg_est <- NA
-    reg_se <- NA
+           xm = x_c * m_c)
+  
+  
+  # Fit the model and capture warnings and errors
+  fit_mmr <- sem(model = "Y ~ c0*x_c + c1*m_c + c2*xm", 
+                 data = dat_mmr)
+  
+  # Extract parameters
+  std_col <- standardizedSolution(fit_mmr)
+  est <- std_col[std_col$label == "c2", "est.std"]
+  se <- std_col[std_col$label == "c2", "se"]
+  usd_col <- parameterEstimates(fit_mmr, standardized = FALSE)
+  se_usd <- usd_col[usd_col$label == "c2", "se"]
+  lrtp_col <- lrtp(fit_mmr)
+  lrtp_ci <- as.data.frame(lrtp_col) %>%
+    filter(op == "~" & label == "c2") %>%
+    select(ci.lower, ci.upper)
+  
+  # Check convergence
+  converge <- ifelse(lavInspect(fit_upi, "converged"), 1, 0)
+  
+  # Create the output vector
+  out <- unlist(c(est, se, se_usd, lrtp_ci$ci.lower, lrtp_ci$ci.upper, converge))  # 1 for converge
+  names(out) <- c("est", "se_std", "se_usd", "lrtp_lower", "lrtp_upper", "converge")
+  
+  # Check if any NA exists in the output
+  if (anyNA(out)) {
+    stop("The model did not obtain SE")
   }
-  # Fit using rapi function
+  
+  return(out)
+}
+
+analyze_upi <- function(condition, dat, fixed_objects = NULL) {
+  
+  # Fit the model
+  fit_upi <- upi(model = fixed_objects$model, 
+                 data = dat, 
+                 mode = "match")
+  
+  # Extract parameters
+  est <- coef(fit_upi, type = "user")["beta3"]
+  se <- sqrt(vcov(fit_upi, type = "user")["beta3", "beta3"])
+  se_usd <- sqrt(vcov(fit_upi)["b3", "b3"])
+  lrtp_col <- lrtp(fit_upi)
+  lrtp_ci <- as.data.frame(lrtp_col) %>%
+    filter(op == "~" & label == "b3") %>%
+    select(ci.lower, ci.upper)
+  
+  # Check convergence
+  converge <- ifelse(lavInspect(fit_upi, "converged"), 1, 0)
+  
+  # Create the output vector
+  out <- unlist(c(est, se, se_usd, lrtp_ci$ci.lower, lrtp_ci$ci.upper, converge))  # 1 for converge
+  names(out) <- c("est", "se_std", "se_usd", "lrtp_lower", "lrtp_upper", "converge")
+  
+  # Check for NA values in the output
+  if (anyNA(out)) {
+    stop("The model did not obtain SE")
+  }
+  
+  return(out)
+}
+
+analyze_rapi <- function (condition, dat, fixed_objects = NULL) {
+  
+  # Fit the model and capture warnings and errors
   fit_rapi <- rapi(model = fixed_objects$model,
                    data = dat)
-  if (lavInspect(fit_rapi, what = "converged")) {
-    rapi_est <- coef(fit_rapi, type = "user")["beta3"]
-    rapi_se <- sqrt(vcov(fit_rapi, type = "user")["beta3", "beta3"])
-    rapi_se_usd <- sqrt(vcov(fit_rapi)["b3", "b3"])
-    rapi_lrtp <- lrtp(fit_rapi)
-    rapi_lrtp_ci <- as.data.frame(rapi_lrtp) %>%
-      filter(op == "~" & label == "b3") %>%
-      select(ci.lower, ci.upper)
-  } else {
-    rapi_est <- NA
-    rapi_se <- NA
+
+  est <- coef(fit_rapi, type = "user")["beta3"]
+  se <- sqrt(vcov(fit_rapi, type = "user")["beta3", "beta3"])
+  se_usd <- sqrt(vcov(fit_rapi)["b3", "b3"])
+  lrtp_col <- lrtp(fit_rapi)
+  lrtp_ci <- as.data.frame(lrtp_col) %>%
+    filter(op == "~" & label == "b3") %>%
+    select(ci.lower, ci.upper)
+  
+  # Check convergence
+  converge <- ifelse(lavInspect(fit_upi, "converged"), 1, 0)
+  
+  # Create the output vector
+  out <- unlist(c(est, se, se_usd, lrtp_ci$ci.lower, lrtp_ci$ci.upper, converge))  # 1 for converge
+  names(out) <- c("est", "se_std", "se_usd", "lrtp_lower", "lrtp_upper", "converge")
+  
+  # Check convergence
+  if (anyNA(out)) {
+    stop("The model did not obtain SE")
   }
-  # Fit using upi function
-  fit_upi <- upi(model = fixed_objects$model,
-                 data = dat,
-                 mode = "match")
-  if (lavInspect(fit_upi, what = "converged")) {
-    upi_est <- coef(fit_upi, type = "user")["beta3"]
-    upi_se <- sqrt(vcov(fit_upi, type = "user")["beta3", "beta3"])
-    upi_se_usd <- sqrt(vcov(fit_upi)["b3", "b3"])
-    upi_lrtp <- lrtp(fit_upi)
-    upi_lrtp_ci <- as.data.frame(upi_lrtp) %>%
-      filter(op == "~" & label == "b3") %>%
-      select(ci.lower, ci.upper)
-  } else {
-    upi_est <- NA
-    upi_se <- NA
-  }
-  # Fit using tspa function
+  out
+}
+
+analyze_tspa <- function (condition, dat, fixed_objects = NULL) {
+
+  # Fit using two-stage path analysis
   fs_dat <- get_fs(dat,
                    model ='
                              X =~ x1 + x2 + x3
@@ -180,6 +226,7 @@ extract_res <- function (condition, dat, fixed_objects = NULL) {
                    std.lv = TRUE)
   Y <- dat$Y
   fs_dat <- cbind(fs_dat, Y)
+  
   fit_tspa <- tspa(model = "Y ~ b1*X + b2*M + b3*X:M
                               beta1 := b1 * sqrt(v1)
                               beta2 := b2 * sqrt(v2)
@@ -187,28 +234,142 @@ extract_res <- function (condition, dat, fixed_objects = NULL) {
                    data = fs_dat,
                    se = list(X = fs_dat$fs_X_se[1],
                              M = fs_dat$fs_M_se[1]))
-  if (lavInspect(fit_tspa, what = "converged")) {
-    tspa_est <- coef(fit_tspa, type = "user")["beta3"]
-    tspa_se <- sqrt(vcov(fit_tspa, type = "user")["beta3", "beta3"])
-    tspa_se_usd <- sqrt(vcov(fit_tspa)["b3", "b3"])
-    tspa_lrtp <- lrtp(fit_tspa)
-    tspa_lrtp_ci <- as.data.frame(tspa_lrtp) %>%
-      filter(op == "~" & label == "b3") %>%
-      select(ci.lower, ci.upper)
-  } else {
-    tspa_est <- NA
-    tspa_se <- NA
+  
+  est <- coef(fit_tspa, type = "user")["beta3"]
+  se <- sqrt(vcov(fit_tspa, type = "user")["beta3", "beta3"])
+  se_usd <- sqrt(vcov(fit_tspa)["b3", "b3"])
+  lrtp_col <- lrtp(fit_tspa)
+  lrtp_ci <- as.data.frame(lrtp_col) %>%
+  filter(op == "~" & label == "b3") %>%
+    select(ci.lower, ci.upper)
+  
+  # Check convergence
+  converge <- ifelse(lavInspect(fit_upi, "converged"), 1, 0)
+  
+  # Create the output vector
+  out <- unlist(c(est, se, se_usd, lrtp_ci$ci.lower, lrtp_ci$ci.upper, converge))  # 1 for converge
+  names(out) <- c("est", "se_std", "se_usd", "lrtp_lower", "lrtp_upper", "converge")
+  
+  # Check convergence
+  if (anyNA(out)) {
+    stop("The model did not obtain SE")
   }
-  # Extract parameter estimates and standard errors
-  paret <- c(reg_est, reg_se, reg_se_usd, reg_lrtp_ci$ci.lower, reg_lrtp_ci$ci.upper,
-             rapi_est, rapi_se, rapi_se_usd, rapi_lrtp_ci$ci.lower, rapi_lrtp_ci$ci.upper,
-             upi_est, upi_se, upi_se_usd, upi_lrtp_ci$ci.lower, upi_lrtp_ci$ci.upper,
-             tspa_est, tspa_se, tspa_se_usd, tspa_lrtp_ci$ci.lower, tspa_lrtp_ci$ci.upper)
-  names(paret) <- c("reg_yint_est", "reg_yint_se", "reg_yint_se_usd", "reg_lrtp_ci_lower", "reg_lrtp_ci_upper",
-                    "rapi_yint_est", "rapi_yint_se", "rapi_yint_se_usd", "rapi_lrtp_ci_lower", "rapi_lrtp_ci_upper",
-                    "upi_yint_est", "upi_yint_se", "upi_yint_se_usd", "upi_lrtp_ci_lower", "upi_lrtp_ci_upper",
-                    "tspa_yint_est", "tspa_yint_se", "tspa_yint_se_usd", "tspa_lrtp_ci_lower", "tspa_lrtp_ci_upper")
-  return(paret)
+  out
+}
+
+# ========================================= Results Summary =========================================
+
+# Helper function: robust bias
+robust_bias <- function(est, se, par, trim = 0, type = NULL) {
+  output <- numeric(ncol(est))
+  for (i in seq_len(ncol(est))) {
+    if (type == "raw") {
+      output[i] <- mean((est[,i] - par), na.rm = TRUE)
+    } else if (type == "standardized") {
+      output[i] <- (mean(est[,i], na.rm = TRUE) - par)/sd(est[,i], na.rm = TRUE)
+    } else if (type == "trim") {
+      output[i] <- mean(est[,i], trim = trim, na.rm = TRUE) - par
+    } else if (type == "median") {
+      output[i] <- (median(est[,i], na.rm = TRUE) - par) / mad(est[,i], na.rm = TRUE)
+    } else {
+      output[i] <- (mean(est[,i], trim = trim, na.rm = TRUE) - par) / sd(est[,i], na.rm = TRUE)
+    }
+  }
+  names(output) <- colnames(est)
+  return(output)
+}
+
+# Helper function: relative SE bias
+rse_bias <- function(est, se, trim = 0, type = "raw") {
+  if (type == "raw") {
+    se_mean <- apply(se, 2, mean, na.rm = T)
+    se_sd <- apply(est, 2L, sd, na.rm = T)
+    rse_bias <- se_mean / se_sd - 1
+  } else if (type == "median") {
+    se_median <- apply(se, 2, median, na.rm = TRUE)
+    mad_sd <- apply(est, 2, function(x) mad(x, na.rm = TRUE))
+    rse_bias <- se_median / mad_sd - 1
+  } else if (type == "trim") {
+    se_mean <- apply(se, 2, mean, trim = trim, na.rm = TRUE)
+    se_sd <- apply(est, 2L, sd, na.rm = T)
+    rse_bias <- se_mean / se_sd - 1
+  }
+  return(rse_bias)
+}
+
+# Helper function: detecting outliers for SE
+outlier_se <- function(se) {
+  results <- c()
+  for(column in colnames(se)) {
+    # Calculate Q1, Q3, and IQR
+    Q1 <- quantile(se[,column], 0.25, na.rm = TRUE)
+    Q3 <- quantile(se[,column], 0.75, na.rm = TRUE)
+    IQR <- Q3 - Q1
+    # Determine outliers
+    lower_bound <- (Q1 - 1.5 * IQR)
+    upper_bound <- (Q3 + 1.5 * IQR)
+    outliers <- se[,column][se[,column] < lower_bound | se[,column] > upper_bound]
+    # Calculate the percentage of outliers
+    percentage <- length(outliers) / sum(!is.na(se[,column])) * 100
+    results[column] <- percentage
+  }
+  return(results)
+}
+
+# Helper function for convergence rate
+convergence_rate <- function(converge) {
+  apply(converge, 2, function(x) 1-(sum(is.na(x)) / length(x)))
+}
+
+# Helper function for calculating coverage rate, Type I error rate, and power
+ci_stats <- function(est, se, se_usd, par, stats_type, lrt_lo = NULL, lrt_up = NULL) {
+  
+  # Calculate the confidence intervals (std)
+  lo_95 <- est - qnorm(.975) * se
+  up_95 <- est + qnorm(.975) * se
+  ci_est <- vector("list", length = ncol(est))
+  names(ci_est) <- colnames(est)
+  
+  # Construct confidence intervals for each method
+  for (i in seq_len(ncol(est))) {
+    ci_est[[i]] <- cbind(lo_95[,i], up_95[,i])
+  }
+  
+  # Calculate the confidence intervals (usd)
+  lo_95_usd <- est - qnorm(.975) * se_usd
+  up_95_usd <- est + qnorm(.975) * se_usd
+  ci_est_usd <- vector("list", length = ncol(est))
+  names(ci_est_usd) <- colnames(est)
+  
+  # Construct confidence intervals for each method
+  for (i in seq_len(ncol(est))) {
+    ci_est_usd[[i]] <- cbind(lo_95_usd[,i], up_95_usd[,i])
+  }
+  
+  # Extract LRT CIs
+  if (!is.null(lrt_lo) && !is.null(lrt_up)) {
+    ci_lrt <- vector("list", length = ncol(est))
+    names(ci_lrt) <- colnames(est)
+    
+    for (i in seq_len(ncol(est))) {
+      ci_lrt[[i]] <- cbind(lrt_lo[,i], lrt_up[,i])
+    }
+  }
+  
+  # Determine which statistic to calculate
+  if (stats_type == "Coverage") {
+    return(sapply(ci_est, function(ci) mean(ci[,1] <= par & ci[,2] >= par)))
+  } else if (stats_type == "TypeI") {
+    return(sapply(ci_est_usd, function(ci) mean(ci[,1] > 0 | ci[,2] < 0)))
+  } else if (stats_type == "Lrt_TypeI") {
+    return(sapply(ci_lrt, function(ci) mean(ci[,1] > 0 | ci[,2] < 0)))
+  } else if (stats_type == "Power") {
+    return(sapply(ci_est_usd, function(ci) (1 - mean(ci[,1] < 0 & ci[,2] > 0))))
+  } else if (stats_type == "Lrt_Power") {
+    return(sapply(ci_lrt, function(ci) (1 - mean(ci[,1] < 0 & ci[,2] > 0))))
+  } else {
+    stop("Invalid stats_type specified. Please choose from 'Coverage', 'TypeI', or 'Power'.")
+  }
 }
 
 evaluate_res <- function (condition, results, fixed_objects = NULL) {
@@ -216,238 +377,92 @@ evaluate_res <- function (condition, results, fixed_objects = NULL) {
   # Population parameter
   pop_par <- condition$gamma_xm
 
-  # Separate estimates and se
-  results_est <- as.data.frame(results[colnames(results)[grepl("_est", colnames(results))]])
-  results_se <- as.data.frame(results[colnames(results)[grepl("_se$", colnames(results))]])
-  results_se_usd <- as.data.frame(results[colnames(results)[grepl("_se_usd", colnames(results))]])
-  lrtp_ci_lower <- as.data.frame(results[colnames(results)[grepl("_ci_lower", colnames(results))]])
-  lrtp_ci_upper <- as.data.frame(results[colnames(results)[grepl("_ci_upper", colnames(results))]])
+  # Parameter estimates
+  est <- results[, grep(".est$", colnames(results))]
+  se_std <- results[, grep(".se_std$", colnames(results))]
+  se_usd <- results[, grep(".se_usd$", colnames(results))]
+  lrtp_lower <- results[, grep(".lrtp_lower$", colnames(results))]
+  lrtp_upper <- results[, grep(".lrtp_upper$", colnames(results))]
+  converge <- results[, grep(".converge$", colnames(results))]
 
-  # Descriptive of SEs
-  descriptive <- function(est, se, type = NULL) {
-    output <- numeric(ncol(est))
-    if (type == "SD") {
-      output <- apply(est, 2L, sd, na.rm = T)
-    } else if (type == "MeanSE") {
-      output <- apply(se, 2, mean, na.rm = T)
-    } else if (type == "MedianSE") {
-      output <- apply(se, 2, median, na.rm = TRUE)
-    } else if (type == "MAD") {
-      output <- apply(est, 2, function(x) mad(x, na.rm = TRUE))
-    }
-    return(output)
-  }
-
-  # Helper function: robust bias
-  robust_bias <- function(est, se, pop_par, trim = 0, type = NULL) {
-    output <- numeric(ncol(est))
-    for (i in seq_len(ncol(est))) {
-      if (type == "raw") {
-        output[i] <- mean((est[,i] - pop_par), na.rm = TRUE)
-      } else if (type == "standardized") {
-        output[i] <- (mean(est[,i], na.rm = TRUE) - pop_par)/sd(est[,i], na.rm = TRUE)
-      } else if (type == "trim") {
-        output[i] <- mean(est[,i], trim = trim, na.rm = TRUE) - pop_par
-      } else if (type == "median") {
-        output[i] <- (median(est[,i], na.rm = TRUE) - pop_par) / mad(est[,i], na.rm = TRUE)
-      } else {
-        output[i] <- (mean(est[,i], trim = trim, na.rm = TRUE) - pop_par) / sd(est[,i], na.rm = TRUE)
-      }
-    }
-    names(output) <- colnames(est)
-    return(output)
-  }
-
-  # Helper function: relative SE bias
-  rse_bias <- function(est, est_se, trim = 0, type = "raw") {
-    if (type == "raw") {
-      est_se <- as.matrix(est_se)
-      est <- as.matrix(est)
-      est_se_mean <- apply(est_se, 2, mean, na.rm = T)
-      emp_sd <- apply(est, 2L, sd, na.rm = T)
-      rse_bias <- est_se_mean / emp_sd - 1
-    } else if (type == "median") {
-      est_se <- as.matrix(est_se)
-      est <- as.matrix(est)
-      est_se_median <- apply(est_se, 2, median, na.rm = TRUE)
-      emp_mad <- apply(est, 2, function(x) mad(x, na.rm = TRUE))
-      rse_bias <- est_se_median / emp_mad - 1
-    } else if (type == "trim") {
-      est_se <- as.matrix(est_se)
-      est <- as.matrix(est)
-      est_se_mean <- apply(est_se, 2, mean, trim = trim, na.rm = TRUE)
-      emp_sd <- apply(est, 2L, sd, na.rm = T)
-      rse_bias <- est_se_mean / emp_sd - 1
-    }
-    return(rse_bias)
-  }
-
-  # Helper function: detecting outliers for SE
-  outlier_se <- function(est_se) {
-    results <- c()
-    for(column in names(est_se)) {
-      # Calculate Q1, Q3, and IQR
-      Q1 <- quantile(est_se[[column]], 0.25, na.rm = TRUE)
-      Q3 <- quantile(est_se[[column]], 0.75, na.rm = TRUE)
-      IQR <- Q3 - Q1
-      # Determine outliers
-      lower_bound <- (Q1 - 1.5 * IQR)
-      upper_bound <- (Q3 + 1.5 * IQR)
-      outliers <- est_se[[column]][est_se[[column]] < lower_bound | est_se[[column]] > upper_bound]
-      # Calculate the percentage of outliers
-      percentage <- length(outliers) / sum(!is.na(est_se[[column]])) * 100
-      results[column] <- percentage
-    }
-    return(results)
-  }
-
-  # Helper function for calculating coverage rate, Type I error rate, and power
-  ci_stats <- function(est, est_se, est_se_usd, par, stats_type, lrt_lo_95 = NULL, lrt_hi_95 = NULL) {
-    est_se <- as.matrix(est_se)
-    est_se_usd <- as.matrix(est_se_usd)
-    est <- as.matrix(est)
-
-    # Calculate the confidence intervals
-    lo.95 <- est - qnorm(.975) * est_se
-    hi.95 <- est + qnorm(.975) * est_se
-    ci_est <- vector("list", length = ncol(est))
-    names(ci_est) <- colnames(est)
-
-    # Construct confidence intervals for each method
-    for (i in seq_len(ncol(est))) {
-      ci_est[[i]] <- cbind(lo.95[,i], hi.95[,i])
-    }
-
-    # Calculate the confidence intervals
-    lo.95.usd <- est - qnorm(.975) * est_se_usd
-    hi.95.usd <- est + qnorm(.975) * est_se_usd
-    ci_est_usd <- vector("list", length = ncol(est))
-    names(ci_est_usd) <- colnames(est)
-    
-    # Construct confidence intervals for each method
-    for (i in seq_len(ncol(est))) {
-      ci_est_usd[[i]] <- cbind(lo.95.usd[,i], hi.95.usd[,i])
-    }
-    
-    # Extract LRT CIs
-    if (!is.null(lrt_lo_95) && !is.null(lrt_hi_95)) {
-      lrt_lo_95 <- as.matrix(lrt_lo_95)
-      lrt_hi_95 <- as.matrix(lrt_hi_95)
-      ci_lrt <- vector("list", length = ncol(est))
-      names(ci_lrt) <- colnames(est)
-
-      for (i in seq_len(ncol(est))) {
-        ci_lrt[[i]] <- cbind(lrt_lo_95[,i], lrt_hi_95[,i])
-      }
-    }
-
-    # Determine which statistic to calculate
-    if (stats_type == "Coverage") {
-      return(sapply(ci_est, function(ci) mean(ci[,1] <= par & ci[,2] >= par)))
-    } else if (stats_type == "TypeI") {
-      return(sapply(ci_est_usd, function(ci) mean(ci[,1] > 0 | ci[,2] < 0)))
-    } else if (stats_type == "Lrt_TypeI") {
-      return(sapply(ci_lrt, function(ci) mean(ci[,1] > 0 | ci[,2] < 0)))
-    } else if (stats_type == "Power") {
-      return(sapply(ci_est_usd, function(ci) (1 - mean(ci[,1] < 0 & ci[,2] > 0))))
-    } else if (stats_type == "Lrt_Power") {
-      return(sapply(ci_lrt, function(ci) (1 - mean(ci[,1] < 0 & ci[,2] > 0))))
-    } else {
-      return("Invalid stats_type specified. Please choose from 'Coverage', 'TypeI', or 'Power'.")
-    }
-  }
-
-  # Helper function for convergence rate
-  convergence_rate <- function(est) {
-    apply(est, 2, function(x) 1-(sum(is.na(x)) / length(x)))
-  }
-
-  c(raw_bias = robust_bias(results_est,
-                           results_se,
+  c(raw_bias = robust_bias(est,
+                           se_std,
                            pop_par,
                            type = "raw"),
-    std_bias = robust_bias(results_est,
-                           results_se,
+    std_bias = robust_bias(est,
+                           se_std,
                            pop_par,
                            type = "standardized"),
-    trim_bias = robust_bias(results_est,
-                            results_se,
+    trim_bias = robust_bias(est,
+                            se_std,
                             pop_par,
                             trim = 0.2,
                             type = "trim"), # 20% trimmed mean
-    stdMed_bias = robust_bias(results_est,
-                              results_se,
+    stdMed_bias = robust_bias(est,
+                              se_std,
                               pop_par,
                               type = "median"),
-    coverage = ci_stats(results_est, 
-                        results_se,
-                        results_se_usd,
-                        pop_par, 
-                        "Coverage"),
-    type1 = ci_stats(results_est, 
-                     results_se, 
-                     results_se_usd,
-                     pop_par, 
-                     "TypeI"),
-    type1_lrt = ci_stats(results_est, 
-                         results_se, 
-                         results_se_usd,
-                         pop_par, 
-                         "Lrt_TypeI",
-                         lrt_lo_95 = lrtp_ci_lower,
-                         lrt_hi_95 = lrtp_ci_upper),
-    power = ci_stats(results_est, 
-                     results_se,
-                     results_se_usd,
-                     pop_par, 
-                     "Power"),
-    power_lrt = ci_stats(results_est, 
-                         results_se, 
-                         results_se_usd,
-                         pop_par, 
-                         "Lrt_Power",
-                         lrt_lo_95 = lrtp_ci_lower,
-                         lrt_hi_95 = lrtp_ci_upper),
-    rmse = RMSE(na.omit(results_est),
-                parameter = pop_par),
-    raw_rse_bias = rse_bias(results_est,
-                            results_se,
+    raw_rse_bias = rse_bias(est,
+                            se_std,
                             type = "raw"),
-    stdMed_rse_bias = rse_bias(results_est,
-                               results_se,
+    stdMed_rse_bias = rse_bias(est,
+                               se_std,
                                type = "median"),
-    SD = descriptive(results_est,
-                     results_se,
-                     type = "SD"),
-    MeanSE = descriptive(results_est,
-                         results_se,
-                         type = "MeanSE"),
-    MedianSE = descriptive(results_est,
-                           results_se,
-                           type = "MedianSE"),
-    MAD = descriptive(results_est,
-                      results_se,
-                      type = "MAD"),
-    trim_rse_bias = rse_bias(results_est,
-                             results_se,
+    trim_rse_bias = rse_bias(est,
+                             se_std,
                              trim = 0.2,
                              type = "trim"),
-    outlier_se = outlier_se(results_se),
-    convergence_rate = convergence_rate(results_est)
+    outlier_se = outlier_se(se_std),
+    coverage = ci_stats(est, 
+                        se_std,
+                        se_usd,
+                        pop_par, 
+                        "Coverage"),
+    type1 = ci_stats(est, 
+                     se_std, 
+                     se_usd,
+                     pop_par, 
+                     "TypeI"),
+    type1_lrt = ci_stats(est, 
+                         se_std, 
+                         se_usd,
+                         pop_par, 
+                         "Lrt_TypeI",
+                         lrt_lo = lrtp_lower,
+                         lrt_up = lrtp_upper),
+    power = ci_stats(est, 
+                     se_std,
+                     se_usd,
+                     pop_par, 
+                     "Power"),
+    power_lrt = ci_stats(est, 
+                         se_std, 
+                         se_usd,
+                         pop_par, 
+                         "Lrt_Power",
+                         lrt_lo = lrtp_lower,
+                         lrt_up = lrtp_upper),
+    rmse = RMSE(na.omit(est),
+                parameter = pop_par),
+    convergence_rate = convergence_rate(converge)
   )
 }
 
 # Run 2000 replications
-
-Match_07292024 <- runSimulation(design = DESIGNFACTOR,
-                                replications = 5,
-                                generate = GenData,
-                                analyse = extract_res,
-                                summarise = evaluate_res,
-                                fixed_objects = FIXED_PARAMETER,
-                                save = TRUE,
-                                save_results = TRUE,
-                                filename = "Match_07292024",
-                                control = list(allow_na = TRUE),
-                                parallel = TRUE,
-                                ncores = min(4L, parallel::detectCores() - 1))
+runSimulation(design = DESIGNFACTOR,
+              replications = 2000,
+              generate = generate_dat,
+              analyse = list(mmr = analyze_mmr,
+                             upi = analyze_upi,
+                             rapi = analyze_rapi,
+                             tspa = analyze_tspa),
+              summarise = evaluate_res,
+              fixed_objects = FIXED_PARAMETER,
+              seed = rep(66225, nrow(DESIGNFACTOR)),
+              packages = "lavaan", 
+              filename = "Continuous_09222024",
+              parallel = TRUE,
+              ncores = min(4L, parallel::detectCores() - 1),
+              save = TRUE,
+              save_seeds = TRUE,
+              save_results = TRUE)

@@ -8,7 +8,7 @@
 #' @return An object of \code{lavaan}.
 #' @export
 
-upi <- function (model, data, mode = "match") {
+upi <- function (model, data, mode = "match", ...) {
 
   pairs <- parseInteractionTerms(model)
   indics <- parseIndicators(model) # This should be a list for multiple pairs
@@ -137,6 +137,6 @@ upi <- function (model, data, mode = "match") {
   #############################################################################
 
   # Fit the model
-  fit_indProd <- sem(model, data = data, bounds = TRUE)
+  fit_indProd <- sem(model, data = data, bounds = TRUE, ...)
   return(fit_indProd)
 }
