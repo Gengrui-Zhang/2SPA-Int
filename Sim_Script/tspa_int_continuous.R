@@ -127,7 +127,8 @@ analyze_mmr <- function(condition, dat, fixed_objects = NULL) {
   
   # Fit the model and capture warnings and errors
   fit_mmr <- sem(model = "Y ~ c0*x_c + c1*m_c + c2*xm", 
-                 data = dat_mmr)
+                 data = dat_mmr,
+                 estimator = "MLR")
   
   # Extract parameters
   std_col <- standardizedSolution(fit_mmr)
@@ -160,7 +161,8 @@ analyze_upi <- function(condition, dat, fixed_objects = NULL) {
   # Fit the model
   fit_upi <- upi(model = fixed_objects$model, 
                  data = dat, 
-                 mode = "match")
+                 mode = "match",
+                 estimator = "MLR")
   
   # Extract parameters
   est <- coef(fit_upi, type = "user")["beta3"]
@@ -190,7 +192,8 @@ analyze_rapi <- function (condition, dat, fixed_objects = NULL) {
   
   # Fit the model and capture warnings and errors
   fit_rapi <- rapi(model = fixed_objects$model,
-                   data = dat)
+                   data = dat,
+                   estimator = "MLR")
 
   est <- coef(fit_rapi, type = "user")["beta3"]
   se <- sqrt(vcov(fit_rapi, type = "user")["beta3", "beta3"])
@@ -233,7 +236,8 @@ analyze_tspa <- function (condition, dat, fixed_objects = NULL) {
                               beta3 := b3 * sqrt(v1) * sqrt(v2)",
                    data = fs_dat,
                    se = list(X = fs_dat$fs_X_se[1],
-                             M = fs_dat$fs_M_se[1]))
+                             M = fs_dat$fs_M_se[1]),
+                   estimator = "MLR")
   
   est <- coef(fit_tspa, type = "user")["beta3"]
   se <- sqrt(vcov(fit_tspa, type = "user")["beta3", "beta3"])
@@ -460,8 +464,8 @@ res <- runSimulation(design = DESIGNFACTOR,
               fixed_objects = FIXED_PARAMETER,
               seed = rep(66225, nrow(DESIGNFACTOR)),
               packages = "lavaan", 
-              filename = "Continuous_09222024",
+              filename = "Continuous_MLR_09222024",
               parallel = TRUE,
-              ncores = min(4L, parallel::detectCores() - 1),
+              ncores = 20,
               save = TRUE,
               save_results = TRUE)
