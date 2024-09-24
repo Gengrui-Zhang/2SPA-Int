@@ -8,7 +8,7 @@
 #' @return An object of \code{lavaan}.
 #' @export
 
-rapi <- function (model, data) {
+rapi <- function (model, data, ...) {
 
   # Helper function: processing data
   processData <- function (data, pairs, indics) {
@@ -120,6 +120,6 @@ rapi <- function (model, data) {
   model_new <- gsub(paste0(lat_names[2], "_rel"), replacement = second_rel, x = model_new)
 
   # Fit the model
-  fit_rapi <- sem(model_new, data = data_int, bounds = TRUE)
+  fit_rapi <- sem(model_new, data = data_int, bounds = TRUE, ...)
   return(fit_rapi)
 }

@@ -141,7 +141,7 @@ analyze_mmr <- function(condition, dat, fixed_objects = NULL) {
     select(ci.lower, ci.upper)
   
   # Check convergence
-  converge <- ifelse(lavInspect(fit_upi, "converged"), 1, 0)
+  converge <- ifelse(lavInspect(fit_mmr, "converged"), 1, 0)
   
   # Create the output vector
   out <- unlist(c(est, se, se_usd, lrtp_ci$ci.lower, lrtp_ci$ci.upper, converge))  # 1 for converge
@@ -201,7 +201,7 @@ analyze_rapi <- function (condition, dat, fixed_objects = NULL) {
     select(ci.lower, ci.upper)
   
   # Check convergence
-  converge <- ifelse(lavInspect(fit_upi, "converged"), 1, 0)
+  converge <- ifelse(lavInspect(fit_rapi, "converged"), 1, 0)
   
   # Create the output vector
   out <- unlist(c(est, se, se_usd, lrtp_ci$ci.lower, lrtp_ci$ci.upper, converge))  # 1 for converge
@@ -244,7 +244,7 @@ analyze_tspa <- function (condition, dat, fixed_objects = NULL) {
     select(ci.lower, ci.upper)
   
   # Check convergence
-  converge <- ifelse(lavInspect(fit_upi, "converged"), 1, 0)
+  converge <- ifelse(lavInspect(fit_tspa, "converged"), 1, 0)
   
   # Create the output vector
   out <- unlist(c(est, se, se_usd, lrtp_ci$ci.lower, lrtp_ci$ci.upper, converge))  # 1 for converge
@@ -449,7 +449,7 @@ evaluate_res <- function (condition, results, fixed_objects = NULL) {
 }
 
 # Run 2000 replications
-runSimulation(design = DESIGNFACTOR,
+res <- runSimulation(design = DESIGNFACTOR,
               replications = 2000,
               generate = generate_dat,
               analyse = list(mmr = analyze_mmr,
@@ -464,5 +464,4 @@ runSimulation(design = DESIGNFACTOR,
               parallel = TRUE,
               ncores = min(4L, parallel::detectCores() - 1),
               save = TRUE,
-              save_seeds = TRUE,
               save_results = TRUE)
