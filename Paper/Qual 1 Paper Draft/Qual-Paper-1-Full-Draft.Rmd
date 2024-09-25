@@ -63,9 +63,9 @@ knitr::opts_chunk$set(cache.extra = knitr::rand_seed)
 ```
 
 ```{r message=FALSE, warning=FALSE}
-sim <- readRDS(here("Sim_Data", "Match_07012024.rds"))
+sim <- readRDS(here("Sim_Data", "continuous_09232024.rds"))
 sim_results <- sim %>% 
-  dplyr::select(-c(REPLICATIONS:WARNINGS)) %>%
+  dplyr::select(-c(REPLICATIONS:ERRORS)) %>%
   mutate(across(where(is.numeric), round, 4),
          cor_xm = ifelse(cor_xm == 0, "0", cor_xm))
 sim_null <- sim_results %>% filter(gamma_xm == 0)
@@ -420,7 +420,7 @@ Overall, the latent interaction methods yielded comparably low standardized bias
 
 ```{r standardized bias (raw bias), message=FALSE, warning=FALSE}
 raw_bias <- sim_alt %>%
-  dplyr::select(N:raw_bias.tspa_yint_est) %>%
+  dplyr::select(N:raw_bias.tspa.est) %>%
   dplyr::select(-gamma_xm) %>%
   arrange(N) %>%
   relocate(cor_xm, .after = rel)
@@ -435,7 +435,7 @@ raw_bias_wide <- raw_bias %>%
 names(raw_bias_wide) <- c("$\\textit{N}$", "$Corr(\\xi_{x}, \\xi_{m})$", paste(rep(c("$\\rho = .70$", "$\\rho = .80$", "$\\rho = .90$"), 4)))
 
 std_bias <- sim_alt %>% 
-  dplyr::select(N:rel, std_bias.reg_yint_est:std_bias.tspa_yint_est) %>%
+  dplyr::select(N:rel, std_bias.mmr.est:std_bias.tspa.est) %>%
   arrange(N) %>%
   relocate(cor_xm, .after = rel) 
 names(std_bias) <- c("$\\textit{N}$", "$\\rho$", "$Corr(\\xi_{x}, \\xi_{m})$", "MMR", "RAPI", "Matched-Pair UPI", "2SPA")
@@ -480,13 +480,13 @@ However, the robust relative SE bias did not demonstrate a clear pattern associa
 
 ```{r MAD relative SE bias with outliers proportion, message=FALSE, warning=FALSE}
 MAD <- sim_alt %>% 
-  dplyr::select(N:rel, stdMed_rse_bias.reg_yint_se:stdMed_rse_bias.tspa_yint_se) %>%
+  dplyr::select(N:rel, stdMed_rse_bias.mmr.se_std:stdMed_rse_bias.tspa.se_std) %>%
   arrange(N) %>%
   relocate(cor_xm, .after = rel) %>%
-  mutate(stdMed_rse_bias.reg_yint_se = stdMed_rse_bias.reg_yint_se*100,
-         stdMed_rse_bias.rapi_yint_se = stdMed_rse_bias.rapi_yint_se*100,
-         stdMed_rse_bias.upi_yint_se = stdMed_rse_bias.upi_yint_se*100,
-         stdMed_rse_bias.tspa_yint_se = stdMed_rse_bias.tspa_yint_se*100)
+  mutate(stdMed_rse_bias.mmr.se_std = stdMed_rse_bias.mmr.se_std*100,
+         stdMed_rse_bias.rapi.se_std = stdMed_rse_bias.rapi.se_std*100,
+         stdMed_rse_bias.upi.se_std = stdMed_rse_bias.upi.se_std*100,
+         stdMed_rse_bias.tspa.se_std = stdMed_rse_bias.tspa.se_std*100)
 names(MAD) <- c("$\\textit{N}$", "$\\rho$", "$Corr(\\xi_{x}, \\xi_{m})$", "MMR", "RAPI", "Matched-Pair UPI", "2SPA")
 
 MAD_wide <- MAD %>%
@@ -497,7 +497,7 @@ MAD_wide <- MAD %>%
 names(MAD_wide) <- c("$\\textit{N}$", "$Corr(\\xi_{x}, \\xi_{m})$", paste(rep(c("$\\rho = .70$", "$\\rho = .80$", "$\\rho = .90$"), 4)))
 
 outlier_se <- sim_alt %>% 
-  dplyr::select(N:rel, outlier_se.reg_yint_se:outlier_se.tspa_yint_se) %>%
+  dplyr::select(N:rel, outlier_se.mmr.se_std:outlier_se.tspa.se_std) %>%
   arrange(N) %>%
   relocate(cor_xm, .after = rel) %>%
   mutate(across(where(is.numeric), ~sprintf("%.2f", .)))
@@ -553,13 +553,13 @@ No clear trends in coverage rate were observed within the methods in relation to
 
 ```{r coverage rate, message=FALSE, warning=FALSE}
 coverage <- sim_alt %>% 
-  dplyr::select(N:rel, coverage.reg_yint_est:coverage.tspa_yint_est) %>%
+  dplyr::select(N:rel, coverage.mmr.est:coverage.tspa.est) %>%
   arrange(N) %>%
   relocate(cor_xm, .after = rel) %>%
-  mutate(coverage.reg_yint_est = coverage.reg_yint_est*100,
-         coverage.rapi_yint_est = coverage.rapi_yint_est*100,
-         coverage.upi_yint_est = coverage.upi_yint_est*100,
-         coverage.tspa_yint_est = coverage.tspa_yint_est*100) 
+  mutate(coverage.mmr.est = coverage.mmr.est*100,
+         coverage.rapi.est = coverage.rapi.est*100,
+         coverage.upi.est = coverage.upi.est*100,
+         coverage.tspa.est = coverage.tspa.est*100) 
 names(coverage) <- c("$\\textit{N}$", "$\\rho$", "$Corr(\\xi_{x}, \\xi_{m})$", "MMR", "RAPI", "Matched-Pair UPI", "2SPA")
 
 coverage_wide <- coverage %>%
@@ -601,7 +601,7 @@ Table 4 exhibited that the RMSE values for $\gamma_{xm}$ decreased as the sample
 
 ```{r rmse, message=FALSE, warning=FALSE}
 rmse <- sim_alt %>% 
-  dplyr::select(N:rel, rmse.reg_yint_est:rmse.tspa_yint_est) %>%
+  dplyr::select(N:rel, rmse.mmr.est:rmse.tspa.est) %>%
   arrange(N) %>%
   relocate(cor_xm, .after = rel)
 names(rmse) <- c("$\\textit{N}$", "$\\rho$", "$Corr(\\xi_{x}, \\xi_{m})$", "MMR", "RAPI", "Matched-Pair UPI", "2S-PA-Int")
@@ -634,7 +634,7 @@ Regarding statistical power, MMR exhibited higher power than the latent interact
 
 ```{r type I error, message=FALSE, warning=FALSE}
 type1 <- sim_null %>% 
-  dplyr::select(N:rel, type1.reg_yint_est:type1.tspa_yint_est) %>%
+  dplyr::select(N:rel, type1.mmr.est:type1.tspa.est) %>%
   arrange(N) %>%
   relocate(cor_xm, .after = rel)
 names(type1) <- c("$\\textit{N}$", "$\\rho$", "$Corr(\\xi_{x}, \\xi_{m})$", "MMR", "RAPI", "Matched-Pair UPI", "2S-PA-Int")
@@ -661,7 +661,7 @@ type1_table
 
 ```{r power, message=FALSE, warning=FALSE}
 power <- sim_alt %>% 
-  dplyr::select(N:rel, power.reg_yint_est:power.tspa_yint_est) %>%
+  dplyr::select(N:rel, power.mmr.est:power.tspa.est) %>%
   arrange(N) %>%
   relocate(cor_xm, .after = rel)
 names(power) <- c("$\\textit{N}$", "$\\rho$", "$Corr(\\xi_{x}, \\xi_{m})$", "MMR", "RAPI", "Matched-Pair UPI", "2S-PA-Int")
@@ -716,46 +716,82 @@ PIRLS_Data <- PIRLS_Data %>%
   drop_na()
 
 # Measurement Model
-IM <- PIRLS_Data %>% select(ASBGRST1, ASBGRST4, ASBGRST6_recode)
-EM <- PIRLS_Data %>% select(ASBGRST2_recode, ASBGRST3_recode, ASBGRST5_recode)
+IM <- PIRLS_Data %>% 
+  select(ASBGRST1, ASBGRST4, ASBGRST6_recode) %>%
+  rename(
+    IM1 = ASBGRST1,
+    IM2 = ASBGRST4,
+    IM3 = ASBGRST6_recode
+  )
+EM <- PIRLS_Data %>% 
+  select(ASBGRST2_recode, ASBGRST3_recode, ASBGRST5_recode) %>%
+  rename(
+    EM1 = ASBGRST2_recode,
+    EM2 = ASBGRST3_recode,
+    EM3 = ASBGRST5_recode
+  )
 
-model <- "IM =~ ASBGRST1 + ASBGRST4 + ASBGRST6_recode
-          EM =~ ASBGRST2_recode + ASBGRST3_recode + ASBGRST5_recode"
+model <- "IM =~ IM1 + IM2 + IM3
+          EM =~ EM1 + EM2 + EM3"
 
-fitmeasures(sem(model, PIRLS_Data))
-
-# Dependent Vars
 DVs <- c("ASRREA01", "ASRREA02", "ASRREA03", "ASRREA04", "ASRREA05")
+final_df <- cbind(IM, EM, PIRLS_Data[DVs])
+
+fitmeasures(sem(model, final_df))
 
 # UPI
+intNames <- paste0(rep(colnames(IM), each = length(colnames(EM))), colnames(EM))
+mod_df <- indProd(final_df, 
+                  var1 = colnames(IM),
+                  var2 = colnames(EM),
+                  match = FALSE, 
+                  meanC = T, 
+                  residualC = F, 
+                  doubleMC = T,
+                  namesProd = intNames) # using the DMC strategy
+upi_df <- cbind(mod_df, PIRLS_Data[DVs])
 mod_upi <- "
-          IM =~ ASBGRST1 + ASBGRST4 + ASBGRST6_recode
-          EM =~ ASBGRST2_recode + ASBGRST3_recode + ASBGRST5_recode
+          IM =~ IM1 + IM2 + IM3
+          EM =~ EM1 + EM2 + EM3
+          Int =~ IM1EM1 + IM1EM2 + IM1EM3 + IM2EM1 + IM2EM2 + IM2EM3 + IM3EM1 + IM3EM2 + IM3EM3
 
-          DV ~ b1*IM + b2*EM + b3*IM:EM
-         
+          DV ~ b1*IM + b2*EM + b3*Int
+          
+          # Covariances between the same indicators are constrained to equality
+              IM1EM1 ~~ th1*IM1EM2 + th1*IM1EM3 
+              IM1EM2 ~~ th1*IM1EM3 
+              IM2EM1 ~~ th2*IM2EM2 + th2*IM2EM3 
+              IM2EM2 ~~ th2*IM2EM3 
+              IM3EM1 ~~ th3*IM3EM2 + th3*IM3EM3 
+              IM3EM2 ~~ th3*IM3EM3
+              IM1EM1 ~~ th4*IM2EM1 + th4*IM3EM1 
+              IM2EM1 ~~ th4*IM3EM1 
+              IM1EM2 ~~ th5*IM2EM2 + th5*IM3EM2 
+              IM2EM2 ~~ th5*IM3EM2 
+              IM1EM3 ~~ th6*IM2EM3 + th6*IM3EM3 
+              IM2EM3 ~~ th6*IM3EM3
+
           # Variance
           IM ~~ v1*IM
           EM ~~ v2*EM
-          IM:EM ~~ v3*IM:EM
+          Int ~~ v3*Int
           
           # Covariance
           IM ~~ cov_12*EM
-          IM ~~ cov_13*IM:EM
-          EM ~~ cov_23*IM:EM
+          IM ~~ cov_13*Int
+          EM ~~ cov_23*Int
           
           # Disturbance
     			DV ~~ dist_y*DV
-          d1 :=  dist_y + (b1^2 * v1 + b2^2 * v2 + b3^2 * v3 + 
-                          2 * b1 * b2 * cov_12 + 
-                          2 * b1 * b3 * cov_13 + 
-                          2 * b2 * b3 * cov_23)
+          var_y :=  dist_y + (b1^2 * v1 + b2^2 * v2 + b3^2 * v3 + 
+                              2 * b1 * b2 * cov_12 + 
+                              2 * b1 * b3 * cov_13 + 
+                              2 * b2 * b3 * cov_23)
           
-          beta1 := b1*sqrt(v1)/sqrt(d1)
-          beta2 := b2*sqrt(v2)/sqrt(d1)
-          beta3 := b3*sqrt(v1)*sqrt(v2)/sqrt(d1)
+          beta1 := b1*sqrt(v1)/sqrt(var_y)
+          beta2 := b2*sqrt(v2)/sqrt(var_y)
+          beta3 := b3*sqrt(v1)*sqrt(v2)/sqrt(var_y)
           "
-
 
 # Fit the model using upi()
 beta1_upi <- c()
@@ -770,7 +806,7 @@ p3_upi <- c()
 
 for (dv in DVs) {
   mod_upi_temp <- gsub("DV", dv, mod_upi)  # Replace "DV" with the current dv in the loop
-  fit_upi <- upi(mod_upi_temp, PIRLS_Data, mode = "match")
+  fit_upi <- sem(mod_upi_temp, upi_df)
   beta1_upi <- unname(c(beta1_upi, coef(fit_upi, type = "user")["beta1"]))
   beta2_upi <- unname(c(beta2_upi, coef(fit_upi, type = "user")["beta2"]))
   beta3_upi <- unname(c(beta3_upi, coef(fit_upi, type = "user")["beta3"]))
@@ -812,17 +848,42 @@ p2_upi_avg <- combine_p_value(beta2_upi_avg, se2_upi_avg)
 p3_upi_avg <- combine_p_value(beta3_upi_avg, se3_upi_avg)
 
 # RAPI
+# df
+rapi_df <- final_df %>%
+  mutate(across(c(IM1:EM3), ~ . - mean(.)))
+rapi_df$IM_m <- rowSums(rapi_df[, c("IM1", "IM2", "IM3")])/3
+rapi_df$EM_m <- rowSums(rapi_df[, c("EM1", "EM2", "EM3")])/3
+rapi_df$Int <- rapi_df$IM_m*rapi_df$EM_m
+IM_rel <- psych::alpha(rapi_df[, c("IM1", "IM2", "IM3")])$total$raw_alpha
+EM_rel <- psych::alpha(rapi_df[, c("EM1", "EM2", "EM3")])$total$raw_alpha
+
 mod_rapi <- "
-          IM =~ ASBGRST1 + ASBGRST4 + ASBGRST6_recode
-          EM =~ ASBGRST2_recode + ASBGRST3_recode + ASBGRST5_recode
+          IM =~ 1 * IM_m
+          EM =~ 1 * EM_m
+          lInt =~ 1 * Int
 
-          DV ~ b1*IM + b2*EM + b3*IM:EM
+          DV ~ b1*IM + b2*EM + b3*lInt
 
+          # Variance
           IM ~~ v1*IM
           EM ~~ v2*EM
-          beta1 := b1*sqrt(v1)
-          beta2 := b2*sqrt(v2)
-          beta3 := b3*sqrt(v1)*sqrt(v2)
+          lInt ~~ v3*lInt
+          
+          # Covariance
+          IM ~~ cov_12*EM
+          IM ~~ cov_13*lInt
+          EM ~~ cov_23*lInt
+          
+          # Disturbance
+    			DV ~~ dist_y*DV
+          var_y :=  dist_y + (b1^2 * v1 + b2^2 * v2 + b3^2 * v3 + 
+                              2 * b1 * b2 * cov_12 + 
+                              2 * b1 * b3 * cov_13 + 
+                              2 * b2 * b3 * cov_23)
+          
+          beta1 := b1*sqrt(v1)/sqrt(var_y)
+          beta2 := b2*sqrt(v2)/sqrt(var_y)
+          beta3 := b3*sqrt(v1)*sqrt(v2)/sqrt(var_y)
           "
 # Fit the model using upi()
 beta1_rapi <- c()
@@ -837,7 +898,7 @@ p3_rapi <- c()
 
 for (dv in DVs) {
   mod_rapi_temp <- gsub("DV", dv, mod_rapi)  # Replace "DV" with the current dv in the loop
-  fit_rapi <- rapi(mod_rapi_temp, PIRLS_Data)
+  fit_rapi <- sem(mod_rapi_temp, rapi_df)
   beta1_rapi <- c(beta1_rapi, coef(fit_rapi, type = "user")["beta1"])
   beta2_rapi <- c(beta2_rapi, coef(fit_rapi, type = "user")["beta2"])
   beta3_rapi <- c(beta3_rapi, coef(fit_rapi, type = "user")["beta3"])
@@ -863,17 +924,59 @@ p2_rapi_avg <- combine_p_value(beta2_rapi_avg, se2_rapi_avg)
 p3_rapi_avg <- combine_p_value(beta3_rapi_avg, se3_rapi_avg)
 
 # 2SPA
+# fs_dat
 mod_cfa <- '
-IM =~ ASBGRST1 + ASBGRST4 + ASBGRST6_recode
-EM =~ ASBGRST2_recode + ASBGRST3_recode + ASBGRST5_recode
+IM =~ IM1 + IM2 + IM3
+EM =~ EM1 + EM2 + EM3
 '
 # Obtain factor scores
-fs_dat <- get_fs(PIRLS_Data, model = mod_cfa, method = "Bartlett", std.lv = TRUE)
+fs_dat <- get_fs(final_df, model = mod_cfa, method = "Bartlett", std.lv = TRUE)
 # Obtain factor product
 fs_dat$fs_int <- fs_dat$fs_IM * fs_dat$fs_EM
 # Centering the product variable
 fs_dat$fs_int <- fs_dat$fs_int - mean(fs_dat$fs_int)
 fs_dat$fs_int_se <- sqrt(1 * fs_dat$fs_IM_se^2 + 1 * fs_dat$fs_EM_se^2 + fs_dat$fs_IM_se^2*fs_dat$fs_EM_se^2)
+
+# tspa model
+mod_tspa <- "
+            # latent variables (indicated by factor scores)
+            IM =~ 1 * fs_IM
+            EM =~ 1 * fs_EM
+            lInt =~ 1 * fs_int
+
+            # constrain the errors
+            fs_IM ~~ rel_IM * fs_IM
+            fs_EM ~~ rel_EM * fs_EM
+            fs_int ~~ rel_int * fs_int
+            
+            # regressions
+            DV ~ b1*IM + b2*EM + b3*lInt
+
+            # Variance
+            IM ~~ v1*IM
+            EM ~~ v2*EM
+            lInt ~~ v3*lInt
+            
+            # Covariance
+            IM ~~ cov_12*EM
+            IM ~~ cov_13*lInt
+            EM ~~ cov_23*lInt
+          
+            # Disturbance
+    			  DV ~~ dist_y*DV
+            var_y :=  dist_y + (b1^2 * v1 + b2^2 * v2 + b3^2 * v3 + 
+                              2 * b1 * b2 * cov_12 + 
+                              2 * b1 * b3 * cov_13 + 
+                              2 * b2 * b3 * cov_23)
+              
+            # Define Standardized Coefficients
+            beta1 := b1*sqrt(v1)/sqrt(var_y)
+            beta2 := b2*sqrt(v2)/sqrt(var_y)
+            beta3 := b3*sqrt(v1)*sqrt(v2)/sqrt(var_y)"
+  
+mod_tspa <- gsub("rel_IM", replacement = fs_dat$fs_IM_se[1]^2, x = mod_tspa)
+mod_tspa <- gsub("rel_EM", replacement = fs_dat$fs_EM_se[1]^2, x = mod_tspa)
+mod_tspa <- gsub("rel_int", replacement = fs_dat$fs_int_se[1]^2, x = mod_tspa)
 
 beta1_tspa <- c()
 beta2_tspa <- c()
@@ -886,17 +989,12 @@ p2_tspa <- c()
 p3_tspa <- c()
 
 for (dv in DVs) {
-  if ("ReadingScore" %in% names(fs_dat)) {
-    fs_dat$ReadingScore <- NULL
+  if ("DV" %in% names(fs_dat)) {
+    fs_dat$DV <- NULL
   }
-  fs_dat$ReadingScore <- PIRLS_Data[[dv]]
-  fit_tspa <- tspa(model = "ReadingScore ~ b1*IM + b2*EM + b3*IM:EM
-                          beta1 := b1 * sqrt(v1)
-                          beta2 := b2 * sqrt(v2)
-                          beta3 := b3 * sqrt(v1) * sqrt(v2)",
-                   data = fs_dat,
-                   se = list(IM = fs_dat$fs_IM_se[1],
-                             EM = fs_dat$fs_EM_se[1]))
+  fs_dat$DV <- PIRLS_Data[[dv]]
+  fit_tspa <- sem(mod_tspa,
+                  data = fs_dat)
   beta1_tspa <- c(beta1_tspa, coef(fit_tspa, type = "user")["beta1"])
   beta2_tspa <- c(beta2_tspa, coef(fit_tspa, type = "user")["beta2"])
   beta3_tspa <- c(beta3_tspa, coef(fit_tspa, type = "user")["beta3"])

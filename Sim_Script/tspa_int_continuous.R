@@ -124,17 +124,16 @@ analyze_mmr <- function(condition, dat, fixed_objects = NULL) {
            m_c = rowSums(dat[c("m1", "m2", "m3")]) - mean(rowSums(dat[c("m1", "m2", "m3")])),
            xm = x_c * m_c)
   
-  
   # Fit the model and capture warnings and errors
   fit_mmr <- sem(model = "Y ~ c0*x_c + c1*m_c + c2*xm", 
-                 data = dat_mmr,
-                 estimator = "MLR") |> manageWarnings(warning2error = T)
+                 data = dat_mmr) 
   
   # Extract parameters
   std_col <- standardizedSolution(fit_mmr)
   est <- std_col[std_col$label == "c2", "est.std"]
   se <- std_col[std_col$label == "c2", "se"]
   usd_col <- parameterEstimates(fit_mmr, standardized = FALSE)
+  est_usd <- usd_col[usd_col$label == "c2", "est"]
   se_usd <- usd_col[usd_col$label == "c2", "se"]
   lrtp_col <- lrtp(fit_mmr)
   lrtp_ci <- as.data.frame(lrtp_col) %>%
@@ -145,8 +144,8 @@ analyze_mmr <- function(condition, dat, fixed_objects = NULL) {
   converge <- ifelse(lavInspect(fit_mmr, "converged"), 1, 0)
   
   # Create the output vector
-  out <- unlist(c(est, se, se_usd, lrtp_ci$ci.lower, lrtp_ci$ci.upper, converge))  # 1 for converge
-  names(out) <- c("est", "se_std", "se_usd", "lrtp_lower", "lrtp_upper", "converge")
+  out <- unlist(c(est, est_usd, se, se_usd, lrtp_ci$ci.lower, lrtp_ci$ci.upper, converge))  # 1 for converge
+  names(out) <- c("est", "est_usd", "se_std", "se_usd", "lrtp_lower", "lrtp_upper", "converge")
   
   # Check if any NA exists in the output
   if (anyNA(out)) {
@@ -161,12 +160,12 @@ analyze_upi <- function(condition, dat, fixed_objects = NULL) {
   # Fit the model
   fit_upi <- upi(model = fixed_objects$model, 
                  data = dat, 
-                 mode = "match",
-                 estimator = "MLR") |> manageWarnings(warning2error = T)
+                 mode = "match") 
   
   # Extract parameters
   est <- coef(fit_upi, type = "user")["beta3"]
   se <- sqrt(vcov(fit_upi, type = "user")["beta3", "beta3"])
+  est_usd <- coef(fit_upi)["b3"]
   se_usd <- sqrt(vcov(fit_upi)["b3", "b3"])
   lrtp_col <- lrtp(fit_upi)
   lrtp_ci <- as.data.frame(lrtp_col) %>%
@@ -177,8 +176,8 @@ analyze_upi <- function(condition, dat, fixed_objects = NULL) {
   converge <- ifelse(lavInspect(fit_upi, "converged"), 1, 0)
   
   # Create the output vector
-  out <- unlist(c(est, se, se_usd, lrtp_ci$ci.lower, lrtp_ci$ci.upper, converge))  # 1 for converge
-  names(out) <- c("est", "se_std", "se_usd", "lrtp_lower", "lrtp_upper", "converge")
+  out <- unlist(c(est, est_usd, se, se_usd, lrtp_ci$ci.lower, lrtp_ci$ci.upper, converge))  # 1 for converge
+  names(out) <- c("est", "est_usd", "se_std", "se_usd", "lrtp_lower", "lrtp_upper", "converge")
   
   # Check for NA values in the output
   if (anyNA(out)) {
@@ -192,10 +191,10 @@ analyze_rapi <- function (condition, dat, fixed_objects = NULL) {
   
   # Fit the model and capture warnings and errors
   fit_rapi <- rapi(model = fixed_objects$model,
-                   data = dat,
-                   estimator = "MLR") |> manageWarnings(warning2error = T)
+                   data = dat) 
 
   est <- coef(fit_rapi, type = "user")["beta3"]
+  est_usd <- coef(fit_rapi)["b3"]
   se <- sqrt(vcov(fit_rapi, type = "user")["beta3", "beta3"])
   se_usd <- sqrt(vcov(fit_rapi)["b3", "b3"])
   lrtp_col <- lrtp(fit_rapi)
@@ -207,8 +206,8 @@ analyze_rapi <- function (condition, dat, fixed_objects = NULL) {
   converge <- ifelse(lavInspect(fit_rapi, "converged"), 1, 0)
   
   # Create the output vector
-  out <- unlist(c(est, se, se_usd, lrtp_ci$ci.lower, lrtp_ci$ci.upper, converge))  # 1 for converge
-  names(out) <- c("est", "se_std", "se_usd", "lrtp_lower", "lrtp_upper", "converge")
+  out <- unlist(c(est, est_usd, se, se_usd, lrtp_ci$ci.lower, lrtp_ci$ci.upper, converge))  # 1 for converge
+  names(out) <- c("est", "est_usd", "se_std", "se_usd", "lrtp_lower", "lrtp_upper", "converge")
   
   # Check convergence
   if (anyNA(out)) {
@@ -228,11 +227,6 @@ analyze_tspa <- function (condition, dat, fixed_objects = NULL) {
                    method = "Bartlett",
                    std.lv = TRUE)
   
-  # Check if there is any NaN value
-  if (any(is.nan(as.matrix(fs_dat)))) {
-    stop("Error: fs_dat contains NaN values.")
-  } 
-  
   Y <- dat$Y
   fs_dat <- cbind(fs_dat, Y)
   
@@ -242,10 +236,10 @@ analyze_tspa <- function (condition, dat, fixed_objects = NULL) {
                               beta3 := b3 * sqrt(v1) * sqrt(v2)",
                    data = fs_dat,
                    se = list(X = fs_dat$fs_X_se[1],
-                             M = fs_dat$fs_M_se[1]),
-                   estimator = "MLR") |> manageWarnings(warning2error = T)
+                             M = fs_dat$fs_M_se[1])) 
   
   est <- coef(fit_tspa, type = "user")["beta3"]
+  est_usd <- coef(fit_tspa)["b3"]
   se <- sqrt(vcov(fit_tspa, type = "user")["beta3", "beta3"])
   se_usd <- sqrt(vcov(fit_tspa)["b3", "b3"])
   lrtp_col <- lrtp(fit_tspa)
@@ -257,8 +251,8 @@ analyze_tspa <- function (condition, dat, fixed_objects = NULL) {
   converge <- ifelse(lavInspect(fit_tspa, "converged"), 1, 0)
   
   # Create the output vector
-  out <- unlist(c(est, se, se_usd, lrtp_ci$ci.lower, lrtp_ci$ci.upper, converge))  # 1 for converge
-  names(out) <- c("est", "se_std", "se_usd", "lrtp_lower", "lrtp_upper", "converge")
+  out <- unlist(c(est, est_usd, se, se_usd, lrtp_ci$ci.lower, lrtp_ci$ci.upper, converge))  # 1 for converge
+  names(out) <- c("est", "est_usd", "se_std", "se_usd", "lrtp_lower", "lrtp_upper", "converge")
   
   # Check convergence
   if (anyNA(out)) {
@@ -331,22 +325,11 @@ convergence_rate <- function(converge) {
 }
 
 # Helper function for calculating coverage rate, Type I error rate, and power
-ci_stats <- function(est, se, se_usd, par, stats_type, lrt_lo = NULL, lrt_up = NULL) {
-  
-  # Calculate the confidence intervals (std)
-  lo_95 <- est - qnorm(.975) * se
-  up_95 <- est + qnorm(.975) * se
-  ci_est <- vector("list", length = ncol(est))
-  names(ci_est) <- colnames(est)
-  
-  # Construct confidence intervals for each method
-  for (i in seq_len(ncol(est))) {
-    ci_est[[i]] <- cbind(lo_95[,i], up_95[,i])
-  }
+ci_stats <- function(est, se, par, stats_type, lrt_lo = NULL, lrt_up = NULL) {
   
   # Calculate the confidence intervals (usd)
-  lo_95_usd <- est - qnorm(.975) * se_usd
-  up_95_usd <- est + qnorm(.975) * se_usd
+  lo_95_usd <- est - qnorm(.975) * se
+  up_95_usd <- est + qnorm(.975) * se
   ci_est_usd <- vector("list", length = ncol(est))
   names(ci_est_usd) <- colnames(est)
   
@@ -367,7 +350,7 @@ ci_stats <- function(est, se, se_usd, par, stats_type, lrt_lo = NULL, lrt_up = N
   
   # Determine which statistic to calculate
   if (stats_type == "Coverage") {
-    return(sapply(ci_est, function(ci) mean(ci[,1] <= par & ci[,2] >= par)))
+    return(sapply(ci_est_usd, function(ci) mean(ci[,1] <= par & ci[,2] >= par)))
   } else if (stats_type == "TypeI") {
     return(sapply(ci_est_usd, function(ci) mean(ci[,1] > 0 | ci[,2] < 0)))
   } else if (stats_type == "Lrt_TypeI") {
@@ -388,71 +371,67 @@ evaluate_res <- function (condition, results, fixed_objects = NULL) {
   pop_par <- condition$gamma_xm
 
   # Parameter estimates
-  est <- results[, grep(".est$", colnames(results))]
+  est_std <- results[, grep(".est$", colnames(results))]
+  est_usd <- results[, grep(".est_usd$", colnames(results))]
   se_std <- results[, grep(".se_std$", colnames(results))]
   se_usd <- results[, grep(".se_usd$", colnames(results))]
   lrtp_lower <- results[, grep(".lrtp_lower$", colnames(results))]
   lrtp_upper <- results[, grep(".lrtp_upper$", colnames(results))]
   converge <- results[, grep(".converge$", colnames(results))]
 
-  c(raw_bias = robust_bias(est,
+  c(raw_bias = robust_bias(est_std,
                            se_std,
                            pop_par,
                            type = "raw"),
-    std_bias = robust_bias(est,
+    std_bias = robust_bias(est_std,
                            se_std,
                            pop_par,
                            type = "standardized"),
-    trim_bias = robust_bias(est,
+    trim_bias = robust_bias(est_std,
                             se_std,
                             pop_par,
                             trim = 0.2,
                             type = "trim"), # 20% trimmed mean
-    stdMed_bias = robust_bias(est,
+    stdMed_bias = robust_bias(est_std,
                               se_std,
                               pop_par,
                               type = "median"),
-    raw_rse_bias = rse_bias(est,
+    raw_rse_bias = rse_bias(est_std,
                             se_std,
                             type = "raw"),
-    stdMed_rse_bias = rse_bias(est,
+    stdMed_rse_bias = rse_bias(est_std,
                                se_std,
                                type = "median"),
-    trim_rse_bias = rse_bias(est,
+    trim_rse_bias = rse_bias(est_std,
                              se_std,
                              trim = 0.2,
                              type = "trim"),
     outlier_se = outlier_se(se_std),
-    coverage = ci_stats(est, 
-                        se_std,
+    coverage = ci_stats(est_usd, 
                         se_usd,
                         pop_par, 
                         "Coverage"),
-    type1 = ci_stats(est, 
-                     se_std, 
+    type1 = ci_stats(est_usd, 
                      se_usd,
                      pop_par, 
                      "TypeI"),
-    type1_lrt = ci_stats(est, 
-                         se_std, 
+    type1_lrt = ci_stats(est_usd, 
                          se_usd,
                          pop_par, 
                          "Lrt_TypeI",
                          lrt_lo = lrtp_lower,
                          lrt_up = lrtp_upper),
-    power = ci_stats(est, 
-                     se_std,
+    power = ci_stats(est_usd, 
                      se_usd,
                      pop_par, 
                      "Power"),
-    power_lrt = ci_stats(est, 
-                         se_std, 
+    power_lrt = ci_stats(est_usd, 
                          se_usd,
                          pop_par, 
                          "Lrt_Power",
                          lrt_lo = lrtp_lower,
                          lrt_up = lrtp_upper),
-    rmse = RMSE(na.omit(est),
+    rmse = RMSE(na.omit(est_std),
                 parameter = pop_par),
     convergence_rate = convergence_rate(converge)
   )
@@ -468,7 +447,7 @@ res <- runSimulation(design = DESIGNFACTOR,
                              tspa = analyze_tspa),
               summarise = evaluate_res,
               fixed_objects = FIXED_PARAMETER,
-              seed = rep(66225, nrow(DESIGNFACTOR)),
+              seed = rep(61543, nrow(DESIGNFACTOR)),
               packages = "lavaan", 
               filename = "continuous_mlr_09232024",
               parallel = TRUE,

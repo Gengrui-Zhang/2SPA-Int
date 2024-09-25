@@ -137,6 +137,6 @@ upi <- function (model, data, mode = "match", ...) {
   #############################################################################
 
   # Fit the model
-  fit_indProd <- sem(model, data = data, bounds = TRUE, ...)
+  fit_indProd <- sem(model, data = data, ...)
   return(fit_indProd)
 }
