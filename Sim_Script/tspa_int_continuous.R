@@ -140,12 +140,9 @@ analyze_mmr <- function(condition, dat, fixed_objects = NULL) {
     filter(op == "~" & label == "c2") %>%
     select(ci.lower, ci.upper)
   
-  # Check convergence
-  converge <- ifelse(lavInspect(fit_mmr, "converged"), 1, 0)
-  
   # Create the output vector
-  out <- unlist(c(est, est_usd, se, se_usd, lrtp_ci$ci.lower, lrtp_ci$ci.upper, converge))  # 1 for converge
-  names(out) <- c("est", "est_usd", "se_std", "se_usd", "lrtp_lower", "lrtp_upper", "converge")
+  out <- unlist(c(est, se, est_usd, se_usd, lrtp_ci$ci.lower, lrtp_ci$ci.upper))  
+  names(out) <- c("est", "se_std", "est_usd", "se_usd", "lrtp_lower", "lrtp_upper")
   
   # Check if any NA exists in the output
   if (anyNA(out)) {
@@ -172,12 +169,9 @@ analyze_upi <- function(condition, dat, fixed_objects = NULL) {
     filter(op == "~" & label == "b3") %>%
     select(ci.lower, ci.upper)
   
-  # Check convergence
-  converge <- ifelse(lavInspect(fit_upi, "converged"), 1, 0)
-  
   # Create the output vector
-  out <- unlist(c(est, est_usd, se, se_usd, lrtp_ci$ci.lower, lrtp_ci$ci.upper, converge))  # 1 for converge
-  names(out) <- c("est", "est_usd", "se_std", "se_usd", "lrtp_lower", "lrtp_upper", "converge")
+  out <- unlist(c(est, se, est_usd, se_usd, lrtp_ci$ci.lower, lrtp_ci$ci.upper))  
+  names(out) <- c("est", "se_std", "est_usd", "se_usd", "lrtp_lower", "lrtp_upper")
   
   # Check for NA values in the output
   if (anyNA(out)) {
@@ -194,20 +188,17 @@ analyze_rapi <- function (condition, dat, fixed_objects = NULL) {
                    data = dat) 
 
   est <- coef(fit_rapi, type = "user")["beta3"]
-  est_usd <- coef(fit_rapi)["b3"]
   se <- sqrt(vcov(fit_rapi, type = "user")["beta3", "beta3"])
+  est_usd <- coef(fit_rapi)["b3"]
   se_usd <- sqrt(vcov(fit_rapi)["b3", "b3"])
   lrtp_col <- lrtp(fit_rapi)
   lrtp_ci <- as.data.frame(lrtp_col) %>%
     filter(op == "~" & label == "b3") %>%
     select(ci.lower, ci.upper)
   
-  # Check convergence
-  converge <- ifelse(lavInspect(fit_rapi, "converged"), 1, 0)
-  
   # Create the output vector
-  out <- unlist(c(est, est_usd, se, se_usd, lrtp_ci$ci.lower, lrtp_ci$ci.upper, converge))  # 1 for converge
-  names(out) <- c("est", "est_usd", "se_std", "se_usd", "lrtp_lower", "lrtp_upper", "converge")
+  out <- unlist(c(est, se, est_usd, se_usd, lrtp_ci$ci.lower, lrtp_ci$ci.upper))  
+  names(out) <- c("est", "se_std", "est_usd", "se_usd", "lrtp_lower", "lrtp_upper")
   
   # Check convergence
   if (anyNA(out)) {
@@ -239,20 +230,17 @@ analyze_tspa <- function (condition, dat, fixed_objects = NULL) {
                              M = fs_dat$fs_M_se[1])) 
   
   est <- coef(fit_tspa, type = "user")["beta3"]
-  est_usd <- coef(fit_tspa)["b3"]
   se <- sqrt(vcov(fit_tspa, type = "user")["beta3", "beta3"])
+  est_usd <- coef(fit_tspa)["b3"]
   se_usd <- sqrt(vcov(fit_tspa)["b3", "b3"])
   lrtp_col <- lrtp(fit_tspa)
   lrtp_ci <- as.data.frame(lrtp_col) %>%
   filter(op == "~" & label == "b3") %>%
     select(ci.lower, ci.upper)
   
-  # Check convergence
-  converge <- ifelse(lavInspect(fit_tspa, "converged"), 1, 0)
-  
   # Create the output vector
-  out <- unlist(c(est, est_usd, se, se_usd, lrtp_ci$ci.lower, lrtp_ci$ci.upper, converge))  # 1 for converge
-  names(out) <- c("est", "est_usd", "se_std", "se_usd", "lrtp_lower", "lrtp_upper", "converge")
+  out <- unlist(c(est, se, est_usd, se_usd, lrtp_ci$ci.lower, lrtp_ci$ci.upper))  
+  names(out) <- c("est", "se_std", "est_usd", "se_usd", "lrtp_lower", "lrtp_upper")
   
   # Check convergence
   if (anyNA(out)) {
@@ -328,14 +316,14 @@ convergence_rate <- function(converge) {
 ci_stats <- function(est, se, par, stats_type, lrt_lo = NULL, lrt_up = NULL) {
   
   # Calculate the confidence intervals (usd)
-  lo_95_usd <- est - qnorm(.975) * se
-  up_95_usd <- est + qnorm(.975) * se
-  ci_est_usd <- vector("list", length = ncol(est))
-  names(ci_est_usd) <- colnames(est)
+  lo_95 <- est - qnorm(.975) * se
+  up_95 <- est + qnorm(.975) * se
+  ci_est <- vector("list", length = ncol(est))
+  names(ci_est) <- colnames(est)
   
   # Construct confidence intervals for each method
   for (i in seq_len(ncol(est))) {
-    ci_est_usd[[i]] <- cbind(lo_95_usd[,i], up_95_usd[,i])
+    ci_est[[i]] <- cbind(lo_95[,i], up_95[,i])
   }
   
   # Extract LRT CIs
@@ -350,13 +338,13 @@ ci_stats <- function(est, se, par, stats_type, lrt_lo = NULL, lrt_up = NULL) {
   
   # Determine which statistic to calculate
   if (stats_type == "Coverage") {
-    return(sapply(ci_est_usd, function(ci) mean(ci[,1] <= par & ci[,2] >= par)))
+    return(sapply(ci_est, function(ci) mean(ci[,1] <= par & ci[,2] >= par)))
   } else if (stats_type == "TypeI") {
-    return(sapply(ci_est_usd, function(ci) mean(ci[,1] > 0 | ci[,2] < 0)))
+    return(sapply(ci_est, function(ci) mean(ci[,1] > 0 | ci[,2] < 0)))
   } else if (stats_type == "Lrt_TypeI") {
     return(sapply(ci_lrt, function(ci) mean(ci[,1] > 0 | ci[,2] < 0)))
   } else if (stats_type == "Power") {
-    return(sapply(ci_est_usd, function(ci) (1 - mean(ci[,1] < 0 & ci[,2] > 0))))
+    return(sapply(ci_est, function(ci) (1 - mean(ci[,1] < 0 & ci[,2] > 0))))
   } else if (stats_type == "Lrt_Power") {
     return(sapply(ci_lrt, function(ci) (1 - mean(ci[,1] < 0 & ci[,2] > 0))))
   } else {
@@ -407,24 +395,36 @@ evaluate_res <- function (condition, results, fixed_objects = NULL) {
                              trim = 0.2,
                              type = "trim"),
     outlier_se = outlier_se(se_std),
-    coverage = ci_stats(est_usd, 
+    coverage_usd = ci_stats(est_usd, 
                         se_usd,
                         pop_par, 
                         "Coverage"),
-    type1 = ci_stats(est_usd, 
-                     se_usd,
-                     pop_par, 
-                     "TypeI"),
+    coverage_std = ci_stats(est_std, 
+                            se_std,
+                            pop_par, 
+                            "Coverage"),
+    type1_usd = ci_stats(est_usd, 
+                         se_usd,
+                         pop_par, 
+                         "TypeI"),
+    type1_std = ci_stats(est_std, 
+                         se_std,
+                         pop_par, 
+                         "TypeI"),
     type1_lrt = ci_stats(est_usd, 
                          se_usd,
                          pop_par, 
                          "Lrt_TypeI",
                          lrt_lo = lrtp_lower,
                          lrt_up = lrtp_upper),
-    power = ci_stats(est_usd, 
-                     se_usd,
-                     pop_par, 
-                     "Power"),
+    power_usd = ci_stats(est_usd, 
+                         se_usd,
+                         pop_par, 
+                         "Power"),
+    power_std = ci_stats(est_std, 
+                         se_std,
+                         pop_par, 
+                         "Power"),
     power_lrt = ci_stats(est_usd, 
                          se_usd,
                          pop_par, 

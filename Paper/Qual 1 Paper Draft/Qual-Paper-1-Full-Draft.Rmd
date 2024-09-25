@@ -553,13 +553,13 @@ No clear trends in coverage rate were observed within the methods in relation to
 
 ```{r coverage rate, message=FALSE, warning=FALSE}
 coverage <- sim_alt %>% 
-  dplyr::select(N:rel, coverage.mmr.est:coverage.tspa.est) %>%
+  dplyr::select(N:rel, coverage.mmr.est_usd:coverage.tspa.est_usd) %>%
   arrange(N) %>%
   relocate(cor_xm, .after = rel) %>%
-  mutate(coverage.mmr.est = coverage.mmr.est*100,
-         coverage.rapi.est = coverage.rapi.est*100,
-         coverage.upi.est = coverage.upi.est*100,
-         coverage.tspa.est = coverage.tspa.est*100) 
+  mutate(coverage.mmr.est_usd = coverage.mmr.est_usd*100,
+         coverage.rapi.est_usd = coverage.rapi.est_usd*100,
+         coverage.upi.est_usd = coverage.upi.est_usd*100,
+         coverage.tspa.est_usd = coverage.tspa.est_usd*100) 
 names(coverage) <- c("$\\textit{N}$", "$\\rho$", "$Corr(\\xi_{x}, \\xi_{m})$", "MMR", "RAPI", "Matched-Pair UPI", "2SPA")
 
 coverage_wide <- coverage %>%
@@ -634,7 +634,7 @@ Regarding statistical power, MMR exhibited higher power than the latent interact
 
 ```{r type I error, message=FALSE, warning=FALSE}
 type1 <- sim_null %>% 
-  dplyr::select(N:rel, type1.mmr.est:type1.tspa.est) %>%
+  dplyr::select(N:rel, type1.mmr.est_usd:type1.tspa.est_usd) %>%
   arrange(N) %>%
   relocate(cor_xm, .after = rel)
 names(type1) <- c("$\\textit{N}$", "$\\rho$", "$Corr(\\xi_{x}, \\xi_{m})$", "MMR", "RAPI", "Matched-Pair UPI", "2S-PA-Int")
@@ -661,7 +661,7 @@ type1_table
 
 ```{r power, message=FALSE, warning=FALSE}
 power <- sim_alt %>% 
-  dplyr::select(N:rel, power.mmr.est:power.tspa.est) %>%
+  dplyr::select(N:rel, power.mmr.est_usd:power.tspa.est_usd) %>%
   arrange(N) %>%
   relocate(cor_xm, .after = rel)
 names(power) <- c("$\\textit{N}$", "$\\rho$", "$Corr(\\xi_{x}, \\xi_{m})$", "MMR", "RAPI", "Matched-Pair UPI", "2S-PA-Int")
