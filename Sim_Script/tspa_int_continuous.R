@@ -11,7 +11,7 @@ library(here)
 r_scripts <- list.files(here("R"), pattern = "\\.R$", full.names = TRUE)
 lapply(r_scripts, source)
 
-# ========================================= Simulation Conditions =========================================
+# ========================================= Simulation Conditions ========================================= #
 
 DESIGNFACTOR <- createDesign(
   N = c(100, 250, 500),
@@ -42,7 +42,7 @@ FIXED_PARAMETER <- list(model = '
                         gamma_m = 0.3
 )
 
-# ========================================= Data Generation =========================================
+# ========================================= Data Generation ========================================= #
 # Helper Function
 generate_sem_data <- function(N, model, Alpha, Phi, Lambda, Gamma, Theta, SD_y) {
   # Generate scores for observed items: x1 - x3, m1 - m3
@@ -114,7 +114,7 @@ generate_dat <- function (condition, fixed_objects = NULL) {
   )
 }
 
-# ========================================= Data Analysis =========================================
+# ========================================= Data Analysis ========================================= #
 
 analyze_mmr <- function(condition, dat, fixed_objects = NULL) {
   
@@ -128,7 +128,7 @@ analyze_mmr <- function(condition, dat, fixed_objects = NULL) {
   # Fit the model and capture warnings and errors
   fit_mmr <- sem(model = "Y ~ c0*x_c + c1*m_c + c2*xm", 
                  data = dat_mmr,
-                 estimator = "MLR")
+                 estimator = "MLR") |> manageWarnings(warning2error = T)
   
   # Extract parameters
   std_col <- standardizedSolution(fit_mmr)
@@ -162,7 +162,7 @@ analyze_upi <- function(condition, dat, fixed_objects = NULL) {
   fit_upi <- upi(model = fixed_objects$model, 
                  data = dat, 
                  mode = "match",
-                 estimator = "MLR")
+                 estimator = "MLR") |> manageWarnings(warning2error = T)
   
   # Extract parameters
   est <- coef(fit_upi, type = "user")["beta3"]
@@ -193,7 +193,7 @@ analyze_rapi <- function (condition, dat, fixed_objects = NULL) {
   # Fit the model and capture warnings and errors
   fit_rapi <- rapi(model = fixed_objects$model,
                    data = dat,
-                   estimator = "MLR")
+                   estimator = "MLR") |> manageWarnings(warning2error = T)
 
   est <- coef(fit_rapi, type = "user")["beta3"]
   se <- sqrt(vcov(fit_rapi, type = "user")["beta3", "beta3"])
@@ -227,6 +227,12 @@ analyze_tspa <- function (condition, dat, fixed_objects = NULL) {
                              ',
                    method = "Bartlett",
                    std.lv = TRUE)
+  
+  # Check if there is any NaN value
+  if (any(is.nan(as.matrix(fs_dat)))) {
+    stop("Error: fs_dat contains NaN values.")
+  } 
+  
   Y <- dat$Y
   fs_dat <- cbind(fs_dat, Y)
   
@@ -237,7 +243,7 @@ analyze_tspa <- function (condition, dat, fixed_objects = NULL) {
                    data = fs_dat,
                    se = list(X = fs_dat$fs_X_se[1],
                              M = fs_dat$fs_M_se[1]),
-                   estimator = "MLR")
+                   estimator = "MLR") |> manageWarnings(warning2error = T)
   
   est <- coef(fit_tspa, type = "user")["beta3"]
   se <- sqrt(vcov(fit_tspa, type = "user")["beta3", "beta3"])
@@ -261,8 +267,7 @@ analyze_tspa <- function (condition, dat, fixed_objects = NULL) {
   out
 }
 
-# ========================================= Results Summary =========================================
-
+# ========================================= Results Summary ========================================= #
 # Helper function: robust bias
 robust_bias <- function(est, se, par, trim = 0, type = NULL) {
   output <- numeric(ncol(est))
@@ -376,6 +381,7 @@ ci_stats <- function(est, se, se_usd, par, stats_type, lrt_lo = NULL, lrt_up = N
   }
 }
 
+# Evaluation Function
 evaluate_res <- function (condition, results, fixed_objects = NULL) {
 
   # Population parameter
@@ -452,7 +458,7 @@ evaluate_res <- function (condition, results, fixed_objects = NULL) {
   )
 }
 
-# Run 2000 replications
+# ========================================= Run Experiment ========================================= #
 res <- runSimulation(design = DESIGNFACTOR,
               replications = 2000,
               generate = generate_dat,
@@ -464,7 +470,7 @@ res <- runSimulation(design = DESIGNFACTOR,
               fixed_objects = FIXED_PARAMETER,
               seed = rep(66225, nrow(DESIGNFACTOR)),
               packages = "lavaan", 
-              filename = "Continuous_MLR_09222024",
+              filename = "continuous_mlr_09232024",
               parallel = TRUE,
               ncores = 20,
               save = TRUE,
