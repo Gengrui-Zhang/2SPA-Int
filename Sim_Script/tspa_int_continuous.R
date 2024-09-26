@@ -502,7 +502,7 @@ evaluate_res <- function (condition, results, fixed_objects = NULL) {
 
 # ========================================= Run Experiment ========================================= #
 res <- runSimulation(design = DESIGNFACTOR,
-              replications = 200,
+              replications = 2000,
               generate = generate_dat,
               analyse = list(mmr = analyze_mmr,
                              upi = analyze_upi,
@@ -512,7 +512,7 @@ res <- runSimulation(design = DESIGNFACTOR,
               fixed_objects = FIXED_PARAMETER,
               seed = rep(61543, nrow(DESIGNFACTOR)),
               packages = "lavaan", 
-              filename = "trial_bound_09232024",
+              filename = "continuous_bound_09252024",
               parallel = TRUE,
               ncores = 30,
               save = TRUE,
