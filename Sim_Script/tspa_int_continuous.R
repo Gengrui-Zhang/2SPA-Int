@@ -118,140 +118,198 @@ generate_dat <- function (condition, fixed_objects = NULL) {
 
 analyze_mmr <- function(condition, dat, fixed_objects = NULL) {
   
-  # Fit using moderated multiple regression
-  dat_mmr <- dat %>%
-    mutate(x_c = rowSums(dat[c("x1", "x2", "x3")]) - mean(rowSums(dat[c("x1", "x2", "x3")])),
-           m_c = rowSums(dat[c("m1", "m2", "m3")]) - mean(rowSums(dat[c("m1", "m2", "m3")])),
-           xm = x_c * m_c)
+  # Initialize a local warning counter for this replication
+  local_warning_counter <- 0
   
-  # Fit the model and capture warnings and errors
-  fit_mmr <- sem(model = "Y ~ c0*x_c + c1*m_c + c2*xm", 
-                 data = dat_mmr,
-                 bounds = TRUE) 
+  # Fit the model and capture warnings
+  result <- withCallingHandlers(
+    {
+      # Fit using moderated multiple regression
+      dat_mmr <- dat %>%
+        mutate(x_c = rowSums(dat[c("x1", "x2", "x3")]) - mean(rowSums(dat[c("x1", "x2", "x3")])),
+               m_c = rowSums(dat[c("m1", "m2", "m3")]) - mean(rowSums(dat[c("m1", "m2", "m3")])),
+               xm = x_c * m_c)
+      
+      # Fit the model
+      fit_mmr <- sem(model = "Y ~ c0*x_c + c1*m_c + c2*xm", 
+                     data = dat_mmr,
+                     bounds = TRUE)
+      
+      # Extract parameters
+      std_col <- standardizedSolution(fit_mmr)
+      est <- std_col[std_col$label == "c2", "est.std"]
+      se <- std_col[std_col$label == "c2", "se"]
+      usd_col <- parameterEstimates(fit_mmr, standardized = FALSE)
+      est_usd <- usd_col[usd_col$label == "c2", "est"]
+      se_usd <- usd_col[usd_col$label == "c2", "se"]
+      lrtp_col <- lrtp(fit_mmr)
+      lrtp_ci <- as.data.frame(lrtp_col) %>%
+        filter(op == "~" & label == "c2") %>%
+        select(ci.lower, ci.upper)
+      
+      # Create the output vector
+      out <- c(est, se, est_usd, se_usd, lrtp_ci$ci.lower, lrtp_ci$ci.upper, local_warning_counter)  
+      names(out) <- c("est", "se_std", "est_usd", "se_usd", "lrtp_lower", "lrtp_upper", "warnings_count")
+      
+      # Check if any NA exists in the output
+      if (anyNA(out)) {
+        stop("The model did not obtain SE")
+      }
+      
+      return(out)
+    },
+    warning = function(w) {
+      # Increment the local warning counter
+      local_warning_counter <<- local_warning_counter + 1
+    }
+  )
   
-  # Extract parameters
-  std_col <- standardizedSolution(fit_mmr)
-  est <- std_col[std_col$label == "c2", "est.std"]
-  se <- std_col[std_col$label == "c2", "se"]
-  usd_col <- parameterEstimates(fit_mmr, standardized = FALSE)
-  est_usd <- usd_col[usd_col$label == "c2", "est"]
-  se_usd <- usd_col[usd_col$label == "c2", "se"]
-  lrtp_col <- lrtp(fit_mmr)
-  lrtp_ci <- as.data.frame(lrtp_col) %>%
-    filter(op == "~" & label == "c2") %>%
-    select(ci.lower, ci.upper)
-  
-  # Create the output vector
-  out <- unlist(c(est, se, est_usd, se_usd, lrtp_ci$ci.lower, lrtp_ci$ci.upper))  
-  names(out) <- c("est", "se_std", "est_usd", "se_usd", "lrtp_lower", "lrtp_upper")
-  
-  # Check if any NA exists in the output
-  if (anyNA(out)) {
-    stop("The model did not obtain SE")
-  }
-  
-  return(out)
+  return(result)
 }
 
 analyze_upi <- function(condition, dat, fixed_objects = NULL) {
   
-  # Fit the model
-  fit_upi <- upi(model = fixed_objects$model, 
-                 data = dat, 
-                 mode = "match",
-                 bounds = TRUE) 
+  # Initialize a local warning counter for this replication
+  local_warning_counter <- 0
   
-  # Extract parameters
-  est <- coef(fit_upi, type = "user")["beta3"]
-  se <- sqrt(vcov(fit_upi, type = "user")["beta3", "beta3"])
-  est_usd <- coef(fit_upi)["b3"]
-  se_usd <- sqrt(vcov(fit_upi)["b3", "b3"])
-  lrtp_col <- lrtp(fit_upi)
-  lrtp_ci <- as.data.frame(lrtp_col) %>%
-    filter(op == "~" & label == "b3") %>%
-    select(ci.lower, ci.upper)
+  # Fit the model and capture warnings
+  result <- withCallingHandlers(
+    {
+      fit_upi <- upi(model = fixed_objects$model, 
+                     data = dat, 
+                     mode = "match",
+                     bounds = TRUE) 
+      
+      # Extract parameters
+      est <- coef(fit_upi, type = "user")["beta3"]
+      se <- sqrt(vcov(fit_upi, type = "user")["beta3", "beta3"])
+      est_usd <- coef(fit_upi)["b3"]
+      se_usd <- sqrt(vcov(fit_upi)["b3", "b3"])
+      lrtp_col <- lrtp(fit_upi)
+      lrtp_ci <- as.data.frame(lrtp_col) %>%
+        filter(op == "~" & label == "b3") %>%
+        select(ci.lower, ci.upper)
+      
+      # Create the output vector
+      out <- c(est, se, est_usd, se_usd, lrtp_ci$ci.lower, lrtp_ci$ci.upper, local_warning_counter)  
+      names(out) <- c("est", "se_std", "est_usd", "se_usd", "lrtp_lower", "lrtp_upper", "warnings_count")
+      
+      # Check for NA values in the output
+      if (anyNA(out)) {
+        stop("The model did not obtain SE")
+      }
+      
+      return(out)
+    },
+    warning = function(w) {
+      # Increment the local warning counter
+      local_warning_counter <<- local_warning_counter + 1
+    }
+  )
   
-  # Create the output vector
-  out <- unlist(c(est, se, est_usd, se_usd, lrtp_ci$ci.lower, lrtp_ci$ci.upper))  
-  names(out) <- c("est", "se_std", "est_usd", "se_usd", "lrtp_lower", "lrtp_upper")
-  
-  # Check for NA values in the output
-  if (anyNA(out)) {
-    stop("The model did not obtain SE")
-  }
-  
-  return(out)
+  return(result)
 }
 
-analyze_rapi <- function (condition, dat, fixed_objects = NULL) {
+analyze_rapi <- function(condition, dat, fixed_objects = NULL) {
   
-  # Fit the model and capture warnings and errors
-  fit_rapi <- rapi(model = fixed_objects$model,
-                   data = dat,
-                   bounds = TRUE) 
-
-  est <- coef(fit_rapi, type = "user")["beta3"]
-  se <- sqrt(vcov(fit_rapi, type = "user")["beta3", "beta3"])
-  est_usd <- coef(fit_rapi)["b3"]
-  se_usd <- sqrt(vcov(fit_rapi)["b3", "b3"])
-  lrtp_col <- lrtp(fit_rapi)
-  lrtp_ci <- as.data.frame(lrtp_col) %>%
-    filter(op == "~" & label == "b3") %>%
-    select(ci.lower, ci.upper)
+  # Initialize a local warning counter for this replication
+  local_warning_counter <- 0
   
-  # Create the output vector
-  out <- unlist(c(est, se, est_usd, se_usd, lrtp_ci$ci.lower, lrtp_ci$ci.upper))  
-  names(out) <- c("est", "se_std", "est_usd", "se_usd", "lrtp_lower", "lrtp_upper")
+  # Fit the model and capture warnings
+  result <- withCallingHandlers(
+    {
+      # Fit the model
+      fit_rapi <- rapi(model = fixed_objects$model,
+                       data = dat,
+                       bounds = TRUE)
+      
+      # Extract parameters
+      est <- coef(fit_rapi, type = "user")["beta3"]
+      se <- sqrt(vcov(fit_rapi, type = "user")["beta3", "beta3"])
+      est_usd <- coef(fit_rapi)["b3"]
+      se_usd <- sqrt(vcov(fit_rapi)["b3", "b3"])
+      lrtp_col <- lrtp(fit_rapi)
+      lrtp_ci <- as.data.frame(lrtp_col) %>%
+        filter(op == "~" & label == "b3") %>%
+        select(ci.lower, ci.upper)
+      
+      # Create the output vector
+      out <- c(est, se, est_usd, se_usd, lrtp_ci$ci.lower, lrtp_ci$ci.upper, local_warning_counter)
+      names(out) <- c("est", "se_std", "est_usd", "se_usd", "lrtp_lower", "lrtp_upper", "warnings_count")
+      
+      # Check for NA values in the output
+      if (anyNA(out)) {
+        stop("The model did not obtain SE")
+      }
+      
+      return(out)
+    },
+    warning = function(w) {
+      # Increment the local warning counter
+      local_warning_counter <<- local_warning_counter + 1
+    }
+  )
   
-  # Check convergence
-  if (anyNA(out)) {
-    stop("The model did not obtain SE")
-  }
-  out
+  return(result)
 }
 
-analyze_tspa <- function (condition, dat, fixed_objects = NULL) {
-
-  # Fit using two-stage path analysis
-  fs_dat <- get_fs(dat,
-                   model ='
-                             X =~ x1 + x2 + x3
-                             M =~ m1 + m2 + m3
-                             ',
-                   method = "Bartlett",
-                   std.lv = TRUE,
-                   bounds = TRUE)
+analyze_tspa <- function(condition, dat, fixed_objects = NULL) {
   
-  Y <- dat$Y
-  fs_dat <- cbind(fs_dat, Y)
+  # Initialize a local warning counter for this replication
+  local_warning_counter <- 0
   
-  fit_tspa <- tspa(model = "Y ~ b1*X + b2*M + b3*X:M
-                              beta1 := b1 * sqrt(v1)
-                              beta2 := b2 * sqrt(v2)
-                              beta3 := b3 * sqrt(v1) * sqrt(v2)",
-                   data = fs_dat,
-                   se = list(X = fs_dat$fs_X_se[1],
-                             M = fs_dat$fs_M_se[1]),
-                   bounds = TRUE) 
+  # Fit the model and capture warnings
+  result <- withCallingHandlers(
+    {
+      # Fit using two-stage path analysis
+      fs_dat <- get_fs(dat,
+                       model = '
+                         X =~ x1 + x2 + x3
+                         M =~ m1 + m2 + m3
+                       ',
+                       method = "Bartlett",
+                       std.lv = TRUE,
+                       bounds = TRUE)
+      
+      Y <- dat$Y
+      fs_dat <- cbind(fs_dat, Y)
+      
+      fit_tspa <- tspa(model = "Y ~ b1*X + b2*M + b3*X:M
+                                beta1 := b1 * sqrt(v1)
+                                beta2 := b2 * sqrt(v2)
+                                beta3 := b3 * sqrt(v1) * sqrt(v2)",
+                       data = fs_dat,
+                       se = list(X = fs_dat$fs_X_se[1], M = fs_dat$fs_M_se[1]),
+                       bounds = TRUE) 
+      
+      # Extract parameters
+      est <- coef(fit_tspa, type = "user")["beta3"]
+      se <- sqrt(vcov(fit_tspa, type = "user")["beta3", "beta3"])
+      est_usd <- coef(fit_tspa)["b3"]
+      se_usd <- sqrt(vcov(fit_tspa)["b3", "b3"])
+      lrtp_col <- lrtp(fit_tspa)
+      lrtp_ci <- as.data.frame(lrtp_col) %>%
+        filter(op == "~" & label == "b3") %>%
+        select(ci.lower, ci.upper)
+      
+      # Create the output vector
+      out <- c(est, se, est_usd, se_usd, lrtp_ci$ci.lower, lrtp_ci$ci.upper, local_warning_counter)
+      names(out) <- c("est", "se_std", "est_usd", "se_usd", "lrtp_lower", "lrtp_upper", "warnings_count")
+      
+      # Check for NA values in the output
+      if (anyNA(out)) {
+        stop("The model did not obtain SE")
+      }
+      
+      return(out)
+    },
+    warning = function(w) {
+      # Increment the local warning counter
+      local_warning_counter <<- local_warning_counter + 1
+    }
+  )
   
-  est <- coef(fit_tspa, type = "user")["beta3"]
-  se <- sqrt(vcov(fit_tspa, type = "user")["beta3", "beta3"])
-  est_usd <- coef(fit_tspa)["b3"]
-  se_usd <- sqrt(vcov(fit_tspa)["b3", "b3"])
-  lrtp_col <- lrtp(fit_tspa)
-  lrtp_ci <- as.data.frame(lrtp_col) %>%
-  filter(op == "~" & label == "b3") %>%
-    select(ci.lower, ci.upper)
-  
-  # Create the output vector
-  out <- unlist(c(est, se, est_usd, se_usd, lrtp_ci$ci.lower, lrtp_ci$ci.upper))  
-  names(out) <- c("est", "se_std", "est_usd", "se_usd", "lrtp_lower", "lrtp_upper")
-  
-  # Check convergence
-  if (anyNA(out)) {
-    stop("The model did not obtain SE")
-  }
-  out
+  return(result)
 }
 
 # ========================================= Results Summary ========================================= #
@@ -312,14 +370,9 @@ outlier_se <- function(se) {
   return(results)
 }
 
-# Helper function for convergence rate
-convergence_rate <- function(converge) {
-  apply(converge, 2, function(x) 1-(sum(is.na(x)) / length(x)))
-}
-
 # Helper function for calculating coverage rate, Type I error rate, and power
 ci_stats <- function(est, se, par, stats_type, lrt_lo = NULL, lrt_up = NULL) {
-  
+  browser()
   # Calculate the confidence intervals (usd)
   lo_95 <- est - qnorm(.975) * se
   up_95 <- est + qnorm(.975) * se
@@ -357,6 +410,11 @@ ci_stats <- function(est, se, par, stats_type, lrt_lo = NULL, lrt_up = NULL) {
   }
 }
 
+# Helper function for warning sum
+warning_sum <- function(count) {
+  apply(count, 2, sum, na.rm = TRUE)
+}
+
 # Evaluation Function
 evaluate_res <- function (condition, results, fixed_objects = NULL) {
 
@@ -370,7 +428,7 @@ evaluate_res <- function (condition, results, fixed_objects = NULL) {
   se_usd <- results[, grep(".se_usd$", colnames(results))]
   lrtp_lower <- results[, grep(".lrtp_lower$", colnames(results))]
   lrtp_upper <- results[, grep(".lrtp_upper$", colnames(results))]
-  converge <- results[, grep(".converge$", colnames(results))]
+  warnings <- results[, grep(".warnings_count$", colnames(results))]
 
   c(raw_bias = robust_bias(est_std,
                            se_std,
@@ -438,7 +496,7 @@ evaluate_res <- function (condition, results, fixed_objects = NULL) {
                          lrt_up = lrtp_upper),
     rmse = RMSE(na.omit(est_std),
                 parameter = pop_par),
-    convergence_rate = convergence_rate(converge)
+    warning_total = warning_sum(warnings)
   )
 }
 
