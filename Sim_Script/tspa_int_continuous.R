@@ -133,7 +133,8 @@ analyze_mmr <- function(condition, dat, fixed_objects = NULL) {
       # Fit the model
       fit_mmr <- sem(model = "Y ~ c0*x_c + c1*m_c + c2*xm", 
                      data = dat_mmr,
-                     bounds = TRUE)
+                     bounds = TRUE,
+                     estimator = "MLR")
       
       # Extract parameters
       std_col <- standardizedSolution(fit_mmr)
@@ -178,7 +179,8 @@ analyze_upi <- function(condition, dat, fixed_objects = NULL) {
       fit_upi <- upi(model = fixed_objects$model, 
                      data = dat, 
                      mode = "match",
-                     bounds = TRUE) 
+                     bounds = TRUE,
+                     estimator = "MLR") 
       
       # Extract parameters
       est <- coef(fit_upi, type = "user")["beta3"]
@@ -221,7 +223,8 @@ analyze_rapi <- function(condition, dat, fixed_objects = NULL) {
       # Fit the model
       fit_rapi <- rapi(model = fixed_objects$model,
                        data = dat,
-                       bounds = TRUE)
+                       bounds = TRUE,
+                       estimator = "MLR")
       
       # Extract parameters
       est <- coef(fit_rapi, type = "user")["beta3"]
@@ -269,7 +272,8 @@ analyze_tspa <- function(condition, dat, fixed_objects = NULL) {
                        ',
                        method = "Bartlett",
                        std.lv = TRUE,
-                       bounds = TRUE)
+                       bounds = TRUE,
+                       estimator = "MLR")
       
       Y <- dat$Y
       fs_dat <- cbind(fs_dat, Y)
@@ -280,7 +284,8 @@ analyze_tspa <- function(condition, dat, fixed_objects = NULL) {
                                 beta3 := b3 * sqrt(v1) * sqrt(v2)",
                        data = fs_dat,
                        se = list(X = fs_dat$fs_X_se[1], M = fs_dat$fs_M_se[1]),
-                       bounds = TRUE) 
+                       bounds = TRUE,
+                       estimator = "MLR") 
       
       # Extract parameters
       est <- coef(fit_tspa, type = "user")["beta3"]
@@ -372,7 +377,7 @@ outlier_se <- function(se) {
 
 # Helper function for calculating coverage rate, Type I error rate, and power
 ci_stats <- function(est, se, par, stats_type, lrt_lo = NULL, lrt_up = NULL) {
-  browser()
+
   # Calculate the confidence intervals (usd)
   lo_95 <- est - qnorm(.975) * se
   up_95 <- est + qnorm(.975) * se
@@ -512,7 +517,7 @@ res <- runSimulation(design = DESIGNFACTOR,
               fixed_objects = FIXED_PARAMETER,
               seed = rep(61543, nrow(DESIGNFACTOR)),
               packages = "lavaan", 
-              filename = "continuous_bound_09252024",
+              filename = "continuous_boundMLR_09252024",
               parallel = TRUE,
               ncores = 30,
               save = TRUE,
