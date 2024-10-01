@@ -63,7 +63,7 @@ knitr::opts_chunk$set(cache.extra = knitr::rand_seed)
 ```
 
 ```{r message=FALSE, warning=FALSE}
-sim <- readRDS(here("Sim_Data", "continuous_09232024.rds"))
+sim <- readRDS(here("Sim_Data", "continuous_bound_09252024.rds"))
 sim_results <- sim %>% 
   dplyr::select(-c(REPLICATIONS:ERRORS)) %>%
   mutate(across(where(is.numeric), round, 4),
@@ -419,53 +419,204 @@ It was found that the absolute SB values for the latent interaction methods were
 Overall, the latent interaction methods yielded comparably low standardized biases across simulation conditions, which was acceptable for practical use. 
 
 ```{r standardized bias (raw bias), message=FALSE, warning=FALSE}
-raw_bias <- sim_alt %>%
+# Helper Function
+bold_if <- function(cell) {
+  first_number <- as.numeric(str_extract(cell, "^[^\\(]+"))
+  if (!is.na(first_number) && abs(first_number) > 0.4) {
+    return(sprintf("\\textbf{%s}", cell))
+  } else {
+    return(cell)
+  }
+}
+
+# Null Effect
+rb_null <- sim_null %>%
   dplyr::select(N:raw_bias.tspa.est) %>%
   dplyr::select(-gamma_xm) %>%
   arrange(N) %>%
   relocate(cor_xm, .after = rel)
-names(raw_bias) <- c("$\\textit{N}$", "$\\rho$", "$Corr(\\xi_{x}, \\xi_{m})$", "MMR", "RAPI", "Matched-Pair UPI", "2SPA")
+names(rb_null) <- c("$\\textit{N}$", "$\\rho$", "$Corr(\\xi_{x}, \\xi_{m})$", "MMR", "Matched-Pair UPI", "RAPI", "2SPA")
 
-raw_bias_wide <- raw_bias %>%
+rb_null_wide <- rb_null %>%
   pivot_wider(names_from = `$\\rho$`,
-              values_from = c("MMR", "RAPI", "Matched-Pair UPI", "2SPA"), #
+              values_from = c("MMR", "Matched-Pair UPI", "RAPI", "2SPA"), #
               names_prefix = "corr_") %>%
   mutate(`$\\textit{N}$` = ifelse(`$Corr(\\xi_{x}, \\xi_{m})$` != 0, " ", `$\\textit{N}$`),
          across(where(is.numeric), round, 2))
-names(raw_bias_wide) <- c("$\\textit{N}$", "$Corr(\\xi_{x}, \\xi_{m})$", paste(rep(c("$\\rho = .70$", "$\\rho = .80$", "$\\rho = .90$"), 4)))
+names(rb_null_wide) <- c("$\\textit{N}$", "$Corr(\\xi_{x}, \\xi_{m})$", paste(rep(c("$\\rho = .70$", "$\\rho = .80$", "$\\rho = .90$"), 4)))
 
-std_bias <- sim_alt %>% 
+sb_null <- sim_null %>% 
   dplyr::select(N:rel, std_bias.mmr.est:std_bias.tspa.est) %>%
   arrange(N) %>%
   relocate(cor_xm, .after = rel) 
-names(std_bias) <- c("$\\textit{N}$", "$\\rho$", "$Corr(\\xi_{x}, \\xi_{m})$", "MMR", "RAPI", "Matched-Pair UPI", "2SPA")
+names(sb_null) <- c("$\\textit{N}$", "$\\rho$", "$Corr(\\xi_{x}, \\xi_{m})$", "MMR", "Matched-Pair UPI", "RAPI", "2SPA")
 
-std_bias_wide <- std_bias %>%
+sb_null_wide <- sb_null %>%
   pivot_wider(names_from = `$\\rho$`,  
-              values_from = c("MMR", "RAPI", "Matched-Pair UPI", "2SPA"), #
+              values_from = c("MMR", "Matched-Pair UPI", "RAPI", "2SPA"), #
               names_prefix = "corr_") %>%
   mutate(`$\\textit{N}$` = ifelse(`$Corr(\\xi_{x}, \\xi_{m})$` != 0, " ", `$\\textit{N}$`),
          across(where(is.numeric), round, 2))
-names(std_bias_wide) <- c("$\\textit{N}$", "$Corr(\\xi_{x}, \\xi_{m})$", paste(rep(c("$\\rho = .70$", "$\\rho = .80$", "$\\rho = .90$"), 4)))
+names(sb_null_wide) <- c("$\\textit{N}$", "$Corr(\\xi_{x}, \\xi_{m})$", paste(rep(c("$\\rho = .70$", "$\\rho = .80$", "$\\rho = .90$"), 4)))
 
-standardized_bias <- raw_bias_wide
-for (col_idx in 3:ncol(raw_bias_wide)) {
+rbsb_null <- rb_null_wide
+for (col_idx in 3:ncol(rb_null_wide)) {
   combined_values <- mapply(FUN = function(x, y) paste(y, "\ (", x, ")", sep = ""),
-                            x = raw_bias_wide[, col_idx], y = std_bias_wide[, col_idx])
-  standardized_bias[, col_idx] <- combined_values
+                            x = rb_null_wide[, col_idx], y = sb_null_wide[, col_idx])
+  rbsb_null[, col_idx] <- combined_values
 }
 
-standardized_bias_table <- apa_table(standardized_bias,
-                                    escape = F,
-                                    caption = "Standardized Bias (Raw Bias) for $\\gamma_{xm} (= 0.3)$ over 2,000 Replications.",
-                                    align = c(rep("c", ncol(standardized_bias))),
-                                    col_spanners = list(`MMR` = c(3, 5), `RAPI` = c(6, 8), 
-                                                        `Matched-Pair UPI` = c(9, 11), `2S-PA-Int` = c(12, 14)),
-                                    landscape = TRUE,
-                                    font_size = "tiny",
-                                    note = "$\\textit{N}$ = sample size; $Corr(\\xi_{x}, \\xi_{m})$ = correlation between $\\xi_{x}$ and $\\xi_{m}$; $\\rho$ = reliability level; MMR = moderated multiple regression method; RAPI = reliability-adjusted product indicator method; Matched-Pair UPI = matched-pair product unconstrained indicator method; 2S-PA-Int = two-stage path analysis with interaction method. Raw biases are shown in pararenthese. Note that numerical values have been rounded to two decimal places for consistency, which means that some values, while very close to 0 but not exactly 0, are displayed as 0.")
+for (i in 3:ncol(rbsb_null)) {
+  rbsb_null[[i]] <- sapply(rbsb_null[[i]], bold_if)
+}
 
-standardized_bias_table
+# Alternative Effect
+rb_alt <- sim_alt %>%
+  dplyr::select(N:raw_bias.tspa.est) %>%
+  dplyr::select(-gamma_xm) %>%
+  arrange(N) %>%
+  relocate(cor_xm, .after = rel)
+names(rb_alt) <- c("$\\textit{N}$", "$\\rho$", "$Corr(\\xi_{x}, \\xi_{m})$", "MMR", "Matched-Pair UPI", "RAPI", "2SPA")
+
+rb_alt_wide <- rb_alt %>%
+  pivot_wider(names_from = `$\\rho$`,
+              values_from = c("MMR", "Matched-Pair UPI", "RAPI", "2SPA"), #
+              names_prefix = "corr_") %>%
+  mutate(`$\\textit{N}$` = ifelse(`$Corr(\\xi_{x}, \\xi_{m})$` != 0, " ", `$\\textit{N}$`),
+         across(where(is.numeric), round, 2))
+names(rb_alt_wide) <- c("$\\textit{N}$", "$Corr(\\xi_{x}, \\xi_{m})$", paste(rep(c("$\\rho = .70$", "$\\rho = .80$", "$\\rho = .90$"), 4)))
+
+sb_alt <- sim_alt %>% 
+  dplyr::select(N:rel, std_bias.mmr.est:std_bias.tspa.est) %>%
+  arrange(N) %>%
+  relocate(cor_xm, .after = rel) 
+names(sb_alt) <- c("$\\textit{N}$", "$\\rho$", "$Corr(\\xi_{x}, \\xi_{m})$", "MMR", "Matched-Pair UPI", "RAPI", "2SPA")
+
+sb_alt_wide <- sb_alt %>%
+  pivot_wider(names_from = `$\\rho$`,  
+              values_from = c("MMR", "Matched-Pair UPI", "RAPI", "2SPA"), #
+              names_prefix = "corr_") %>%
+  mutate(`$\\textit{N}$` = ifelse(`$Corr(\\xi_{x}, \\xi_{m})$` != 0, " ", `$\\textit{N}$`),
+         across(where(is.numeric), round, 2))
+names(sb_alt_wide) <- c("$\\textit{N}$", "$Corr(\\xi_{x}, \\xi_{m})$", paste(rep(c("$\\rho = .70$", "$\\rho = .80$", "$\\rho = .90$"), 4)))
+
+rbsb_alt <- rb_alt_wide
+for (col_idx in 3:ncol(rb_alt_wide)) {
+  combined_values <- mapply(FUN = function(x, y) paste(y, "\ (", x, ")", sep = ""),
+                            x = rb_alt_wide[, col_idx], y = sb_alt_wide[, col_idx])
+  rbsb_alt[, col_idx] <- combined_values
+}
+
+for (i in 3:ncol(rbsb_alt)) {
+  rbsb_alt[[i]] <- sapply(rbsb_alt[[i]], bold_if)
+}
+
+# Table
+rbsb_table <- apa_table(list(`$\\gamma_{xm} = 0$` = rbsb_null,
+                             `$\\gamma_{xm} = 0.3$` = rbsb_alt),
+                        merge_method = "table_spanner",
+                        escape = F,
+                        caption = "Standardized Bias (Raw Bias) for $\\gamma_{xm}$ over 2,000 Replications.",
+                        align = c(rep("c", ncol(rbsb_alt))),
+                        col_spanners = list(`MMR` = c(3, 5), `Matched-Pair UPI` = c(6, 8),
+                                            `RAPI` = c(9, 11), `2S-PA-Int` = c(12, 14)),
+                        landscape = TRUE,
+                        font_size = "tiny",
+                        note = "$\\textit{N}$ = sample size; $Corr(\\xi_{x}, \\xi_{m})$ = correlation between $\\xi_{x}$ and $\\xi_{m}$; $\\rho$ = reliability level; MMR = moderated multiple regression method; Matched-Pair UPI = matched-pair product unconstrained indicator method; RAPI = reliability-adjusted product indicator method; 2S-PA-Int = two-stage path analysis with interaction method. Raw biases are shown in pararenthese. Note that numerical values have been rounded to two decimal places for consistency, which means that some values, while very close to 0 but not exactly 0, are displayed as 0.")
+
+rbsb_table
+```
+
+```{r standardized bias plot, message=FALSE, warning=FALSE}
+# Helper Function 1
+process_data <- function(data) {
+  results <- data %>%
+    gather("var", "val", raw_bias.mmr.est:rmse.tspa.est) %>%
+    dplyr::select(-c(warning_total.mmr.warnings_count:WARNINGS)) %>%
+    separate(col = var, into = c("stats", "method"), sep = "\\.") %>%
+    spread(stats, val) %>%
+    mutate(N_lab = as_factor(paste0("italic(N) == ", N)),
+           gammaint_lab = as_factor(paste0("\\beta_{xm} == ", gamma_xm)),
+           cor_xm_lab = as_factor(paste0("corr[XM] == ", cor_xm)),
+           rel_lab = as_factor(paste0("rho == ", rel)))
+
+  return(results)
+}
+
+# Helper Function 2
+plot_results <- function(data,
+                         x_var, y_var, 
+                         x_label, y_label, 
+                         y_limits = NULL, 
+                         color_var = "method", 
+                         shape_var = "method", 
+                         point_size = 3, 
+                         add_lines = FALSE, 
+                         remove_baseline = FALSE) {
+  
+  # Optionally filter out "mmr" group
+  if (remove_baseline) {
+    data <- data %>% filter(!!sym(color_var) != "mmr")
+  }
+  
+  plot <- data %>%
+    ggplot(aes(x = factor(!!sym(x_var)), y = !!sym(y_var), color = !!sym(color_var), shape = !!sym(shape_var))) +
+    geom_point(position = position_jitterdodge(jitter.width = 0, dodge.width = 0), size = point_size, alpha = 0.8) +
+    facet_grid(cor_xm_lab ~ rel_lab, labeller = label_parsed) +
+    scale_shape_manual(name = "Method",
+                       values = if (remove_baseline) c("rapi" = 16, "upi" = 18, "tspa" = 15) else c("mmr" = 17, "rapi" = 16, "upi" = 18, "tspa" = 15),
+                       labels = if (remove_baseline) c("rapi" = "RAPI", "upi" = "Matched-Pair UPI", "tspa" = "2S-PA-Int") else c("mmr" = "MMR", "rapi" = "RAPI", "upi" = "Matched-Pair UPI", "tspa" = "2S-PA-Int")) +
+    scale_color_manual(name = "Method",
+                       values = if (remove_baseline) c("rapi" = "#E69F00", "upi" = "#CC79A7", "tspa" = "#009E73") else c("mmr" = "pink", "rapi" = "#CC79A7", "upi" = "#d95f02", "tspa" = "#009E73"),
+                       labels = if (remove_baseline) c("rapi" = "RAPI", "upi" = "Matched-Pair UPI", "tspa" = "2S-PA-Int") else c("mmr" = "MMR", "rapi" = "RAPI", "upi" = "Matched-Pair UPI", "tspa" = "2S-PA-Int")) +
+    labs(x = x_label, y = y_label, color = "method", shape = "method") +
+    theme_minimal() +
+    theme(legend.title = element_text(size = 12, face = "bold"),
+          legend.text = element_text(size = 10),
+          legend.position = "right",
+          strip.text = element_text(size = 12, face = "bold"),  # Adjust facet label text
+          panel.border = element_rect(color = "black", fill = NA, size = 1),  # Add black border to panels
+          strip.background = element_rect(color = "black", size = 1),  # Add black border to facet labels
+          panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "gray80"),
+          panel.grid.minor = element_blank(),
+          panel.grid.major.x = element_blank(),  # Remove vertical grid lines
+          panel.grid.major.y = element_line(size = 0.5, linetype = 'solid', colour = "gray80"),  # Keep horizontal lines
+          axis.line = element_line(color = "black"),  # Add black lines to x and y axes
+          axis.ticks = element_line(color = "black"))
+  
+  if (add_lines) {
+    plot <- plot + 
+      geom_line(aes(group = !!sym(color_var), 
+                    linetype = !!sym(shape_var)), 
+                size = 0.7, alpha = 0.6) +  # Removed `position_dodge()`
+      scale_linetype_manual(name = "Method",
+                            values = if (remove_baseline) c("rapi" = "solid", "upi" = "dashed", "tspa" = "twodash") else c("mmr" = "dotted", "rapi" = "solid", "upi" = "dashed", "tspa" = "twodash"),
+                            labels = if (remove_baseline) c("rapi" = "RAPI", "upi" = "Matched-Pair UPI", "tspa" = "2S-PA-Int") else c("mmr" = "MMR", "rapi" = "RAPI", "upi" = "Matched-Pair UPI", "tspa" = "2S-PA-Int"))
+  }
+  
+  if (!is.null(y_limits)) {
+    plot <- plot + ylim(y_limits)
+  }
+  
+  return(plot)
+}
+
+# Plot
+type1_pd <- process_data(sim_null)
+power_pd <- process_data(sim_alt)
+
+sd_bias_plot <- plot_results(power_pd,
+                             "N",
+                             "std_bias",
+                             "Sample Size (N)",
+                             "Standardized Bias",
+                             c(-0.5, 0.5),
+                             add_lines = TRUE,
+                             remove_baseline = TRUE)
+sd_bias_plot <- sd_bias_plot +
+  geom_hline(yintercept = c(-0.4, 0.4), linetype = "dashed", color = "red")
+
+ggsave("sd_bias_plot.png", plot = sd_bias_plot, width = 7, height = 5, dpi = 300)
 ```
 
 ## Relative SE Bias of $\gamma_{xm}$
@@ -479,45 +630,7 @@ The outlier proportions of SEs, identified using the IQR method, showed a declin
 However, the robust relative SE bias did not demonstrate a clear pattern associated with $\rho$ (reliability) and $N$ (sample size). It was observed that even under conditions of large sample size and high reliability, the robust relative SE bias could be higher than those under less favorable conditions. Furthermore, the overall values of the relative SE bias were negative for matched-pair UPI and 2S-PA-Int, and predominantly positive for RAPI. This pattern suggested that the SEs were systematically underestimated for matched-pair UPI and 2S-PA-Int, while they were overestimated for RAPI.
 
 ```{r MAD relative SE bias with outliers proportion, message=FALSE, warning=FALSE}
-MAD <- sim_alt %>% 
-  dplyr::select(N:rel, stdMed_rse_bias.mmr.se_std:stdMed_rse_bias.tspa.se_std) %>%
-  arrange(N) %>%
-  relocate(cor_xm, .after = rel) %>%
-  mutate(stdMed_rse_bias.mmr.se_std = stdMed_rse_bias.mmr.se_std*100,
-         stdMed_rse_bias.rapi.se_std = stdMed_rse_bias.rapi.se_std*100,
-         stdMed_rse_bias.upi.se_std = stdMed_rse_bias.upi.se_std*100,
-         stdMed_rse_bias.tspa.se_std = stdMed_rse_bias.tspa.se_std*100)
-names(MAD) <- c("$\\textit{N}$", "$\\rho$", "$Corr(\\xi_{x}, \\xi_{m})$", "MMR", "RAPI", "Matched-Pair UPI", "2SPA")
-
-MAD_wide <- MAD %>%
-  pivot_wider(names_from = `$\\rho$`,  
-              values_from = c("MMR","RAPI", "Matched-Pair UPI", "2SPA"), 
-              names_prefix = "corr_") %>%
-  mutate(`$\\textit{N}$` = ifelse(`$Corr(\\xi_{x}, \\xi_{m})$` != 0, " ", `$\\textit{N}$`))
-names(MAD_wide) <- c("$\\textit{N}$", "$Corr(\\xi_{x}, \\xi_{m})$", paste(rep(c("$\\rho = .70$", "$\\rho = .80$", "$\\rho = .90$"), 4)))
-
-outlier_se <- sim_alt %>% 
-  dplyr::select(N:rel, outlier_se.mmr.se_std:outlier_se.tspa.se_std) %>%
-  arrange(N) %>%
-  relocate(cor_xm, .after = rel) %>%
-  mutate(across(where(is.numeric), ~sprintf("%.2f", .)))
-  
-names(outlier_se) <- c("$\\textit{N}$", "$\\rho$", "$Corr(\\xi_{x}, \\xi_{m})$", "MMR","RAPI", "Matched-Pair UPI", "2SPA")
-
-outlier_se_wide <- outlier_se %>%
-  pivot_wider(names_from = `$\\rho$`,  
-              values_from = c("MMR", "RAPI", "Matched-Pair UPI", "2SPA"), #
-              names_prefix = "corr_") %>%
-  mutate(`$\\textit{N}$` = ifelse(`$Corr(\\xi_{x}, \\xi_{m})$` != 0, " ", `$\\textit{N}$`)) 
-names(outlier_se_wide) <- c("$\\textit{N}$", "$Corr(\\xi_{x}, \\xi_{m})$", paste(rep(c("$\\rho = .70$", "$\\rho = .80$", "$\\rho = .90$"), 4)))
-
-MAD_bias <- MAD_wide
-for (col_idx in 3:ncol(MAD_wide)) {
-  combined_values <- mapply(FUN = function(x, y) paste(y, "\ (", x, ")", sep = ""),
-                            x = outlier_se_wide[, col_idx], y = MAD_wide[, col_idx])
-  MAD_bias[, col_idx] <- combined_values
-}
-
+# Helper Function
 bold_if_larger_than_10 <- function(cell) {
   first_number <- as.numeric(str_extract(cell, "^[^\\(]+"))
   if (!is.na(first_number) && abs(first_number) > 10) {
@@ -527,22 +640,121 @@ bold_if_larger_than_10 <- function(cell) {
   }
 }
 
-for (i in 3:ncol(MAD_bias)) {
-  # Applying the formatting function to each element of the column
-  MAD_bias[[i]] <- sapply(MAD_bias[[i]], bold_if_larger_than_10)
+# Null Effect
+MAD_null <- sim_null %>% 
+  dplyr::select(N:rel, stdMed_rse_bias.mmr.se_std:stdMed_rse_bias.tspa.se_std) %>%
+  arrange(N) %>%
+  relocate(cor_xm, .after = rel) %>%
+  mutate(stdMed_rse_bias.mmr.se_std = stdMed_rse_bias.mmr.se_std*100,
+         stdMed_rse_bias.upi.se_std = stdMed_rse_bias.upi.se_std*100,
+         stdMed_rse_bias.rapi.se_std = stdMed_rse_bias.rapi.se_std*100,
+         stdMed_rse_bias.tspa.se_std = stdMed_rse_bias.tspa.se_std*100)
+names(MAD_null) <- c("$\\textit{N}$", "$\\rho$", "$Corr(\\xi_{x}, \\xi_{m})$", "MMR", "Matched-Pair UPI", "RAPI", "2SPA")
+
+MAD_null_wide <- MAD_null %>%
+  pivot_wider(names_from = `$\\rho$`,  
+              values_from = c("MMR", "Matched-Pair UPI", "RAPI", "2SPA"), 
+              names_prefix = "corr_") %>%
+  mutate(`$\\textit{N}$` = ifelse(`$Corr(\\xi_{x}, \\xi_{m})$` != 0, " ", `$\\textit{N}$`))
+names(MAD_null_wide) <- c("$\\textit{N}$", "$Corr(\\xi_{x}, \\xi_{m})$", paste(rep(c("$\\rho = .70$", "$\\rho = .80$", "$\\rho = .90$"), 4)))
+
+outse_null <- sim_null %>% 
+  dplyr::select(N:rel, outlier_se.mmr.se_std:outlier_se.tspa.se_std) %>%
+  arrange(N) %>%
+  relocate(cor_xm, .after = rel) %>%
+  mutate(across(where(is.numeric), ~sprintf("%.2f", .)))
+names(outse_null) <- c("$\\textit{N}$", "$\\rho$", "$Corr(\\xi_{x}, \\xi_{m})$", "MMR", "Matched-Pair UPI", "RAPI", "2SPA")
+
+outse_null_wide <- outse_null %>%
+  pivot_wider(names_from = `$\\rho$`,  
+              values_from = c("MMR", "Matched-Pair UPI", "RAPI", "2SPA"), #
+              names_prefix = "corr_") %>%
+  mutate(`$\\textit{N}$` = ifelse(`$Corr(\\xi_{x}, \\xi_{m})$` != 0, " ", `$\\textit{N}$`)) 
+names(outse_null_wide) <- c("$\\textit{N}$", "$Corr(\\xi_{x}, \\xi_{m})$", paste(rep(c("$\\rho = .70$", "$\\rho = .80$", "$\\rho = .90$"), 4)))
+
+MAD_null <- MAD_null_wide
+for (col_idx in 3:ncol(MAD_null_wide)) {
+  combined_values <- mapply(FUN = function(x, y) paste(y, "\ (", x, ")", sep = ""),
+                            x = outse_null_wide[, col_idx], y = MAD_null_wide[, col_idx])
+  MAD_null[, col_idx] <- combined_values
 }
 
-MAD_bias_table <- apa_table(MAD_bias, 
+for (i in 3:ncol(MAD_null)) {
+  MAD_null[[i]] <- sapply(MAD_null[[i]], bold_if_larger_than_10)
+}
+
+# Alternative Effect
+MAD_alt <- sim_alt %>% 
+  dplyr::select(N:rel, stdMed_rse_bias.mmr.se_std:stdMed_rse_bias.tspa.se_std) %>%
+  arrange(N) %>%
+  relocate(cor_xm, .after = rel) %>%
+  mutate(stdMed_rse_bias.mmr.se_std = stdMed_rse_bias.mmr.se_std*100,
+         stdMed_rse_bias.upi.se_std = stdMed_rse_bias.upi.se_std*100,
+         stdMed_rse_bias.rapi.se_std = stdMed_rse_bias.rapi.se_std*100,
+         stdMed_rse_bias.tspa.se_std = stdMed_rse_bias.tspa.se_std*100)
+names(MAD_alt) <- c("$\\textit{N}$", "$\\rho$", "$Corr(\\xi_{x}, \\xi_{m})$", "MMR", "Matched-Pair UPI", "RAPI", "2SPA")
+
+MAD_alt_wide <- MAD_alt %>%
+  pivot_wider(names_from = `$\\rho$`,  
+              values_from = c("MMR", "Matched-Pair UPI", "RAPI", "2SPA"), 
+              names_prefix = "corr_") %>%
+  mutate(`$\\textit{N}$` = ifelse(`$Corr(\\xi_{x}, \\xi_{m})$` != 0, " ", `$\\textit{N}$`))
+names(MAD_alt_wide) <- c("$\\textit{N}$", "$Corr(\\xi_{x}, \\xi_{m})$", paste(rep(c("$\\rho = .70$", "$\\rho = .80$", "$\\rho = .90$"), 4)))
+
+outse_alt <- sim_alt %>% 
+  dplyr::select(N:rel, outlier_se.mmr.se_std:outlier_se.tspa.se_std) %>%
+  arrange(N) %>%
+  relocate(cor_xm, .after = rel) %>%
+  mutate(across(where(is.numeric), ~sprintf("%.2f", .)))
+names(outse_alt) <- c("$\\textit{N}$", "$\\rho$", "$Corr(\\xi_{x}, \\xi_{m})$", "MMR", "Matched-Pair UPI", "RAPI", "2SPA")
+
+outse_alt_wide <- outse_alt %>%
+  pivot_wider(names_from = `$\\rho$`,  
+              values_from = c("MMR", "Matched-Pair UPI", "RAPI", "2SPA"), #
+              names_prefix = "corr_") %>%
+  mutate(`$\\textit{N}$` = ifelse(`$Corr(\\xi_{x}, \\xi_{m})$` != 0, " ", `$\\textit{N}$`)) 
+names(outse_alt_wide) <- c("$\\textit{N}$", "$Corr(\\xi_{x}, \\xi_{m})$", paste(rep(c("$\\rho = .70$", "$\\rho = .80$", "$\\rho = .90$"), 4)))
+
+MAD_alt <- MAD_alt_wide
+for (col_idx in 3:ncol(MAD_alt_wide)) {
+  combined_values <- mapply(FUN = function(x, y) paste(y, "\ (", x, ")", sep = ""),
+                            x = outse_alt_wide[, col_idx], y = MAD_alt_wide[, col_idx])
+  MAD_alt[, col_idx] <- combined_values
+}
+
+for (i in 3:ncol(MAD_alt)) {
+  MAD_alt[[i]] <- sapply(MAD_alt[[i]], bold_if_larger_than_10)
+}
+
+# Table
+MAD_table <- apa_table(
+  list(`$\\gamma_{xm} = 0$` = MAD_null,
+       `$\\gamma_{xm} = 0.3$` = MAD_alt), 
+  merge_method = "table_spanner",
             escape = F,
-            caption = "Robust Relative Standard Error (SE) Bias Ratio (Outlier Proportion of SE; $\\%$) for $\\gamma_{xm} (= 0.3)$ over 2,000 Replications.",
-            align = c(rep("c", ncol(MAD_bias))),
-            col_spanners = list(`MMR` = c(3, 5), `RAPI` = c(6, 8),
-                                `Matched-Pair UPI` = c(9, 11), `2S-PA-Int` = c(12, 14)),
+            caption = "Robust Relative Standard Error (SE) Bias Ratio (Outlier Proportion of SE; $\\%$) for $\\gamma_{xm}$ over 2,000 Replications.",
+            align = c(rep("c", ncol(MAD_alt))),
+            col_spanners = list(`MMR` = c(3, 5), `Matched-Pair UPI` = c(6, 8),
+                                `RAPI` = c(9, 11), `2S-PA-Int` = c(12, 14)),
             landscape = TRUE,
             font_size = "tiny",
-            note = "$\\textit{N}$ = sample size; $Corr(\\xi_{x}, \\xi_{m})$ = correlation between $\\xi_{x}$ and $\\xi_{m}$; $\\rho$ = reliability level; MMR = moderated multiple regression method; RAPI = reliability-adjusted product indicator method; Matched-Pair UPI = matched-pair product unconstrained indicator method; 2S-PA-Int = two-stage path analysis with interaction method. Outlier proportions of SE are shown in parenthese and all the numbers were percentages. Note that relative SE bias values outside the acceptable range of [-10$\\%$, 10$\\%$] are bolded.")
+            note = "$\\textit{N}$ = sample size; $Corr(\\xi_{x}, \\xi_{m})$ = correlation between $\\xi_{x}$ and $\\xi_{m}$; $\\rho$ = reliability level; MMR = moderated multiple regression method; Matched-Pair UPI = matched-pair product unconstrained indicator method; RAPI = reliability-adjusted product indicator method; 2S-PA-Int = two-stage path analysis with interaction method. Outlier proportions of SE are shown in parenthese and all the numbers were percentages. Note that relative SE bias values outside the acceptable range of [-10$\\%$, 10$\\%$] are bolded.")
 
-MAD_bias_table
+MAD_table
+```
+
+```{r RSE bias (plot), message=FALSE, warning=FALSE}
+rse_bias_plot <- plot_results(power_pd,
+                              "N",
+                              "stdMed_rse_bias",
+                              "Sample Size (N)",
+                              "Relative SE Bias",
+                              c(-0.3, 0.3),
+                              remove_baseline = TRUE)
+rse_bias_plot <- rse_bias_plot +
+  geom_hline(yintercept = c(-0.1, 0.1), linetype = "dashed", color = "red")
+
+ggsave("rse_bias_plot.png", plot = rse_bias_plot, width = 7, height = 5, dpi = 300)
 ```
 
 ## Coverage Rate of 95% CI of $\gamma_{xm}$
@@ -552,23 +764,7 @@ As shown in Table 3, the coverage rates of the 95% confidence interval (CI) for 
 No clear trends in coverage rate were observed within the methods in relation to sample size, population reliability level, or the correlation between first-order latent variables. However, across the latent interaction methods, RAPI consistently demonstrated the highest coverage rate, followed by 2S-PA-Int, and UPI showing the lowest. This ranking suggested that RAPI had the highest likelihood of capturing the true interaction effect, with 2S-PA-Int and UPI following in performance, when the true interaction effect was present.
 
 ```{r coverage rate, message=FALSE, warning=FALSE}
-coverage <- sim_alt %>% 
-  dplyr::select(N:rel, coverage.mmr.est_usd:coverage.tspa.est_usd) %>%
-  arrange(N) %>%
-  relocate(cor_xm, .after = rel) %>%
-  mutate(coverage.mmr.est_usd = coverage.mmr.est_usd*100,
-         coverage.rapi.est_usd = coverage.rapi.est_usd*100,
-         coverage.upi.est_usd = coverage.upi.est_usd*100,
-         coverage.tspa.est_usd = coverage.tspa.est_usd*100) 
-names(coverage) <- c("$\\textit{N}$", "$\\rho$", "$Corr(\\xi_{x}, \\xi_{m})$", "MMR", "RAPI", "Matched-Pair UPI", "2SPA")
-
-coverage_wide <- coverage %>%
-  pivot_wider(names_from = `$\\rho$`,  
-              values_from = c("MMR", "RAPI", "Matched-Pair UPI", "2SPA"), #
-              names_prefix = "corr_") %>%
-  mutate(`$\\textit{N}$` = ifelse(`$Corr(\\xi_{x}, \\xi_{m})$` != 0, " ", `$\\textit{N}$`))
-names(coverage_wide) <- c("$\\textit{N}$", "$Corr(\\xi_{x}, \\xi_{m})$", paste(rep(c("$\\rho = .70$", "$\\rho = .80$", "$\\rho = .90$"), 4)))
-
+# Helper Function
 bold_if_less_than_91 <- function(cell) {
   if (!is.na(cell) && abs(cell) < 91) {
     return(sprintf("\\textbf{%s}", cell))
@@ -577,22 +773,79 @@ bold_if_less_than_91 <- function(cell) {
   }
 }
 
-for (i in 3:ncol(coverage_wide)) {
+# Null Effect
+cov_null <- sim_null %>% 
+  dplyr::select(N:rel, coverage_std.mmr.est:coverage_std.tspa.est) %>%
+  arrange(N) %>%
+  relocate(cor_xm, .after = rel) %>%
+  mutate(coverage_std.mmr.est = coverage_std.mmr.est*100,
+         coverage_std.upi.est = coverage_std.upi.est*100,
+         coverage_std.rapi.est = coverage_std.rapi.est*100,
+         coverage_std.tspa.est = coverage_std.tspa.est*100) 
+names(cov_null) <- c("$\\textit{N}$", "$\\rho$", "$Corr(\\xi_{x}, \\xi_{m})$", "MMR", "Matched-Pair UPI", "RAPI", "2SPA")
+
+cov_null_wide <- cov_null %>%
+  pivot_wider(names_from = `$\\rho$`,  
+              values_from = c("MMR", "Matched-Pair UPI", "RAPI", "2SPA"), #
+              names_prefix = "corr_") %>%
+  mutate(`$\\textit{N}$` = ifelse(`$Corr(\\xi_{x}, \\xi_{m})$` != 0, " ", `$\\textit{N}$`))
+names(cov_null_wide) <- c("$\\textit{N}$", "$Corr(\\xi_{x}, \\xi_{m})$", paste(rep(c("$\\rho = .70$", "$\\rho = .80$", "$\\rho = .90$"), 4)))
+
+for (i in 3:ncol(cov_null_wide)) {
   # Applying the formatting function to each element of the column
-  coverage_wide[[i]] <- sapply(coverage_wide[[i]], bold_if_less_than_91)
+  cov_null_wide[[i]] <- sapply(cov_null_wide[[i]], bold_if_less_than_91)
 }
 
-coverage_table <- apa_table(coverage_wide, 
-            escape = F,
-            caption = "Coverage Rate of 95 $\\%$ Confidence Interval (CI) for $\\gamma_{xm} (= 0.3)$ over 2,000 Replications.",
-            align = c(rep("c", ncol(coverage))),
-            col_spanners = list(`MMR` = c(3, 5), `RAPI` = c(6, 8),
-                                `Matched-Pair UPI` = c(9, 11), `2S-PA-Int` = c(12, 14)),
-            landscape = TRUE,
-            font_size = "small",
-            note = "$\\textit{N}$ = sample size; $Corr(\\xi_{x}, \\xi_{m})$ = correlation between $\\xi_{x}$ and $\\xi_{m}$; $\\rho$ = reliability level; MMR = moderated multiple regression method; RAPI = reliability-adjusted product indicator method; Matched-Pair UPI = matched-pair product unconstrained indicator method; 2S-PA-Int = two-stage path analysis with interaction method. Coverage rates not reaching the acceptable threshold of 91$\\%$ are bolded.")
+# Alternative Effect
+cov_alt <- sim_alt %>% 
+  dplyr::select(N:rel, coverage_std.mmr.est:coverage_std.tspa.est) %>%
+  arrange(N) %>%
+  relocate(cor_xm, .after = rel) %>%
+  mutate(coverage_std.mmr.est = coverage_std.mmr.est*100,
+         coverage_std.upi.est = coverage_std.upi.est*100,
+         coverage_std.rapi.est = coverage_std.rapi.est*100,
+         coverage_std.tspa.est = coverage_std.tspa.est*100) 
+names(cov_alt) <- c("$\\textit{N}$", "$\\rho$", "$Corr(\\xi_{x}, \\xi_{m})$", "MMR", "Matched-Pair UPI", "RAPI", "2SPA")
 
-coverage_table
+cov_alt_wide <- cov_alt %>%
+  pivot_wider(names_from = `$\\rho$`,  
+              values_from = c("MMR", "Matched-Pair UPI", "RAPI", "2SPA"), #
+              names_prefix = "corr_") %>%
+  mutate(`$\\textit{N}$` = ifelse(`$Corr(\\xi_{x}, \\xi_{m})$` != 0, " ", `$\\textit{N}$`))
+names(cov_alt_wide) <- c("$\\textit{N}$", "$Corr(\\xi_{x}, \\xi_{m})$", paste(rep(c("$\\rho = .70$", "$\\rho = .80$", "$\\rho = .90$"), 4)))
+
+for (i in 3:ncol(cov_alt_wide)) {
+  # Applying the formatting function to each element of the column
+  cov_alt_wide[[i]] <- sapply(cov_alt_wide[[i]], bold_if_less_than_91)
+}
+
+cov_table <- apa_table(
+  list(`$\\gamma_{xm} = 0$` = cov_null_wide,
+       `$\\gamma_{xm} = 0.3$` = cov_alt_wide), 
+  merge_method = "table_spanner",
+            escape = F,
+            caption = "Coverage Rate of 95 $\\%$ Confidence Interval (CI) for $\\gamma_{xm}$ over 2,000 Replications.",
+            align = c(rep("c", ncol(cov_alt))),
+            col_spanners = list(`MMR` = c(3, 5), `Matched-Pair UPI` = c(6, 8),
+                                `RAPI` = c(9, 11), `2S-PA-Int` = c(12, 14)),
+            landscape = TRUE,
+            font_size = "tiny",
+            note = "$\\textit{N}$ = sample size; $Corr(\\xi_{x}, \\xi_{m})$ = correlation between $\\xi_{x}$ and $\\xi_{m}$; $\\rho$ = reliability level; MMR = moderated multiple regression method; Matched-Pair UPI = matched-pair product unconstrained indicator method; RAPI = reliability-adjusted product indicator method; 2S-PA-Int = two-stage path analysis with interaction method. Coverage rates not reaching the acceptable threshold of 91$\\%$ are bolded.")
+
+cov_table
+```
+
+```{r coverage (plot), message=FALSE, warning=FALSE}
+cov_plot <- plot_results(power_pd,
+                              "N",
+                              "coverage_std",
+                              "Sample Size (N)",
+                              "Coverage Rate of 95% CI",
+                              remove_baseline = TRUE)
+cov_plot <- cov_plot +
+  geom_hline(yintercept = c(0.91), linetype = "dashed", color = "red")
+
+ggsave("cov_plot.png", plot = cov_plot, width = 7, height = 5, dpi = 300)
 ```
 
 ## RMSE of $\gamma_{xm}$
@@ -600,28 +853,46 @@ coverage_table
 Table 4 exhibited that the RMSE values for $\gamma_{xm}$ decreased as the sample size increased and the reliability level increased for all methods. The point estimates of $\gamma_{xm}$ for MMR showed the smallest RMSE across conditions, compared to the latent interaction methods. 2S-PA-Int, among the latent interaction methods, showed the least (or equally least) RMSE values across all conditions. For instance, under conditions of small sample size and low reliability, the RMSE values for 2S-PA-Int ranged from 0.20 to 0.32, while those for RAPI and matched-pair UPI ranged from 0.25 to 0.61 and 0.34 to 0.39, respectively. Notably, as reliability increased ($\rho = 0.90$), the discrepancies in RMSE values across methods became less pronounced, indicating that all methods tended to produce more accurate and stable estimates of the interaction effect under conditions of high reliability.
 
 ```{r rmse, message=FALSE, warning=FALSE}
-rmse <- sim_alt %>% 
+# Null Effect
+rmse_null <- sim_null %>% 
   dplyr::select(N:rel, rmse.mmr.est:rmse.tspa.est) %>%
   arrange(N) %>%
   relocate(cor_xm, .after = rel)
-names(rmse) <- c("$\\textit{N}$", "$\\rho$", "$Corr(\\xi_{x}, \\xi_{m})$", "MMR", "RAPI", "Matched-Pair UPI", "2S-PA-Int")
+names(rmse_null) <- c("$\\textit{N}$", "$\\rho$", "$Corr(\\xi_{x}, \\xi_{m})$", "MMR", "Matched-Pair UPI", "RAPI", "2S-PA-Int")
 
-rmse_wide <- rmse %>%
+rmse_null_wide <- rmse_null %>%
   pivot_wider(names_from = `$\\rho$`,  
-              values_from = c("MMR", "RAPI", "Matched-Pair UPI", "2S-PA-Int"), #
+              values_from = c("MMR", "Matched-Pair UPI", "RAPI", "2S-PA-Int"), #
               names_prefix = "corr_") %>%
   mutate(`$\\textit{N}$` = ifelse(`$Corr(\\xi_{x}, \\xi_{m})$` != 0, " ", `$\\textit{N}$`))
-names(rmse_wide) <- c("$\\textit{N}$", "$Corr(\\xi_{x}, \\xi_{m})$", paste(rep(c("$\\rho = .70$", "$\\rho = .80$", "$\\rho = .90$"), 4)))
+names(rmse_null_wide) <- c("$\\textit{N}$", "$Corr(\\xi_{x}, \\xi_{m})$", paste(rep(c("$\\rho = .70$", "$\\rho = .80$", "$\\rho = .90$"), 4)))
 
-rmse_table <- apa_table(rmse_wide, 
+# Alternative Effect
+rmse_alt <- sim_alt %>% 
+  dplyr::select(N:rel, rmse.mmr.est:rmse.tspa.est) %>%
+  arrange(N) %>%
+  relocate(cor_xm, .after = rel)
+names(rmse_alt) <- c("$\\textit{N}$", "$\\rho$", "$Corr(\\xi_{x}, \\xi_{m})$", "MMR", "Matched-Pair UPI", "RAPI", "2S-PA-Int")
+
+rmse_alt_wide <- rmse_alt %>%
+  pivot_wider(names_from = `$\\rho$`,  
+              values_from = c("MMR", "Matched-Pair UPI", "RAPI", "2S-PA-Int"), #
+              names_prefix = "corr_") %>%
+  mutate(`$\\textit{N}$` = ifelse(`$Corr(\\xi_{x}, \\xi_{m})$` != 0, " ", `$\\textit{N}$`))
+names(rmse_alt_wide) <- c("$\\textit{N}$", "$Corr(\\xi_{x}, \\xi_{m})$", paste(rep(c("$\\rho = .70$", "$\\rho = .80$", "$\\rho = .90$"), 4)))
+
+rmse_table <- apa_table(
+  list(`$\\gamma_{xm} = 0$` = rmse_null_wide,
+       `$\\gamma_{xm} = 0.3$` = rmse_alt_wide), 
+  merge_method = "table_spanner",
             escape = F,
-            caption = "Root Mean Square Error (RMSE) for $\\gamma_{xm} (= 0.3)$ over 2,000 Replications.",
-            align = c(rep("c", ncol(rmse))),
-            col_spanners = list(`MMR` = c(3, 5), `RAPI` = c(6, 8),
-                                `Matched-Pair UPI` = c(9, 11), `2S-PA-Int` = c(12, 14)),
+            caption = "Root Mean Square Error (RMSE) for $\\gamma_{xm}$ over 2,000 Replications.",
+            align = c(rep("c", ncol(rmse_alt_wide))),
+            col_spanners = list(`MMR` = c(3, 5), `Matched-Pair UPI` = c(6, 8),
+                                `RAPI` = c(9, 11), `2S-PA-Int` = c(12, 14)),
             landscape = TRUE,
-            font_size = "small",
-            note = "$\\textit{N}$ = sample size; $Corr(\\xi_{x}, \\xi_{m})$ = correlation between $\\xi_{x}$ and $\\xi_{m}$; $\\rho$ = reliability level; MMR = moderated multiple regression method; RAPI = reliability-adjusted product indicator method; Matched-Pair UPI = matched-pair product unconstrained indicator method; 2S-PA-Int = two-stage path analysis with interaction method. Note that the methods are grouped in the second-order header for comparing RMSE under the same conditions.")
+            font_size = "tiny",
+            note = "$\\textit{N}$ = sample size; $Corr(\\xi_{x}, \\xi_{m})$ = correlation between $\\xi_{x}$ and $\\xi_{m}$; $\\rho$ = reliability level; MMR = moderated multiple regression method; Matched-Pair UPI = matched-pair product unconstrained indicator method; RAPI = reliability-adjusted product indicator method; 2S-PA-Int = two-stage path analysis with interaction method. Note that the methods are grouped in the second-order header for comparing RMSE under the same conditions.")
 
 rmse_table
 ```
@@ -634,56 +905,73 @@ Regarding statistical power, MMR exhibited higher power than the latent interact
 
 ```{r type I error, message=FALSE, warning=FALSE}
 type1 <- sim_null %>% 
-  dplyr::select(N:rel, type1.mmr.est_usd:type1.tspa.est_usd) %>%
+  dplyr::select(N:rel, type1_lrt.mmr.est_usd:type1_lrt.tspa.est_usd) %>%
   arrange(N) %>%
   relocate(cor_xm, .after = rel)
-names(type1) <- c("$\\textit{N}$", "$\\rho$", "$Corr(\\xi_{x}, \\xi_{m})$", "MMR", "RAPI", "Matched-Pair UPI", "2S-PA-Int")
+names(type1) <- c("$\\textit{N}$", "$\\rho$", "$Corr(\\xi_{x}, \\xi_{m})$", "MMR", "Matched-Pair UPI", "RAPI", "2S-PA-Int")
 
 type1_wide <- type1 %>%
   pivot_wider(names_from = `$\\rho$`,  
-              values_from = c("MMR", "RAPI", "Matched-Pair UPI", "2S-PA-Int"), #
+              values_from = c("MMR", "Matched-Pair UPI", "RAPI", "2S-PA-Int"), #
               names_prefix = "corr_") %>%
   mutate(`$\\textit{N}$` = ifelse(`$Corr(\\xi_{x}, \\xi_{m})$` != 0, " ", `$\\textit{N}$`))
 names(type1_wide) <- c("$\\textit{N}$", "$Corr(\\xi_{x}, \\xi_{m})$", paste(rep(c("$\\rho = .70$", "$\\rho = .80$", "$\\rho = .90$"), 4)))
 
-type1_table <- apa_table(type1_wide, 
-            escape = F,
-            caption = "Empirical Type I Error Rate for $\\gamma_{xm} (= 0)$ over 2,000 Replications.",
-            align = c(rep("c", ncol(rmse))),
-            col_spanners = list(`MMR` = c(3, 5), `RAPI` = c(6, 8),
-                                `Matched-Pair UPI` = c(9, 11), `2S-PA-Int` = c(12, 14)),
-            landscape = TRUE,
-            font_size = "footnotesize",
-            note = "$\\textit{N}$ = sample size; $Corr(\\xi_{x}, \\xi_{m})$ = correlation between $\\xi_{x}$ and $\\xi_{m}$; $\\rho$ = reliability level; MMR = moderated multiple regression method; RAPI = reliability-adjusted product indicator method; Matched-Pair UPI = matched-pair product unconstrained indicator method; 2S-PA-Int = two-stage path analysis with interaction method. Note that the methods are grouped in the second-order header for comparing the empirical Type I error rate under the same conditions.")
-
-type1_table
+# type1_table <- apa_table(type1_wide, 
+#             escape = F,
+#             caption = "Empirical Type I Error Rate for $\\gamma_{xm} (= 0)$ over 2,000 Replications.",
+#             align = c(rep("c", ncol(type1))),
+#             col_spanners = list(`MMR` = c(3, 5), `Matched-Pair UPI` = c(6, 8),
+#                                 `RAPI` = c(9, 11), `2S-PA-Int` = c(12, 14)),
+#             landscape = TRUE,
+#             font_size = "footnotesize",
+#             note = "$\\textit{N}$ = sample size; $Corr(\\xi_{x}, \\xi_{m})$ = correlation between $\\xi_{x}$ and $\\xi_{m}$; $\\rho$ = reliability level; MMR = moderated multiple regression method; Matched-Pair UPI = matched-pair product unconstrained indicator method; RAPI = reliability-adjusted product indicator method; 2S-PA-Int = two-stage path analysis with interaction method. Note that the methods are grouped in the second-order header for comparing the empirical Type I error rate under the same conditions.")
+# 
+# type1_table
 ```
 
 ```{r power, message=FALSE, warning=FALSE}
 power <- sim_alt %>% 
-  dplyr::select(N:rel, power.mmr.est_usd:power.tspa.est_usd) %>%
+  dplyr::select(N:rel, power_lrt.mmr.est_usd:power_lrt.tspa.est_usd) %>%
   arrange(N) %>%
   relocate(cor_xm, .after = rel)
-names(power) <- c("$\\textit{N}$", "$\\rho$", "$Corr(\\xi_{x}, \\xi_{m})$", "MMR", "RAPI", "Matched-Pair UPI", "2S-PA-Int")
+names(power) <- c("$\\textit{N}$", "$\\rho$", "$Corr(\\xi_{x}, \\xi_{m})$", "MMR", "Matched-Pair UPI", "RAPI", "2S-PA-Int")
 
 power_wide <- power %>%
   pivot_wider(names_from = `$\\rho$`,  
-              values_from = c("MMR", "RAPI", "Matched-Pair UPI", "2S-PA-Int"), #
+              values_from = c("MMR", "Matched-Pair UPI", "RAPI", "2S-PA-Int"), #
               names_prefix = "corr_") %>%
   mutate(`$\\textit{N}$` = ifelse(`$Corr(\\xi_{x}, \\xi_{m})$` != 0, " ", `$\\textit{N}$`))
 names(power_wide) <- c("$\\textit{N}$", "$Corr(\\xi_{x}, \\xi_{m})$", paste(rep(c("$\\rho = .70$", "$\\rho = .80$", "$\\rho = .90$"), 4)))
 
-power_table <- apa_table(power_wide, 
+type1_power_table <- apa_table(
+  list(`Empirical Type I Error Rate ($\\gamma_{xm} = 0$)` = type1_wide,
+       `Statistical Power ($\\gamma_{xm} = 0.3$)` = power_wide), 
+  merge_method = "table_spanner",
             escape = F,
-            caption = "Statistical Power for $\\gamma_{xm} (= 0.3)$ over 2,000 Replications.",
-            align = c(rep("c", ncol(rmse))),
-            col_spanners = list(`MMR` = c(3, 5), `RAPI` = c(6, 8),
-                                `Matched-Pair UPI` = c(9, 11), `2S-PA-Int` = c(12, 14)),
+            caption = "Empirical Type I Error Rate and Statistical Power over 2,000 Replications.",
+            align = c(rep("c", ncol(power_wide))),
+            col_spanners = list(`MMR` = c(3, 5), `Matched-Pair UPI` = c(6, 8),
+                                `RAPI` = c(9, 11), `2S-PA-Int` = c(12, 14)),
             landscape = TRUE,
-            font_size = "footnotesize",
-            note = "$\\textit{N}$ = sample size; $Corr(\\xi_{x}, \\xi_{m})$ = correlation between $\\xi_{x}$ and $\\xi_{m}$; $\\rho$ = reliability level; MMR = moderated multiple regression method; RAPI = reliability-adjusted product indicator method; Matched-Pair UPI = matched-pair product unconstrained indicator method; 2S-PA-Int = two-stage path analysis with interaction method. Note that the methods are grouped in the second-order header for comparing statistical power under the same conditions.")
+            font_size = "tiny",
+            note = "$\\textit{N}$ = sample size; $Corr(\\xi_{x}, \\xi_{m})$ = correlation between $\\xi_{x}$ and $\\xi_{m}$; $\\rho$ = reliability level; MMR = moderated multiple regression method; Matched-Pair UPI = matched-pair product unconstrained indicator method; RAPI = reliability-adjusted product indicator method; 2S-PA-Int = two-stage path analysis with interaction method. Note that the methods are grouped in the second-order header for comparing statistical power under the same conditions.")
 
-power_table
+type1_power_table
+```
+
+```{r Type I Error (plot), message=FALSE, warning=FALSE}
+type1_plot <- plot_results(type1_pd,
+                              "N",
+                              "type1_lrt",
+                              "Sample Size (N)",
+                              "Type I Error Rate",
+                              c(0, 0.1),
+                              remove_baseline = TRUE)
+type1_plot <- type1_plot +
+  geom_hline(yintercept = c(0.91), linetype = "dashed", color = "red")
+
+ggsave("type1_plot.png", plot = type1_plot, width = 7, height = 5, dpi = 300)
 ```
 
 # Empirical Demonstration Using Real Data
@@ -1054,6 +1342,34 @@ PIRL_table <- apa_table(
 
 PIRL_table
 ```
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1.2\textwidth]{/Users/jimmy_z/R Projects/2SPA-Int/Paper/Qual 1 Paper Draft/sd_bias_plot.png}
+\caption{Standardized Bias in Latent Interaction Effect Estimates.}
+\caption*{\textit{Note. Points with various shapes represent values of three latent interaction methods for all simulation conditions.}}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1.2\textwidth]{/Users/jimmy_z/R Projects/2SPA-Int/Paper/Qual 1 Paper Draft/rse_bias_plot.png}
+\caption{Relative SE Bias in Latent Interaction Effect Estimates.}
+\caption*{\textit{Note. Points with various shapes represent values of three latent interaction methods for all simulation conditions.}}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1.2\textwidth]{/Users/jimmy_z/R Projects/2SPA-Int/Paper/Qual 1 Paper Draft/cov_plot.png}
+\caption{Coverage Rate of 95\%CI in Latent Interaction Effect Estimates.}
+\caption*{\textit{Note. Points with various shapes represent values of three latent interaction methods for all simulation conditions.}}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1.2\textwidth]{/Users/jimmy_z/R Projects/2SPA-Int/Paper/Qual 1 Paper Draft/type1_plot.png}
+\caption{Empirical Type I Error Rates in Latent Interaction Effect Estimates (Zero Effect).}
+\caption*{\textit{Note. Points with various shapes represent values of three latent interaction methods for all simulation conditions.}}
+\end{figure}
 
 \begin{figure}[h]
 \centering
