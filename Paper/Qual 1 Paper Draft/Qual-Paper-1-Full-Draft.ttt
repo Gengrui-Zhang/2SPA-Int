@@ -1,13 +1,13 @@
 \begin{lltable}
 
 \begin{TableNotes}[para]
-\normalsize{\textit{Note.} $\textit{N}$ = sample size; $Corr(\xi_{x}, \xi_{m})$ = correlation between $\xi_{x}$ and $\xi_{m}$; $\rho$ = reliability level; MMR = moderated multiple regression method; Matched-Pair UPI = matched-pair product unconstrained indicator method; RAPI = reliability-adjusted product indicator method; 2S-PA-Int = two-stage path analysis with interaction method. Raw biases are shown in pararenthese. Note that numerical values have been rounded to two decimal places for consistency, which means that some values, while very close to 0 but not exactly 0, are displayed as 0.}
+\normalsize{\textit{Note.} $\textit{N}$ = sample size; $Corr(\xi_{x}, \xi_{m})$ = correlation between $\xi_{x}$ and $\xi_{m}$; $\rho$ = reliability level; $\gamma_{xm} = 0$ indicates no latent interaction effect; $\gamma_{xm} = 0.3$ indicates a non-zero interaction effect; MMR = moderated multiple regression; Matched-Pair UPI = matched-pair product unconstrained indicator; RAPI = reliability-adjusted product indicator; 2S-PA-Int = two-stage path analysis with interaction. Values in parentheses indicate raw bias. All numerical values are rounded to two decimal places for consistency. Note that values close to zero are displayed as 0.00, with negative signs maintained to indicate the direction of bias. Besides, values exceeding the recommended threshold (0.40) are bolded.}
 \end{TableNotes}
 
 \tiny{
 
 \begin{longtable}{cccccccccccccc}\noalign{\getlongtablewidth\global\LTcapwidth=\longtablewidth}
-\caption{\label{tab:standardized bias (raw bias)}Standardized Bias (Raw Bias) for $\gamma_{xm}$ over 2,000 Replications.}\\
+\caption{\label{tab:standardized bias (raw bias)}Standardized Bias and Raw Bias of Latent Interaction Estimates ($\gamma_{xm}$) Across 2,000 Replications.}\\
 \toprule
  &  & \multicolumn{3}{c}{MMR} & \multicolumn{3}{c}{Matched-Pair UPI} & \multicolumn{3}{c}{RAPI} & \multicolumn{3}{c}{2S-PA-Int} \\
 \cmidrule(r){3-5} \cmidrule(r){6-8} \cmidrule(r){9-11} \cmidrule(r){12-14}
@@ -22,25 +22,25 @@ $\textit{N}$ & \multicolumn{1}{c}{$Corr(\xi_{x}, \xi_{m})$} & \multicolumn{1}{c}
 \midrule
 \endhead
 \multicolumn{14}{c}{$\gamma_{xm} = 0$}\\
-100 & 0 & 0.01 (0) & 0 (0) & 0.01 (0) & -0.02 (-0.01) & 0.01 (0) & 0.03 (0) & 0 (0) & 0.01 (0) & 0.01 (0) & 0 (0) & 0.02 (0) & 0.01 (0)\\
- & 0.3 & 0.03 (0) & -0.03 (0) & 0 (0) & 0 (0) & 0 (0) & 0.01 (0) & -0.01 (0) & 0 (0) & 0 (0) & 0.04 (0.01) & -0.03 (0) & 0 (0)\\
- & 0.6 & 0 (0) & -0.03 (0) & -0.02 (0) & 0.03 (0.01) & -0.01 (0) & -0.01 (0) & -0.02 (-0.02) & -0.02 (0) & -0.01 (0) & 0.01 (0) & -0.02 (0) & -0.01 (0)\\
-250 & 0 & 0 (0) & 0.02 (0) & 0.01 (0) & -0.02 (0) & 0.01 (0) & 0.01 (0) & -0.01 (0) & 0.02 (0) & 0.01 (0) & -0.01 (0) & 0.02 (0) & 0.01 (0)\\
- & 0.3 & 0.01 (0) & 0.01 (0) & 0 (0) & 0.01 (0) & 0.01 (0) & 0.01 (0) & 0.01 (0) & 0.01 (0) & 0 (0) & 0.01 (0) & 0.01 (0) & 0.01 (0)\\
- & 0.6 & -0.02 (0) & 0 (0) & 0 (0) & -0.03 (0) & 0.01 (0) & 0.01 (0) & -0.02 (0) & 0 (0) & 0 (0) & -0.02 (0) & 0 (0) & 0 (0)\\
-500 & 0 & -0.03 (0) & -0.04 (0) & -0.03 (0) & -0.01 (0) & -0.04 (0) & -0.03 (0) & -0.01 (0) & -0.03 (0) & -0.03 (0) & -0.01 (0) & -0.03 (0) & -0.03 (0)\\
- & 0.3 & -0.03 (0) & -0.02 (0) & -0.01 (0) & -0.04 (0) & -0.03 (0) & -0.01 (0) & -0.02 (0) & -0.02 (0) & -0.01 (0) & -0.02 (0) & -0.01 (0) & -0.01 (0)\\
- & 0.6 & 0 (0) & 0 (0) & 0.01 (0) & -0.01 (0) & 0 (0) & 0 (0) & 0 (0) & 0 (0) & 0.01 (0) & 0 (0) & 0 (0) & 0.01 (0)\\
+100 & 0 & 0.01 (0.00) & -0.00 (-0.00) & 0.01 (0.00) & -0.02 (-0.01) & 0.01 (0.00) & 0.03 (0.00) & -0.00 (-0.00) & 0.01 (0.00) & 0.01 (0.00) & 0.00 (0.00) & 0.02 (0.00) & 0.01 (0.00)\\
+ & 0.3 & 0.03 (0.00) & -0.03 (-0.00) & -0.00 (-0.00) & 0.00 (0.00) & 0.00 (0.00) & 0.01 (0.00) & -0.01 (-0.00) & 0.00 (0.00) & -0.00 (-0.00) & 0.04 (0.01) & -0.03 (-0.00) & 0.00 (0.00)\\
+ & 0.6 & 0.00 (0.00) & -0.03 (-0.00) & -0.02 (-0.00) & 0.03 (0.01) & -0.01 (-0.00) & -0.01 (-0.00) & -0.02 (-0.02) & -0.02 (-0.00) & -0.01 (-0.00) & 0.01 (0.00) & -0.02 (-0.00) & -0.01 (-0.00)\\
+250 & 0 & 0.00 (0.00) & 0.02 (0.00) & 0.01 (0.00) & -0.02 (-0.00) & 0.01 (0.00) & 0.01 (0.00) & -0.01 (-0.00) & 0.02 (0.00) & 0.01 (0.00) & -0.01 (-0.00) & 0.02 (0.00) & 0.01 (0.00)\\
+ & 0.3 & 0.01 (0.00) & 0.01 (0.00) & 0.00 (0.00) & 0.01 (0.00) & 0.01 (0.00) & 0.01 (0.00) & 0.01 (0.00) & 0.01 (0.00) & 0.01 (0.00) & 0.01 (0.00) & 0.01 (0.00) & 0.01 (0.00)\\
+ & 0.6 & -0.02 (-0.00) & 0.00 (0.00) & 0.00 (0.00) & -0.03 (-0.00) & 0.01 (0.00) & 0.01 (0.00) & -0.02 (-0.00) & -0.00 (-0.00) & -0.00 (-0.00) & -0.02 (-0.00) & -0.00 (-0.00) & 0.00 (0.00)\\
+500 & 0 & -0.03 (-0.00) & -0.04 (-0.00) & -0.03 (-0.00) & -0.01 (-0.00) & -0.04 (-0.00) & -0.03 (-0.00) & -0.01 (-0.00) & -0.03 (-0.00) & -0.03 (-0.00) & -0.01 (-0.00) & -0.03 (-0.00) & -0.03 (-0.00)\\
+ & 0.3 & -0.03 (-0.00) & -0.02 (-0.00) & -0.01 (-0.00) & -0.04 (-0.00) & -0.03 (-0.00) & -0.01 (-0.00) & -0.02 (-0.00) & -0.02 (-0.00) & -0.01 (-0.00) & -0.02 (-0.00) & -0.01 (-0.00) & -0.01 (-0.00)\\
+ & 0.6 & -0.00 (-0.00) & 0.00 (0.00) & 0.01 (0.00) & -0.01 (-0.00) & -0.00 (-0.00) & 0.00 (0.00) & -0.00 (-0.00) & 0.00 (0.00) & 0.01 (0.00) & 0.00 (0.00) & 0.00 (0.00) & 0.01 (0.00)\\
 \multicolumn{14}{c}{$\gamma_{xm} = 0.3$}\\
-100 & 0 & \textbf{-0.96 (-0.1)} & \textbf{-0.73 (-0.07)} & -0.38 (-0.03) & 0.07 (0.04) & 0.09 (0.02) & 0.03 (0) & 0.16 (0.1) & 0.15 (0.02) & 0.06 (0.01) & 0.1 (0.03) & 0.03 (0) & 0 (0)\\
- & 0.3 & \textbf{-0.86 (-0.08)} & \textbf{-0.59 (-0.05)} & -0.26 (-0.02) & 0.06 (0.03) & 0.11 (0.02) & 0.01 (0) & 0.2 (0.08) & 0.17 (0.02) & 0.05 (0) & 0.09 (0.03) & 0.05 (0.01) & -0.01 (0)\\
- & 0.6 & \textbf{-0.49 (-0.05)} & -0.22 (-0.02) & 0.1 (0.01) & 0.14 (0.04) & 0.11 (0.02) & -0.01 (0) & 0.19 (0.07) & 0.15 (0.02) & 0.03 (0) & 0.1 (0.02) & 0.05 (0.01) & -0.02 (0)\\
-250 & 0 & \textbf{-1.53 (-0.09)} & \textbf{-1.01 (-0.06)} & \textbf{-0.54 (-0.03)} & 0.08 (0.01) & 0.09 (0.01) & 0.03 (0) & 0.2 (0.02) & 0.12 (0.01) & 0.06 (0) & 0.09 (0.01) & 0.04 (0) & 0 (0)\\
- & 0.3 & \textbf{-1.32 (-0.08)} & \textbf{-0.83 (-0.05)} & -0.34 (-0.02) & 0.08 (0.01) & 0.1 (0.01) & 0.02 (0) & 0.17 (0.02) & 0.12 (0.01) & 0.05 (0) & 0.05 (0.01) & 0.04 (0) & 0 (0)\\
- & 0.6 & \textbf{-0.76 (-0.05)} & -0.25 (-0.01) & 0.24 (0.01) & 0.12 (0.01) & 0.08 (0.01) & 0.01 (0) & 0.17 (0.02) & 0.1 (0.01) & 0.04 (0) & 0.08 (0.01) & 0.04 (0) & 0 (0)\\
-500 & 0 & \textbf{-2.16 (-0.09)} & \textbf{-1.48 (-0.06)} & \textbf{-0.78 (-0.03)} & 0.07 (0.01) & 0.02 (0) & -0.03 (0) & 0.12 (0.01) & 0.06 (0) & 0.03 (0) & 0.03 (0) & -0.01 (0) & -0.03 (0)\\
- & 0.3 & \textbf{-1.87 (-0.08)} & \textbf{-1.19 (-0.05)} & \textbf{-0.48 (-0.02)} & 0.09 (0.01) & 0.03 (0) & -0.01 (0) & 0.15 (0.01) & 0.08 (0) & 0.04 (0) & 0.06 (0) & 0.01 (0) & -0.01 (0)\\
- & 0.6 & \textbf{-1.01 (-0.04)} & -0.31 (-0.01) & 0.38 (0.02) & 0.11 (0.01) & 0.04 (0) & 0 (0) & 0.15 (0.01) & 0.09 (0) & 0.04 (0) & 0.09 (0) & 0.04 (0) & 0.01 (0)\\
+100 & 0 & \textbf{-0.96 (-0.10)} & \textbf{-0.73 (-0.07)} & -0.38 (-0.03) & 0.07 (0.04) & 0.09 (0.02) & 0.03 (0.00) & 0.16 (0.10) & 0.15 (0.02) & 0.06 (0.01) & 0.10 (0.03) & 0.03 (0.00) & 0.00 (0.00)\\
+ & 0.3 & \textbf{-0.86 (-0.08)} & \textbf{-0.59 (-0.05)} & -0.26 (-0.02) & 0.06 (0.03) & 0.11 (0.02) & 0.01 (0.00) & 0.20 (0.08) & 0.17 (0.02) & 0.05 (0.00) & 0.09 (0.03) & 0.05 (0.01) & -0.01 (-0.00)\\
+ & 0.6 & \textbf{-0.49 (-0.05)} & -0.22 (-0.02) & 0.10 (0.01) & 0.14 (0.04) & 0.11 (0.02) & -0.01 (-0.00) & 0.19 (0.07) & 0.15 (0.02) & 0.03 (0.00) & 0.10 (0.02) & 0.05 (0.01) & -0.02 (-0.00)\\
+250 & 0 & \textbf{-1.53 (-0.09)} & \textbf{-1.01 (-0.06)} & \textbf{-0.54 (-0.03)} & 0.08 (0.01) & 0.09 (0.01) & 0.03 (0.00) & 0.20 (0.02) & 0.12 (0.01) & 0.06 (0.00) & 0.09 (0.01) & 0.04 (0.00) & 0.00 (0.00)\\
+ & 0.3 & \textbf{-1.32 (-0.08)} & \textbf{-0.83 (-0.05)} & -0.34 (-0.02) & 0.08 (0.01) & 0.10 (0.01) & 0.02 (0.00) & 0.17 (0.02) & 0.12 (0.01) & 0.05 (0.00) & 0.05 (0.01) & 0.04 (0.00) & 0.00 (0.00)\\
+ & 0.6 & \textbf{-0.76 (-0.05)} & -0.25 (-0.01) & 0.24 (0.01) & 0.12 (0.01) & 0.08 (0.01) & 0.01 (0.00) & 0.17 (0.02) & 0.10 (0.01) & 0.04 (0.00) & 0.08 (0.01) & 0.04 (0.00) & -0.00 (-0.00)\\
+500 & 0 & \textbf{-2.16 (-0.09)} & \textbf{-1.48 (-0.06)} & \textbf{-0.78 (-0.03)} & 0.07 (0.01) & 0.02 (0.00) & -0.03 (-0.00) & 0.12 (0.01) & 0.06 (0.00) & 0.03 (0.00) & 0.03 (0.00) & -0.01 (-0.00) & -0.03 (-0.00)\\
+ & 0.3 & \textbf{-1.87 (-0.08)} & \textbf{-1.19 (-0.05)} & \textbf{-0.48 (-0.02)} & 0.09 (0.01) & 0.03 (0.00) & -0.01 (-0.00) & 0.15 (0.01) & 0.08 (0.00) & 0.04 (0.00) & 0.06 (0.00) & 0.01 (0.00) & -0.01 (-0.00)\\
+ & 0.6 & \textbf{-1.01 (-0.04)} & -0.31 (-0.01) & 0.38 (0.02) & 0.11 (0.01) & 0.04 (0.00) & 0.00 (0.00) & 0.15 (0.01) & 0.09 (0.00) & 0.04 (0.00) & 0.09 (0.01) & 0.04 (0.00) & 0.01 (0.00)\\
 \bottomrule
 \addlinespace
 \insertTableNotes
@@ -54,13 +54,13 @@ $\textit{N}$ & \multicolumn{1}{c}{$Corr(\xi_{x}, \xi_{m})$} & \multicolumn{1}{c}
 \begin{lltable}
 
 \begin{TableNotes}[para]
-\normalsize{\textit{Note.} $\textit{N}$ = sample size; $Corr(\xi_{x}, \xi_{m})$ = correlation between $\xi_{x}$ and $\xi_{m}$; $\rho$ = reliability level; MMR = moderated multiple regression method; Matched-Pair UPI = matched-pair product unconstrained indicator method; RAPI = reliability-adjusted product indicator method; 2S-PA-Int = two-stage path analysis with interaction method. Outlier proportions of SE are shown in parenthese and all the numbers were percentages. Note that relative SE bias values outside the acceptable range of [-10$\%$, 10$\%$] are bolded.}
+\normalsize{\textit{Note.} $\textit{N}$ = sample size; $Corr(\xi_{x}, \xi_{m})$ = correlation between $\xi_{x}$ and $\xi_{m}$; $\rho$ = reliability level; $\gamma_{xm} = 0$ indicates no latent interaction effect; $\gamma_{xm} = 0.3$ indicates a non-zero interaction effect; MMR = moderated multiple regression; Matched-Pair UPI = matched-pair product unconstrained indicator; RAPI = reliability-adjusted product indicator; 2S-PA-Int = two-stage path analysis with interaction. Values in parentheses represent the outlier proportions of SE, given as percentages. Relative SE bias values outside the acceptable range of [-10$\%$, 10$\%$] are bolded.}
 \end{TableNotes}
 
 \tiny{
 
 \begin{longtable}{cccccccccccccc}\noalign{\getlongtablewidth\global\LTcapwidth=\longtablewidth}
-\caption{\label{tab:MAD relative SE bias with outliers proportion}Robust Relative Standard Error (SE) Bias Ratio (Outlier Proportion of SE; $\%$) for $\gamma_{xm}$ over 2,000 Replications.}\\
+\caption{\label{tab:MAD relative SE bias with outliers proportion}Robust Relative Standard Error (SE) Bias Ratio and Outlier Proportion of SE ($\%$) of Latent Interaction Estimates ($\gamma_{xm}$) Across 2,000 Replications.}\\
 \toprule
  &  & \multicolumn{3}{c}{MMR} & \multicolumn{3}{c}{Matched-Pair UPI} & \multicolumn{3}{c}{RAPI} & \multicolumn{3}{c}{2S-PA-Int} \\
 \cmidrule(r){3-5} \cmidrule(r){6-8} \cmidrule(r){9-11} \cmidrule(r){12-14}
@@ -77,23 +77,23 @@ $\textit{N}$ & \multicolumn{1}{c}{$Corr(\xi_{x}, \xi_{m})$} & \multicolumn{1}{c}
 \multicolumn{14}{c}{$\gamma_{xm} = 0$}\\
 100 & 0 & -3.97 (1.55) & 2.25 (0.75) & -0.05 (0.75) & 0.29 (8.95) & -1.78 (3.85) & -0.54 (2.95) & -1.03 (9.50) & 3.62 (4.45) & 2.07 (2.65) & -4.09 (6.85) & 1.28 (3.25) & 4.16 (2.20)\\
  & 0.3 & -2.27 (0.40) & -2.13 (0.45) & 1.54 (0.60) & -0.41 (7.25) & -2.07 (4.90) & 1.79 (2.10) & 1.21 (8.55) & 3.14 (5.75) & 3.85 (2.20) & -0.83 (6.10) & 1.58 (4.50) & 5.03 (2.20)\\
- & 0.6 & -1.35 (0.60) & 0.71 (1.10) & 0.71 (0.45) & -3.15 (7.00) & -0.97 (4.30) & 0.5 (2.25) & 2.23 (8.50) & 4 (3.90) & 3.27 (1.95) & 3.97 (6.40) & 2.22 (3.45) & 5.3 (1.55)\\
+ & 0.6 & -1.35 (0.60) & 0.71 (1.10) & 0.71 (0.45) & -3.15 (7.00) & -0.97 (4.30) & 0.50 (2.25) & 2.23 (8.50) & 4.00 (3.90) & 3.27 (1.95) & 3.97 (6.40) & 2.22 (3.45) & 5.30 (1.55)\\
 250 & 0 & 0.34 (0.95) & -2.09 (1.00) & -0.11 (1.40) & 2.42 (2.55) & -2.08 (2.50) & 0.62 (1.85) & 2.57 (3.95) & -2.69 (1.85) & 0.25 (1.05) & -1.03 (2.90) & -3.65 (1.50) & 0.38 (0.75)\\
- & 0.3 & -1.32 (0.85) & -2.75 (1.60) & 0.48 (1.40) & 3.49 (2.10) & -3.77 (2.70) & -1.94 (1.15) & -0.85 (4.05) & -3.44 (1.85) & -0.03 (0.85) & -2.3 (2.55) & -3.49 (1.55) & -0.88 (0.75)\\
- & 0.6 & -2.72 (0.65) & -0.07 (1.10) & -1.21 (1.15) & -0.63 (1.80) & -1.5 (2.55) & -1.06 (1.15) & 0.26 (3.25) & 1.11 (1.50) & -0.21 (0.75) & -3.63 (2.15) & -0.27 (1.75) & 0.8 (0.55)\\
-500 & 0 & 0.55 (0.25) & 2.67 (0.35) & 1.13 (0.65) & 5.01 (0.85) & -0.7 (1.75) & 4.72 (1.10) & 2.75 (2.00) & 1.96 (1.70) & 2.45 (1.00) & 4.4 (1.90) & 2.96 (1.20) & 2.13 (1.05)\\
- & 0.3 & -1.38 (0.45) & 1.2 (0.55) & 0.35 (0.60) & -0.88 (1.00) & -0.07 (1.50) & -0.57 (1.25) & -1.51 (1.65) & 1.41 (0.95) & 1.46 (0.85) & 0.1 (1.40) & 2.86 (0.90) & 1.84 (0.95)\\
+ & 0.3 & -1.32 (0.85) & -2.75 (1.60) & 0.48 (1.40) & 3.49 (2.10) & -3.77 (2.70) & -1.94 (1.15) & -0.85 (4.05) & -3.44 (1.85) & -0.03 (0.85) & -2.30 (2.55) & -3.49 (1.55) & -0.88 (0.75)\\
+ & 0.6 & -2.72 (0.65) & -0.07 (1.10) & -1.21 (1.15) & -0.63 (1.80) & -1.50 (2.55) & -1.06 (1.15) & 0.26 (3.25) & 1.11 (1.50) & -0.21 (0.75) & -3.63 (2.15) & -0.27 (1.75) & 0.80 (0.55)\\
+500 & 0 & 0.55 (0.25) & 2.67 (0.35) & 1.13 (0.65) & 5.01 (0.85) & -0.70 (1.75) & 4.72 (1.10) & 2.75 (2.00) & 1.96 (1.70) & 2.45 (1.00) & 4.40 (1.90) & 2.96 (1.20) & 2.13 (1.05)\\
+ & 0.3 & -1.38 (0.45) & 1.20 (0.55) & 0.35 (0.60) & -0.88 (1.00) & -0.07 (1.50) & -0.57 (1.25) & -1.51 (1.65) & 1.41 (0.95) & 1.46 (0.85) & 0.10 (1.40) & 2.86 (0.90) & 1.84 (0.95)\\
  & 0.6 & -0.67 (0.60) & 0.19 (0.55) & -0.28 (0.70) & -1.99 (1.85) & -1.25 (1.35) & 1.26 (1.25) & 0.85 (1.70) & 0.92 (1.10) & -1.17 (1.05) & -0.14 (1.30) & 0.21 (0.85) & 0.83 (1.05)\\
 \multicolumn{14}{c}{$\gamma_{xm} = 0.3$}\\
-100 & 0 & \textbf{-10.06 (1.05)} & -8.44 (0.75) & \textbf{-10.04 (1.05)} & \textbf{-13.37 (8.55)} & -8.83 (5.55) & -2.54 (3.15) & 6.22 (10.55) & 4.9 (5.05) & 5.11 (2.25) & -7.67 (7.40) & -3.23 (3.70) & 1.26 (2.10)\\
- & 0.3 & -8.24 (0.75) & -5.87 (1.00) & \textbf{-11.02 (0.85)} & \textbf{-15.6 (7.85)} & -6.58 (6.15) & 0.75 (2.45) & 5.36 (9.25) & 6.23 (5.70) & 4.03 (2.20) & -6.89 (6.70) & -5.07 (4.10) & -1.05 (2.05)\\
- & 0.6 & \textbf{-16.24 (0.75)} & \textbf{-12.74 (1.50)} & \textbf{-14.93 (1.20)} & -7.3 (7.60) & -5.97 (5.45) & -1 (2.75) & 3.48 (8.90) & 7.93 (4.65) & 1.67 (2.00) & \textbf{-11.22 (7.00)} & -4.97 (3.30) & -5.08 (1.65)\\
-250 & 0 & -9.5 (0.95) & -7.6 (0.65) & \textbf{-10.16 (1.05)} & -4.01 (3.00) & -7.25 (3.90) & -5.51 (1.50) & 9.84 (4.75) & 5.12 (2.70) & -0.12 (1.45) & -6.6 (3.90) & -5.41 (1.85) & -3.29 (1.25)\\
- & 0.3 & \textbf{-13.72 (0.90)} & \textbf{-11.62 (0.75)} & \textbf{-10.52 (0.85)} & -3.2 (3.20) & -6.44 (3.15) & -4.11 (1.25) & 4.76 (5.05) & 4.01 (2.40) & 3.06 (0.75) & -8.36 (3.40) & -4.79 (1.45) & -2.03 (0.70)\\
- & 0.6 & \textbf{-17.31 (0.75)} & \textbf{-16.75 (0.65)} & \textbf{-17.95 (0.70)} & -3.74 (3.45) & -5.86 (3.05) & -2.64 (1.65) & \textbf{10.28 (3.95)} & 8.3 (1.50) & 3.99 (0.70) & -6.06 (3.20) & -1.29 (1.40) & -0.73 (0.55)\\
-500 & 0 & -1.83 (1.00) & -3.69 (1.30) & -7.49 (1.35) & -2.41 (2.60) & -3.01 (1.90) & -0.1 (1.15) & \textbf{10.12 (3.40)} & 8.57 (1.65) & 4.3 (1.10) & -3.25 (2.40) & -0.18 (1.15) & -0.24 (1.00)\\
+100 & 0 & \textbf{-10.06 (1.05)} & -8.44 (0.75) & \textbf{-10.04 (1.05)} & \textbf{-13.37 (8.55)} & -8.83 (5.55) & -2.54 (3.15) & 6.22 (10.55) & 4.90 (5.05) & 5.11 (2.25) & -7.67 (7.40) & -3.23 (3.70) & 1.26 (2.10)\\
+ & 0.3 & -8.24 (0.75) & -5.87 (1.00) & \textbf{-11.02 (0.85)} & \textbf{-15.60 (7.85)} & -6.58 (6.15) & 0.75 (2.45) & 5.36 (9.25) & 6.23 (5.70) & 4.03 (2.20) & -6.89 (6.70) & -5.07 (4.10) & -1.05 (2.05)\\
+ & 0.6 & \textbf{-16.24 (0.75)} & \textbf{-12.74 (1.50)} & \textbf{-14.93 (1.20)} & -7.30 (7.60) & -5.97 (5.45) & -1.00 (2.75) & 3.48 (8.90) & 7.93 (4.65) & 1.67 (2.00) & \textbf{-11.22 (7.00)} & -4.97 (3.30) & -5.08 (1.65)\\
+250 & 0 & -9.50 (0.95) & -7.60 (0.65) & \textbf{-10.16 (1.05)} & -4.01 (3.00) & -7.25 (3.90) & -5.51 (1.50) & 9.84 (4.75) & 5.12 (2.70) & -0.12 (1.45) & -6.60 (3.90) & -5.41 (1.85) & -3.29 (1.25)\\
+ & 0.3 & \textbf{-13.72 (0.90)} & \textbf{-11.62 (0.75)} & \textbf{-10.52 (0.85)} & -3.20 (3.20) & -6.44 (3.15) & -4.11 (1.25) & 4.76 (5.05) & 4.01 (2.40) & 3.06 (0.75) & -8.36 (3.40) & -4.79 (1.45) & -2.03 (0.70)\\
+ & 0.6 & \textbf{-17.31 (0.75)} & \textbf{-16.75 (0.65)} & \textbf{-17.95 (0.70)} & -3.74 (3.45) & -5.86 (3.05) & -2.64 (1.65) & \textbf{10.28 (3.95)} & 8.30 (1.50) & 3.99 (0.70) & -6.06 (3.20) & -1.29 (1.40) & -0.73 (0.55)\\
+500 & 0 & -1.83 (1.00) & -3.69 (1.30) & -7.49 (1.35) & -2.41 (2.60) & -3.01 (1.90) & -0.10 (1.15) & \textbf{10.12 (3.40)} & 8.57 (1.65) & 4.30 (1.10) & -3.25 (2.40) & -0.18 (1.15) & -0.24 (1.00)\\
  & 0.3 & -8.72 (0.80) & -8.54 (1.00) & \textbf{-10.44 (1.10)} & -4.68 (2.90) & 0.15 (1.80) & -0.94 (1.15) & \textbf{12.78 (3.55)} & 7.49 (1.20) & 5.09 (0.85) & -2.27 (2.65) & 0.67 (0.85) & 1.16 (0.85)\\
- & 0.6 & \textbf{-14.2 (0.90)} & \textbf{-15.18 (0.95)} & \textbf{-17.17 (1.25)} & -2.04 (3.85) & -0.69 (1.65) & -0.86 (1.30) & 8.62 (2.25) & 7.92 (0.95) & 6.79 (1.05) & -8.9 (1.80) & -2.79 (0.70) & 0.27 (0.75)\\
+ & 0.6 & \textbf{-14.20 (0.90)} & \textbf{-15.18 (0.95)} & \textbf{-17.17 (1.25)} & -2.04 (3.85) & -0.69 (1.65) & -0.86 (1.30) & 8.62 (2.25) & 7.92 (0.95) & 6.79 (1.05) & -8.90 (1.80) & -2.79 (0.70) & 0.27 (0.75)\\
 \bottomrule
 \addlinespace
 \insertTableNotes
@@ -107,13 +107,13 @@ $\textit{N}$ & \multicolumn{1}{c}{$Corr(\xi_{x}, \xi_{m})$} & \multicolumn{1}{c}
 \begin{lltable}
 
 \begin{TableNotes}[para]
-\normalsize{\textit{Note.} $\textit{N}$ = sample size; $Corr(\xi_{x}, \xi_{m})$ = correlation between $\xi_{x}$ and $\xi_{m}$; $\rho$ = reliability level; MMR = moderated multiple regression method; Matched-Pair UPI = matched-pair product unconstrained indicator method; RAPI = reliability-adjusted product indicator method; 2S-PA-Int = two-stage path analysis with interaction method. Coverage rates not reaching the acceptable threshold of 91$\%$ are bolded.}
+\normalsize{\textit{Note.} $\textit{N}$ = sample size; $Corr(\xi_{x}, \xi_{m})$ = correlation between $\xi_{x}$ and $\xi_{m}$; $\rho$ = reliability level; $\gamma_{xm} = 0$ indicates no latent interaction effect; $\gamma_{xm} = 0.3$ indicates a non-zero interaction effect; MMR = moderated multiple regression; Matched-Pair UPI = matched-pair product unconstrained indicator; RAPI = reliability-adjusted product indicator; 2S-PA-Int = two-stage path analysis with interaction. Coverage rates below the acceptable threshold of 91$\%$ are bolded.}
 \end{TableNotes}
 
 \tiny{
 
 \begin{longtable}{cccccccccccccc}\noalign{\getlongtablewidth\global\LTcapwidth=\longtablewidth}
-\caption{\label{tab:coverage rate}Coverage Rate of 95 $\%$ Confidence Interval (CI) for $\gamma_{xm}$ over 2,000 Replications.}\\
+\caption{\label{tab:coverage rate}Coverage Rate of 95 $\%$ Confidence Interval (CI) of Latent Interaction Estimates ($\gamma_{xm}$) Across 2,000 Replications.}\\
 \toprule
  &  & \multicolumn{3}{c}{MMR} & \multicolumn{3}{c}{Matched-Pair UPI} & \multicolumn{3}{c}{RAPI} & \multicolumn{3}{c}{2S-PA-Int} \\
 \cmidrule(r){3-5} \cmidrule(r){6-8} \cmidrule(r){9-11} \cmidrule(r){12-14}
@@ -160,13 +160,13 @@ $\textit{N}$ & \multicolumn{1}{c}{$Corr(\xi_{x}, \xi_{m})$} & \multicolumn{1}{c}
 \begin{lltable}
 
 \begin{TableNotes}[para]
-\normalsize{\textit{Note.} $\textit{N}$ = sample size; $Corr(\xi_{x}, \xi_{m})$ = correlation between $\xi_{x}$ and $\xi_{m}$; $\rho$ = reliability level; MMR = moderated multiple regression method; Matched-Pair UPI = matched-pair product unconstrained indicator method; RAPI = reliability-adjusted product indicator method; 2S-PA-Int = two-stage path analysis with interaction method. Note that the methods are grouped in the second-order header for comparing RMSE under the same conditions.}
+\normalsize{\textit{Note.} $\textit{N}$ = sample size; $Corr(\xi_{x}, \xi_{m})$ = correlation between $\xi_{x}$ and $\xi_{m}$; $\rho$ = reliability level; $\gamma_{xm} = 0$ indicates no latent interaction effect; $\gamma_{xm} = 0.3$ indicates a non-zero interaction effect; MMR = moderated multiple regression method; Matched-Pair UPI = matched-pair product unconstrained indicator; RAPI = reliability-adjusted product indicator method; 2S-PA-Int = two-stage path analysis with interaction.}
 \end{TableNotes}
 
 \tiny{
 
 \begin{longtable}{cccccccccccccc}\noalign{\getlongtablewidth\global\LTcapwidth=\longtablewidth}
-\caption{\label{tab:rmse}Root Mean Square Error (RMSE) for $\gamma_{xm}$ over 2,000 Replications.}\\
+\caption{\label{tab:rmse}Root Mean Square Error (RMSE) of Latent Interaction Estimates ($\gamma_{xm}$) Across 2,000 Replications.}\\
 \toprule
  &  & \multicolumn{3}{c}{MMR} & \multicolumn{3}{c}{Matched-Pair UPI} & \multicolumn{3}{c}{RAPI} & \multicolumn{3}{c}{2S-PA-Int} \\
 \cmidrule(r){3-5} \cmidrule(r){6-8} \cmidrule(r){9-11} \cmidrule(r){12-14}
@@ -213,13 +213,13 @@ $\textit{N}$ & \multicolumn{1}{c}{$Corr(\xi_{x}, \xi_{m})$} & \multicolumn{1}{c}
 \begin{lltable}
 
 \begin{TableNotes}[para]
-\normalsize{\textit{Note.} $\textit{N}$ = sample size; $Corr(\xi_{x}, \xi_{m})$ = correlation between $\xi_{x}$ and $\xi_{m}$; $\rho$ = reliability level; MMR = moderated multiple regression method; Matched-Pair UPI = matched-pair product unconstrained indicator method; RAPI = reliability-adjusted product indicator method; 2S-PA-Int = two-stage path analysis with interaction method. Note that the methods are grouped in the second-order header for comparing statistical power under the same conditions.}
+\normalsize{\textit{Note.} $\textit{N}$ = sample size; $Corr(\xi_{x}, \xi_{m})$ = correlation between $\xi_{x}$ and $\xi_{m}$; $\rho$ = reliability level; $\gamma_{xm} = 0$ indicates no latent interaction effect; $\gamma_{xm} = 0.3$ indicates a non-zero interaction effect; MMR = moderated multiple regression; Matched-Pair UPI = matched-pair product unconstrained indicator; RAPI = reliability-adjusted product indicator; 2S-PA-Int = two-stage path analysis with interaction.}
 \end{TableNotes}
 
 \tiny{
 
 \begin{longtable}{cccccccccccccc}\noalign{\getlongtablewidth\global\LTcapwidth=\longtablewidth}
-\caption{\label{tab:power}Empirical Type I Error Rate and Statistical Power over 2,000 Replications.}\\
+\caption{\label{tab:power}Empirical Type I Error Rate and Statistical Power Across 2,000 Replications.}\\
 \toprule
  &  & \multicolumn{3}{c}{MMR} & \multicolumn{3}{c}{Matched-Pair UPI} & \multicolumn{3}{c}{RAPI} & \multicolumn{3}{c}{2S-PA-Int} \\
 \cmidrule(r){3-5} \cmidrule(r){6-8} \cmidrule(r){9-11} \cmidrule(r){12-14}
@@ -266,23 +266,23 @@ $\textit{N}$ & \multicolumn{1}{c}{$Corr(\xi_{x}, \xi_{m})$} & \multicolumn{1}{c}
 \begin{lltable}
 
 \begin{TableNotes}[para]
-\normalsize{\textit{Note.} $\textit{N}$ = 4,900. Matched-Pair UPI = matched-pair product unconstrained indicator method; RAPI = reliability-adjusted product indicator method; 2S-PA-Int = two-stage path analysis with interaction method. $\hat{\beta}_{IM}$ and $\hat{\beta}_{EM}$ denoted the first-order effect of IM and EM on reading performance scores, and $\hat{\beta}_{IM \times EM}$ was their latent interaction effect. SE represented the standard error of measurement and $\textit{p}$ denoted the significance value. The results showed significant first-order and latent interaction effects using all three methods.}
+\normalsize{\textit{Note.} $\textit{N}$ = 4,900. Matched-Pair UPI = matched-pair product unconstrained indicator; RAPI = reliability-adjusted product indicator; 2S-PA-Int = two-stage path analysis with interaction. $\hat{\beta}_{IM}$ and $\hat{\beta}_{EM}$ denoted the first-order effect of IM and EM on reading performance scores, and $\hat{\beta}_{IM \times EM}$ was their latent interaction effect. SE represented the standard error of measurement and $\textit{p}$ denoted the significance value. The results showed significant first-order and latent interaction effects using all three methods.}
 \end{TableNotes}
 
 \begin{longtable}{cccccccccc}\noalign{\getlongtablewidth\global\LTcapwidth=\longtablewidth}
-\caption{\label{tab:PIRL 2006 Table}Parameter Estimates of the Latent Interaction Effect with Three Methods.}\\
+\caption{\label{tab:PIRL 2021 Table}Parameter Estimates of the Latent Interaction Effect with Three Methods.}\\
 \toprule
 Approach & \multicolumn{1}{c}{$\hat{\beta}_{IM}$} & \multicolumn{1}{c}{$SE_{IM}$} & \multicolumn{1}{c}{$\textit{p}_{IM}$} & \multicolumn{1}{c}{$\hat{\beta}_{EM}$} & \multicolumn{1}{c}{$SE_{EM}$} & \multicolumn{1}{c}{$\textit{p}_{EM}$} & \multicolumn{1}{c}{$\hat{\beta}_{IM \times EM}$} & \multicolumn{1}{c}{$SE_{IM \times EM}$} & \multicolumn{1}{c}{$\textit{p}_{IM \times EM}$}\\
 \midrule
 \endfirsthead
-\caption*{\normalfont{Table \ref{tab:PIRL 2006 Table} continued}}\\
+\caption*{\normalfont{Table \ref{tab:PIRL 2021 Table} continued}}\\
 \toprule
 Approach & \multicolumn{1}{c}{$\hat{\beta}_{IM}$} & \multicolumn{1}{c}{$SE_{IM}$} & \multicolumn{1}{c}{$\textit{p}_{IM}$} & \multicolumn{1}{c}{$\hat{\beta}_{EM}$} & \multicolumn{1}{c}{$SE_{EM}$} & \multicolumn{1}{c}{$\textit{p}_{EM}$} & \multicolumn{1}{c}{$\hat{\beta}_{IM \times EM}$} & \multicolumn{1}{c}{$SE_{IM \times EM}$} & \multicolumn{1}{c}{$\textit{p}_{IM \times EM}$}\\
 \midrule
 \endhead
-\makebox[4cm][c]{Matched-Pair UPI} & 0.67 & 0.05 & \makebox[2cm][c]{$< .001^{***}$} & -0.36 & 0.06 & \makebox[2cm][c]{$< .001^{***}$} & 0.25 & 0.11 & \makebox[2cm][c]{$< .001^{***}$}\\
-\makebox[4cm][c]{RAPI} & 0.42 & 0.02 & \makebox[2cm][c]{$< .001^{***}$} & -0.09 & 0.02 & \makebox[2cm][c]{$< .001^{***}$} & 0.11 & 0.01 & \makebox[2cm][c]{$< .001^{***}$}\\
-\makebox[4cm][c]{2S-PA-Int} & 0.70 & 0.05 & \makebox[2cm][c]{$< .001^{***}$} & -0.34 & 0.05 & \makebox[2cm][c]{$< .001^{***}$} & 0.15 & 0.02 & \makebox[2cm][c]{$< .001^{***}$}\\
+\makebox[4cm][c]{Matched-Pair UPI} & 0.99 & 0.28 & \makebox[2cm][c]{$< .001^{***}$} & -1.06 & 0.33 & \makebox[2cm][c]{$0.001^{**}$} & -0.21 & 0.08 & \makebox[2cm][c]{$0.011^{*}$}\\
+\makebox[4cm][c]{RAPI} & 1.14 & 0.35 & \makebox[2cm][c]{$0.001^{**}$} & -1.22 & 0.41 & \makebox[2cm][c]{$0.003^{**}$} & -0.22 & 0.09 & \makebox[2cm][c]{$0.018^{*}$}\\
+\makebox[4cm][c]{2S-PA-Int} & 0.85 & 0.21 & \makebox[2cm][c]{$< .001^{***}$} & -0.88 & 0.24 & \makebox[2cm][c]{$< .001^{***}$} & -0.16 & 0.06 & \makebox[2cm][c]{$0.005^{**}$}\\
 \bottomrule
 \addlinespace
 \insertTableNotes

@@ -2,38 +2,6 @@
 \ifnextchar[{\eatarg}{}
 [h]
 \centering
-\includegraphics[width=1.2\textwidth]{/Users/jimmy_z/R Projects/2SPA-Int/Paper/Qual 1 Paper Draft/sd_bias_plot.png}
-\caption{Standardized Bias in Latent Interaction Effect Estimates.}
-\caption*{\textit{Note. Points with various shapes represent values of three latent interaction methods for all simulation conditions.}}
-\end{figure*}
-\begin{figure*}[hbt]
-\ifnextchar[{\eatarg}{}
-[h]
-\centering
-\includegraphics[width=1.2\textwidth]{/Users/jimmy_z/R Projects/2SPA-Int/Paper/Qual 1 Paper Draft/rse_bias_plot.png}
-\caption{Relative SE Bias in Latent Interaction Effect Estimates.}
-\caption*{\textit{Note. Points with various shapes represent values of three latent interaction methods for all simulation conditions.}}
-\end{figure*}
-\begin{figure*}[hbt]
-\ifnextchar[{\eatarg}{}
-[h]
-\centering
-\includegraphics[width=1.2\textwidth]{/Users/jimmy_z/R Projects/2SPA-Int/Paper/Qual 1 Paper Draft/cov_plot.png}
-\caption{Coverage Rate of 95\%CI in Latent Interaction Effect Estimates.}
-\caption*{\textit{Note. Points with various shapes represent values of three latent interaction methods for all simulation conditions.}}
-\end{figure*}
-\begin{figure*}[hbt]
-\ifnextchar[{\eatarg}{}
-[h]
-\centering
-\includegraphics[width=1.2\textwidth]{/Users/jimmy_z/R Projects/2SPA-Int/Paper/Qual 1 Paper Draft/type1_plot.png}
-\caption{Empirical Type I Error Rates in Latent Interaction Effect Estimates (Zero Effect).}
-\caption*{\textit{Note. Points with various shapes represent values of three latent interaction methods for all simulation conditions.}}
-\end{figure*}
-\begin{figure*}[hbt]
-\ifnextchar[{\eatarg}{}
-[h]
-\centering
 \includegraphics[width=0.8\textwidth]{/Users/jimmy_z/R Projects/2SPA-Int/Paper/Qual 1 Paper Draft/PIRL_Plot.png}
 \caption{Structural Model of Illustrative Example from Park (2011).}
 \caption*{\textit{Note. The model includes two first-order latent variables, intrinsic motivation and extrinsic motivation, depicted as ellipses. Their latent interaction term was depicted as a filled black circle. The dependent variable was observed and rendered as a rectangle.}}

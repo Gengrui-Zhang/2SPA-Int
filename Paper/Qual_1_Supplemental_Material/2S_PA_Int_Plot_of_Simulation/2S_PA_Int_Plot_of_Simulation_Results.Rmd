@@ -1,0 +1,275 @@
+---
+title             : "2S-PA-Int: Plots of Simulation Results"
+shorttitle        : "2S-PA-Int"
+
+author: 
+  - name          : "Gengrui (Jimmy) Zhang"
+    affiliation   : "1"
+    corresponding : yes    # Define only one corresponding author
+    email         : "gengruiz@email.com"
+    role: # Contributorship roles (e.g., CRediT, https://credit.niso.org/)
+      - "Conceptualization"
+      - "Writing - Original Draft Preparation"
+      - "Writing - Review & Editing"
+
+affiliation:
+  - id            : "1"
+    institution   : "University of Southhern California"
+
+floatsintext      : no
+linenumbers       : yes
+draft             : no
+mask              : no
+
+figurelist        : no
+tablelist         : no
+footnotelist      : no
+
+classoption       : "man"
+csl               : "`r system.file('rmd', 'apa7.csl', package = 'papaja')`"
+output            : papaja::apa6_pdf
+---
+
+```{r setup, include = FALSE}
+library("papaja")
+library(haven)
+library(dplyr)
+library(here)
+library(tidyverse)
+```
+
+```{r message=FALSE, warning=FALSE}
+sim <- readRDS(here("Sim_Data", "continuous_bound_09252024.rds"))
+sim_results <- sim %>% 
+  dplyr::select(-c(REPLICATIONS:ERRORS)) %>%
+  mutate(across(where(is.numeric), round, 4),
+         cor_xm = ifelse(cor_xm == 0, "0", cor_xm))
+sim_null <- sim_results %>% filter(gamma_xm == 0)
+sim_alt <- sim_results %>% filter(gamma_xm != 0)
+```
+
+Four plots were provided to visualize the pattern of standardized bias, relative standard error (SE) bias, coverage rate of 95% CI, and empirical type I error rate.
+
+```{r standardized bias plot, message=FALSE, warning=FALSE}
+# Helper Function 1
+process_data <- function(data) {
+  results <- data %>%
+    gather("var", "val", raw_bias.mmr.est:rmse.tspa.est) %>%
+    dplyr::select(-c(warning_total.mmr.warnings_count:WARNINGS)) %>%
+    separate(col = var, into = c("stats", "method"), sep = "\\.") %>%
+    spread(stats, val) %>%
+    mutate(N_lab = as_factor(paste0("italic(N) == ", N)),
+           gammaint_lab = as_factor(paste0("\\beta_{xm} == ", gamma_xm)),
+           cor_xm_lab = as_factor(paste0("corr[XM] == ", cor_xm)),
+           rel_lab = as_factor(paste0("rho == ", rel)))
+
+  return(results)
+}
+
+# Helper Function 2
+plot_results <- function(data,
+                         x_var, y_var, 
+                         x_label, y_label, 
+                         y_limits = NULL, 
+                         color_var = "method", 
+                         shape_var = "method", 
+                         point_size = 3,         # Increased point size
+                         point_alpha = 0.9,      # Added point alpha for more flexibility
+                         line_width = 1,         # Line width for lines if `add_lines = TRUE`
+                         hollow_shapes = FALSE,  # Option for hollow shapes
+                         shape_options = NULL,   # New option for custom shapes
+                         color_options = NULL,   # New option for custom colors
+                         add_lines = FALSE, 
+                         remove_baseline = FALSE) {
+  
+  # Optionally filter out "mmr" group
+  if (remove_baseline) {
+    data <- data %>% filter(!!sym(color_var) != "mmr")
+  }
+  
+  # Default shapes if `shape_options` is not provided
+  default_shapes <- if (hollow_shapes) {
+    if (remove_baseline) {
+      c("rapi" = 21, "upi" = 24, "tspa" = 22)  # Hollow shapes 21-25
+    } else {
+      c("mmr" = 23, "rapi" = 21, "upi" = 24, "tspa" = 22)
+    }
+  } else {
+    if (remove_baseline) {
+      c("rapi" = 16, "upi" = 17, "tspa" = 15)  # Filled shapes
+    } else {
+      c("mmr" = 18, "rapi" = 16, "upi" = 17, "tspa" = 15)
+    }
+  }
+  
+  # Default colors if `color_options` is not provided
+  default_colors <- if (remove_baseline) {
+    c("rapi" = "#E69F00", "upi" = "#CC79A7", "tspa" = "#009E73")
+  } else {
+    c("mmr" = "pink", "rapi" = "#CC79A7", "upi" = "#d95f02", "tspa" = "#009E73")
+  }
+  
+  # Use `shape_options` if provided, otherwise use defaults
+  shapes <- if (!is.null(shape_options)) shape_options else default_shapes
+  
+  # Use `color_options` if provided, otherwise use defaults
+  colors <- if (!is.null(color_options)) color_options else default_colors
+
+  plot <- data %>%
+    ggplot(aes(x = factor(!!sym(x_var)), y = !!sym(y_var), color = !!sym(color_var), shape = !!sym(shape_var))) +
+    geom_point(position = position_jitterdodge(jitter.width = 0, dodge.width = 0), 
+               size = point_size, alpha = point_alpha, 
+               fill = if (hollow_shapes) "white" else NA) +  # Fill color for hollow shapes
+    facet_grid(cor_xm_lab ~ rel_lab, labeller = label_parsed) +
+    scale_shape_manual(name = "Method", values = shapes,
+                       labels = if (remove_baseline) c("rapi" = "RAPI", "upi" = "Matched-Pair UPI", "tspa" = "2S-PA-Int") else c("mmr" = "MMR", "rapi" = "RAPI", "upi" = "Matched-Pair UPI", "tspa" = "2S-PA-Int")) +
+    scale_color_manual(name = "Method", values = colors,
+                       labels = if (remove_baseline) c("rapi" = "RAPI", "upi" = "Matched-Pair UPI", "tspa" = "2S-PA-Int") else c("mmr" = "MMR", "rapi" = "RAPI", "upi" = "Matched-Pair UPI", "tspa" = "2S-PA-Int")) +
+    labs(x = x_label, y = y_label, color = "Method", shape = "Method") +
+    theme_minimal() +
+    theme(legend.title = element_text(size = 12, face = "bold"),
+          legend.text = element_text(size = 10),
+          legend.position = "right",
+          strip.text = element_text(size = 10, face = "bold"),  # Adjust facet label text
+          panel.border = element_rect(color = "black", fill = NA, size = 1),  # Add black border to panels
+          strip.background = element_rect(color = "black", size = 1),  # Add black border to facet labels
+          panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "gray80"),
+          panel.grid.minor = element_blank(),
+          panel.grid.major.x = element_blank(),  # Remove vertical grid lines
+          panel.grid.major.y = element_line(size = 0.5, linetype = 'solid', colour = "gray80"),  # Keep horizontal lines
+          axis.line = element_line(color = "black"),  # Add black lines to x and y axes
+          axis.ticks = element_line(color = "black"))
+  
+  if (add_lines) {
+    plot <- plot + 
+      geom_line(aes(group = !!sym(color_var), 
+                    linetype = !!sym(shape_var)), 
+                size = line_width, alpha = 0.6) +
+      scale_linetype_manual(name = "Method",
+                            values = if (remove_baseline) c("rapi" = "solid", "upi" = "dashed", "tspa" = "twodash") else c("mmr" = "dotted", "rapi" = "solid", "upi" = "dashed", "tspa" = "twodash"),
+                            labels = if (remove_baseline) c("rapi" = "RAPI", "upi" = "Matched-Pair UPI", "tspa" = "2S-PA-Int") else c("mmr" = "MMR", "rapi" = "RAPI", "upi" = "Matched-Pair UPI", "tspa" = "2S-PA-Int"))
+  }
+  
+  if (!is.null(y_limits)) {
+    plot <- plot + ylim(y_limits)
+  }
+  
+  return(plot)
+}
+
+# Plot
+type1_pd <- process_data(sim_null)
+power_pd <- process_data(sim_alt)
+
+custom_colors <- c("mmr" = "pink", "rapi" = "#CC79A7", "upi" = "#d95f02", "tspa" = "#009E73")
+custom_shapes <- c("mmr" = 23, "rapi" = 21, "upi" = 3, "tspa" = 24)
+
+sd_bias_plot <- plot_results(power_pd,
+                             x_var = "N",
+                             y_var = "std_bias",
+                             x_label = "Sample Size (N)",
+                             y_label = "Standardized Bias",
+                             y_limits = c(-0.45, 0.45),
+                             point_size = 1.5,
+                             point_alpha = 3,
+                             line_width = 0.5,
+                             hollow_shapes = TRUE,          # Enable hollow shapes
+                             shape_options = custom_shapes, # Custom shapes
+                             color_options = custom_colors, # Custom colors
+                             add_lines = FALSE,
+                             remove_baseline = FALSE)
+
+sd_bias_plot <- sd_bias_plot +
+  geom_hline(yintercept = c(-0.4, 0.4), linetype = "dashed", color = "red")
+
+ggsave("/Users/jimmy_z/R Projects/2SPA-Int/Paper/Qual_1_Supplemental_Material/2S_PA_Int_Plot_of_Simulation/sd_bias_plot.png", plot = sd_bias_plot, width = 7, height = 5, dpi = 300)
+```
+
+```{r RSE bias (plot), message=FALSE, warning=FALSE}
+rse_bias_plot <- plot_results(power_pd,
+                             x_var = "N",
+                             y_var = "stdMed_rse_bias",
+                             x_label = "Sample Size (N)",
+                             y_label = "Relative SE Bias",
+                             y_limits = c(-0.25, 0.25),
+                             point_size = 1.5,
+                             point_alpha = 3,
+                             line_width = 0.5,
+                             hollow_shapes = TRUE,          # Enable hollow shapes
+                             shape_options = custom_shapes, # Custom shapes
+                             color_options = custom_colors, # Custom colors
+                             add_lines = FALSE,
+                             remove_baseline = FALSE)
+rse_bias_plot <- rse_bias_plot +
+  geom_hline(yintercept = c(-0.1, 0.1), linetype = "dashed", color = "red")
+
+ggsave("/Users/jimmy_z/R Projects/2SPA-Int/Paper/Qual_1_Supplemental_Material/2S_PA_Int_Plot_of_Simulation/rse_bias_plot.png", plot = rse_bias_plot, width = 7, height = 5, dpi = 300)
+```
+
+```{r coverage (plot), message=FALSE, warning=FALSE}
+cov_plot <- plot_results(power_pd,
+                         x_var = "N",
+                         y_var = "coverage_std",
+                         x_label = "Sample Size (N)",
+                         y_label = "Coverage Rate of 95% CI",
+                         y_limits = c(0.8, 1),
+                         point_size = 1.5,
+                         point_alpha = 3,
+                         line_width = 0.5,
+                         hollow_shapes = TRUE,
+                         shape_options = custom_shapes, # Custom shapes
+                         color_options = custom_colors, # Custom colors
+                         add_lines = FALSE,
+                         remove_baseline = FALSE)
+cov_plot <- cov_plot +
+  geom_hline(yintercept = c(0.95), linetype = "dashed", color = "red")
+
+ggsave("/Users/jimmy_z/R Projects/2SPA-Int/Paper/Qual_1_Supplemental_Material/2S_PA_Int_Plot_of_Simulation/cov_plot.png", plot = cov_plot, width = 7, height = 5, dpi = 300)
+```
+
+```{r Type I Error (plot), message=FALSE, warning=FALSE}
+type1_plot <- plot_results(type1_pd,
+                           x_var = "N",
+                           y_var = "type1_lrt",
+                           x_label = "Sample Size (N)",
+                           y_label = "Type I Error Rate",
+                           y_limits = c(0, 0.1),
+                           point_size = 1.5,
+                           point_alpha = 3,
+                           line_width = 0.5,
+                           hollow_shapes = TRUE,
+                           shape_options = custom_shapes, # Custom shapes
+                           color_options = custom_colors, # Custom colors
+                           add_lines = FALSE,
+                           remove_baseline = FALSE)
+
+ggsave("/Users/jimmy_z/R Projects/2SPA-Int/Paper/Qual_1_Supplemental_Material/2S_PA_Int_Plot_of_Simulation/type1_plot.png", plot = type1_plot, width = 7, height = 5, dpi = 300)
+```
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1.2\textwidth]{/Users/jimmy_z/R Projects/2SPA-Int/Paper/Qual_1_Supplemental_Material/2S_PA_Int_Plot_of_Simulation/sd_bias_plot.png}
+\caption{Standardized Bias in Latent Interaction Effect Estimates for Nonzero Effect}
+\caption*{\textit{Note. Points with different shapes represent values for the three latent interaction methods across all simulation conditions. Some values of MMR fall outside the y-axis limits and are not shown. The red dashed lines indicate the acceptable range of [-0.40, 0.40].}}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1.2\textwidth]{/Users/jimmy_z/R Projects/2SPA-Int/Paper/Qual_1_Supplemental_Material/2S_PA_Int_Plot_of_Simulation/rse_bias_plot.png}
+\caption{Relative SE Bias in Latent Interaction Effect Estimates for Nonzero Effect}
+\caption*{\textit{Note. Points with different shapes represent values for the three latent interaction methods across all simulation conditions. The red dashed lines indicate the acceptable range of [-10\%, 10\%].}}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1.2\textwidth]{/Users/jimmy_z/R Projects/2SPA-Int/Paper/Qual_1_Supplemental_Material/2S_PA_Int_Plot_of_Simulation/cov_plot.png}
+\caption{Coverage Rate of 95\%CI in Latent Interaction Effect Estimates for Nonzero Effect}
+\caption*{\textit{Note. Points with various shapes represent values of three latent interaction methods for all simulation conditions. The red dashed lines indicate the level of 95\%.}}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1.2\textwidth]{/Users/jimmy_z/R Projects/2SPA-Int/Paper/Qual_1_Supplemental_Material/2S_PA_Int_Plot_of_Simulation/type1_plot.png}
+\caption{Empirical Type I Error Rates in Latent Interaction Effect Estimates for Zero Effect}
+\caption*{\textit{Note. Points with various shapes represent values of three latent interaction methods for all simulation conditions.}}
+\end{figure}
