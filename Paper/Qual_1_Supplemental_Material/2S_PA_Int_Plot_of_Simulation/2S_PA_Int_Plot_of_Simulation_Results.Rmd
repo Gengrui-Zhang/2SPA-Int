@@ -1,5 +1,5 @@
 ---
-title             : "2S-PA-Int: Plots of Simulation Results"
+title             : "Appendix 1: Plots of Simulation Results"
 shorttitle        : "2S-PA-Int"
 
 author: 
