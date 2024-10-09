@@ -1,0 +1,189 @@
+---
+title             : "Appendix 1: Unconstraint Product Indicator Using All Pairs of Product Indicators"
+shorttitle        : "2S-PA-Int"
+
+author: 
+  - name          : "Gengrui (Jimmy) Zhang"
+    affiliation   : "1"
+    corresponding : yes    # Define only one corresponding author
+    email         : "gengruiz@email.com"
+    role: # Contributorship roles (e.g., CRediT, https://credit.niso.org/)
+      - "Conceptualization"
+      - "Writing - Original Draft Preparation"
+      - "Writing - Review & Editing"
+
+affiliation:
+  - id            : "1"
+    institution   : "University of Southhern California"
+
+floatsintext      : no
+linenumbers       : yes
+draft             : no
+mask              : no
+
+figurelist        : no
+tablelist         : no
+footnotelist      : no
+
+classoption       : "man"
+csl               : "`r system.file('rmd', 'apa7.csl', package = 'papaja')`"
+output            : papaja::apa6_pdf
+---
+
+```{r setup, include = FALSE}
+library("papaja")
+library(haven)
+library(dplyr)
+library(tidyr)
+library(stringr)
+library(here)
+library(tidyverse)
+library(semTools)
+library(magick)
+library(SimDesign)
+r_refs("r-references.bib")
+
+r_scripts <- list.files(here("R"), pattern = "\\.R$", full.names = TRUE)
+lapply(r_scripts, source)
+```
+
+```{r analysis-preferences}
+# Seed for random number generation
+set.seed(42)
+knitr::opts_chunk$set(cache.extra = knitr::rand_seed)
+```
+
+Marsh et al. (2004) demonstrated that all-pair UPI was not preferred due to its lack of substantial improvement, compared to matched-pair UPI, in latent interaction estimation but more more complex model specification. In our preliminary study, we investigated the performance of all-pair UPI on congeneric items, as Marsh et al. (2004) only examined parallel items without varying factor loadings and error variances.
+
+We found that while standardized bias (SB) of interaction estimates produced by all-pair UPI were negligible for parallel items, they were more remarkable for congeneric factor items (with varied factor loadings but consistent error variances) and fully congeneric items (with varied factor loadings and error variances). It was shown that SB increased as sample size increased when $\gamma_{xm} = 0.3$ for all-pair UPI, which was contradictory to the findings of other latent interaction methods in our main study. Moreover, the relative standard error (SE) biases for all-pair UPI unacceptable exceeded the threshold range of [-10% to 10%], which were consistently downward. The results indicated that all-pair UPI, though similar to matched-pair UPI, tended to underestimate standard error of interaction effects particularly under the conditions of low and medium reliability, which were consistent with Marsh et al. (2004). Considering the pattern of SB and relative SE bias, a likely explanation for the increased SB could be that, although raw biases (RB) were very small across all the conditions, the corresponding SE estimates systematically decreased as sample size increased and thus amplified the calculation of SB. 
+
+Another issue we found with all-pair UPI was that its coverage rates, especially for low and medium item reliability, did not reach to the threshold of 91%, which was unsatisfactory. The low coverage rates indicated that all-pair UPI, potentially due to downward biased SE estimates, could not capture the true effects of latent interaction when observed items had certain amount of measurement errors, while the performance improved substantially as the reliability level increased. 
+
+These results suggested that all-pair UPI did not perform as well as matched-pair UPI on congeneric items, particularly when the item reliability level was not high enough, in addition to model complexity. 
+
+```{r message=FALSE, warning=FALSE}
+sim <- readRDS(here("Paper", "Qual_1_Supplemental_Material",
+                    "All_Pair_UPI", "all_pair_upi_10082024.rds"))
+sim_results <- sim %>% 
+  dplyr::select(-c(REPLICATIONS:ERRORS)) %>%
+  mutate(across(where(is.numeric), round, 4),
+         cor_xm = ifelse(cor_xm == 0, "0", cor_xm))
+sim_null <- sim_results %>% filter(gamma_xm == 0)
+sim_alt <- sim_results %>% filter(gamma_xm != 0)
+```
+
+```{r null table, message=FALSE, warning=FALSE}
+# Helper function to bold the entire string including parentheses
+bold_if <- function(value, threshold, comparison = "greater") {
+  numeric_values <- as.numeric(unlist(regmatches(value, gregexpr("-?\\d+\\.\\d+", value))))
+  if (comparison == "greater") {
+    if (!is.na(numeric_values[1]) && abs(numeric_values[1]) > threshold) {
+      return(sprintf("\\textbf{%s}", value))
+    }
+  } else if (comparison == "less") {
+    if (!is.na(numeric_values[1]) && numeric_values[1] < threshold) {
+      return(sprintf("\\textbf{%s}", value))
+    }
+  }
+  return(value)
+}
+
+# Apply the changes to the data
+dat_null <- sim_null %>%
+  dplyr::select(N:rmse.est, -c(gamma_xm, power_lrt.est_usd)) %>%
+  arrange(N) %>%
+  relocate(raw_bias.est, .after = std_bias.est) %>%
+  relocate(rmse.est, .before = type1_lrt.est_usd) %>%
+  mutate(across(c(stdMed_rse_bias.se_std, coverage_std.est), ~ .x * 100)) %>%
+  mutate(across(-c(N, cor_xm, rel), ~ sprintf("%.2f", .x))) %>%
+  mutate(std_bias_combined = paste0(std_bias.est, " (", raw_bias.est, ")")) %>%
+  mutate(std_bias.est = sapply(std_bias_combined, function(x) bold_if(x, 0.40, "greater"))) %>%
+  select(-raw_bias.est, -std_bias_combined) %>%
+  mutate(stdMed_combined = paste0(stdMed_rse_bias.se_std, " (", outlier_se.se_std, ")")) %>%
+  mutate(stdMed_rse_bias.se_std = sapply(stdMed_combined, function(x) bold_if(x, 10, "greater"))) %>%
+  select(-outlier_se.se_std, -stdMed_combined) %>%
+  mutate(coverage_std.est = sapply(coverage_std.est, function(x) bold_if(x, 91, "less")))
+
+# Convert to wide format
+dat_null_wide <- dat_null %>%
+  pivot_wider(names_from = rel,  
+              values_from = c("std_bias.est", "stdMed_rse_bias.se_std", 
+                              "coverage_std.est", "rmse.est", "type1_lrt.est_usd"), 
+              names_prefix = "rel_") %>%
+  mutate(N = ifelse(cor_xm != 0, " ", N))
+names(dat_null_wide) <- c("$\\textit{N}$", "$Corr(\\xi_{x}, \\xi_{m})$", paste(rep(c("$\\rho = .70$", "$\\rho = .80$", "$\\rho = .90$"), 5)))
+
+# Table
+null_table <- apa_table(dat_null_wide,
+                        escape = F,
+                        caption = "Evaluation Criteria of Zero Latent Interaction Effect ($\\gamma_{xm} = 0$) for All-Pair UPI Across 2,000 Replications.",
+                        align = c(rep("c", ncol(dat_null_wide))),
+                        col_spanners = list(`Bias` = c(3, 5), 
+                                            `Relative Standard Error Bias` = c(6, 8),
+                                            `Coverage Rate` = c(9, 11), 
+                                            `RMSE` = c(12, 14),
+                                            `Type I Error Rate` = c(15, 17)),
+                        landscape = TRUE,
+                        font_size = "tiny",
+                        note = "$\\textit{N}$ = sample size; $Corr(\\xi_{x}, \\xi_{m})$ = correlation between $\\xi_{x}$ and $\\xi_{m}$; $\\rho$ = reliability level; Bias = standardized bias of latent interaction effect (with raw bias shown in paratheses); Relative standard error bias = relative standard error bias of estimated standard errors (with outlier proportions of standard errors shown in parentheses); Coverage rate = coverage rate of 95$\\%$ confidence interval (CI) of latent interaction effect; RMSE = root mean square error of latent interaction effect; Type I error rate = empirical error rate of falsely rejecting the null hypothesis of zero latent interaction effect. All numerical values are rounded to two decimal places for consistency. Note that values close to zero are displayed as 0.00, with negative signs maintained to indicate the direction of bias. Besides, values exceeding the recommended threshold (0.40) are bolded.")
+
+null_table
+```
+
+```{r alt table, message=FALSE, warning=FALSE}
+# Helper function to bold the entire string including parentheses
+bold_if <- function(value, threshold, comparison = "greater") {
+  numeric_values <- as.numeric(unlist(regmatches(value, gregexpr("-?\\d+\\.\\d+", value))))
+  if (comparison == "greater") {
+    if (!is.na(numeric_values[1]) && abs(numeric_values[1]) > threshold) {
+      return(sprintf("\\textbf{%s}", value))
+    }
+  } else if (comparison == "less") {
+    if (!is.na(numeric_values[1]) && numeric_values[1] < threshold) {
+      return(sprintf("\\textbf{%s}", value))
+    }
+  }
+  return(value)
+}
+
+# Apply the changes to the data
+dat_alt <- sim_alt %>%
+  dplyr::select(N:rmse.est, -c(gamma_xm, type1_lrt.est_usd)) %>%
+  arrange(N) %>%
+  relocate(raw_bias.est, .after = std_bias.est) %>%
+  relocate(rmse.est, .before = power_lrt.est_usd) %>%
+  mutate(across(c(stdMed_rse_bias.se_std, coverage_std.est), ~ .x * 100)) %>%
+  mutate(across(-c(N, cor_xm, rel), ~ sprintf("%.2f", .x))) %>%
+  mutate(std_bias_combined = paste0(std_bias.est, " (", raw_bias.est, ")")) %>%
+  mutate(std_bias.est = sapply(std_bias_combined, function(x) bold_if(x, 0.40, "greater"))) %>%
+  select(-raw_bias.est, -std_bias_combined) %>%
+  mutate(stdMed_combined = paste0(stdMed_rse_bias.se_std, " (", outlier_se.se_std, ")")) %>%
+  mutate(stdMed_rse_bias.se_std = sapply(stdMed_combined, function(x) bold_if(x, 10, "greater"))) %>%
+  select(-outlier_se.se_std, -stdMed_combined) %>%
+  mutate(coverage_std.est = sapply(coverage_std.est, function(x) bold_if(x, 91, "less")))
+
+# Convert to wide format
+dat_alt_wide <- dat_alt %>%
+  pivot_wider(names_from = rel,  
+              values_from = c("std_bias.est", "stdMed_rse_bias.se_std", 
+                              "coverage_std.est", "rmse.est", "power_lrt.est_usd"), 
+              names_prefix = "rel_") %>%
+  mutate(N = ifelse(cor_xm != 0, " ", N))
+names(dat_alt_wide) <- c("$\\textit{N}$", "$Corr(\\xi_{x}, \\xi_{m})$", paste(rep(c("$\\rho = .70$", "$\\rho = .80$", "$\\rho = .90$"), 5)))
+
+# Table
+alt_table <- apa_table(dat_alt_wide,
+                        escape = F,
+                        caption = "Evaluation Criteria of Non-Zero Latent Interaction Effect ($\\gamma_{xm} = 0$) for All-Pair UPI Across 2,000 Replications.",
+                        align = c(rep("c", ncol(dat_alt_wide))),
+                        col_spanners = list(`Bias` = c(3, 5), 
+                                            `Relative Standard Error Bias` = c(6, 8),
+                                            `Coverage Rate` = c(9, 11), 
+                                            `RMSE` = c(12, 14),
+                                            `Statistical Power` = c(15, 17)),
+                        landscape = TRUE,
+                        font_size = "tiny",
+                        note = "$\\textit{N}$ = sample size; $Corr(\\xi_{x}, \\xi_{m})$ = correlation between $\\xi_{x}$ and $\\xi_{m}$; $\\rho$ = reliability level; Bias = standardized bias of latent interaction effect (with raw bias shown in paratheses); Relative standard error bias = relative standard error bias of estimated standard errors (with outlier proportions of standard errors shown in parentheses); Coverage rate = coverage rate of 95$\\%$ confidence interval (CI) of latent interaction effect; RMSE = root mean square error of latent interaction effect; Statistical power = rate of correctly rejecting the null hypothesis of zero latent interaction effect. All numerical values are rounded to two decimal places for consistency. Note that values close to zero are displayed as 0.00, with negative signs maintained to indicate the direction of bias. Besides, values exceeding the recommended threshold (0.40) are bolded.")
+
+alt_table
+```
