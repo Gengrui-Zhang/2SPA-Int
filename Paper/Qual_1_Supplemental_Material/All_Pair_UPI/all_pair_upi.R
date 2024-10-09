@@ -117,7 +117,6 @@ generate_dat <- function (condition, fixed_objects = NULL) {
 # ========================================= Data Analysis ========================================= #
 
 analyze_aupi <- function(condition, dat, fixed_objects = NULL) {
-  
   # Initialize a local warning counter for this replication
   local_warning_counter <- 0
   
@@ -264,18 +263,18 @@ warning_sum <- function(count) {
 
 # Evaluation Function
 evaluate_res <- function (condition, results, fixed_objects = NULL) {
-  
+
   # Population parameter
   pop_par <- condition$gamma_xm
   
   # Parameter estimates
-  est_std <- results[, grep(".est$", colnames(results))]
-  est_usd <- results[, grep(".est_usd$", colnames(results))]
-  se_std <- results[, grep(".se_std$", colnames(results))]
-  se_usd <- results[, grep(".se_usd$", colnames(results))]
-  lrtp_lower <- results[, grep(".lrtp_lower$", colnames(results))]
-  lrtp_upper <- results[, grep(".lrtp_upper$", colnames(results))]
-  warnings <- results[, grep(".warnings_count$", colnames(results))]
+  est_std <- results[grep("est$", colnames(results))]
+  est_usd <- results[grep("est_usd$", colnames(results))]
+  se_std <- results[grep("se_std$", colnames(results))]
+  se_usd <- results[grep("se_usd$", colnames(results))]
+  lrtp_lower <- results[grep("lrtp_lower$", colnames(results))]
+  lrtp_upper <- results[grep("lrtp_upper$", colnames(results))]
+  warnings <- results[grep("warnings_count$", colnames(results))]
   
   c(raw_bias = robust_bias(est_std,
                            se_std,
@@ -285,56 +284,20 @@ evaluate_res <- function (condition, results, fixed_objects = NULL) {
                            se_std,
                            pop_par,
                            type = "standardized"),
-    trim_bias = robust_bias(est_std,
-                            se_std,
-                            pop_par,
-                            trim = 0.2,
-                            type = "trim"), # 20% trimmed mean
-    stdMed_bias = robust_bias(est_std,
-                              se_std,
-                              pop_par,
-                              type = "median"),
-    raw_rse_bias = rse_bias(est_std,
-                            se_std,
-                            type = "raw"),
     stdMed_rse_bias = rse_bias(est_std,
                                se_std,
                                type = "median"),
-    trim_rse_bias = rse_bias(est_std,
-                             se_std,
-                             trim = 0.2,
-                             type = "trim"),
     outlier_se = outlier_se(se_std),
-    coverage_usd = ci_stats(est_usd, 
-                            se_usd,
-                            pop_par, 
-                            "Coverage"),
     coverage_std = ci_stats(est_std, 
                             se_std,
                             pop_par, 
                             "Coverage"),
-    type1_usd = ci_stats(est_usd, 
-                         se_usd,
-                         pop_par, 
-                         "TypeI"),
-    type1_std = ci_stats(est_std, 
-                         se_std,
-                         pop_par, 
-                         "TypeI"),
     type1_lrt = ci_stats(est_usd, 
                          se_usd,
                          pop_par, 
                          "Lrt_TypeI",
                          lrt_lo = lrtp_lower,
                          lrt_up = lrtp_upper),
-    power_usd = ci_stats(est_usd, 
-                         se_usd,
-                         pop_par, 
-                         "Power"),
-    power_std = ci_stats(est_std, 
-                         se_std,
-                         pop_par, 
-                         "Power"),
     power_lrt = ci_stats(est_usd, 
                          se_usd,
                          pop_par, 
