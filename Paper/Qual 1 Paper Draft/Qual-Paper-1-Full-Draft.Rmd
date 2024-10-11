@@ -29,7 +29,7 @@ notice            : c("@kleinMaximumLikelihoodEstimation2000a", "@mvffrw23")
 floatsintext      : no
 linenumbers       : yes
 draft             : no
-mask              : no
+mask              : true
 
 figurelist        : no
 tablelist         : no
