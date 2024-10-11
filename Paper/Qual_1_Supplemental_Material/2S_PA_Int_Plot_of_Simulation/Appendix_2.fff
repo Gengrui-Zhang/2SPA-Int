@@ -1,0 +1,32 @@
+\begin{figure*}[hbt]
+\ifnextchar[{\eatarg}{}
+[h]
+\centering
+\includegraphics[width=1.2\textwidth]{/Users/jimmy_z/R Projects/2SPA-Int/Paper/Qual_1_Supplemental_Material/2S_PA_Int_Plot_of_Simulation/sd_bias_plot.png}
+\caption{Standardized Bias in Latent Interaction Effect Estimates for Nonzero Effect}
+\caption*{\textit{Note. Points with different shapes represent values for the three latent interaction methods across all simulation conditions. Some values of MMR fall outside the y-axis limits and are not shown. The red dashed lines indicate the acceptable range of [-0.40, 0.40].}}
+\end{figure*}
+\begin{figure*}[hbt]
+\ifnextchar[{\eatarg}{}
+[h]
+\centering
+\includegraphics[width=1.2\textwidth]{/Users/jimmy_z/R Projects/2SPA-Int/Paper/Qual_1_Supplemental_Material/2S_PA_Int_Plot_of_Simulation/rse_bias_plot.png}
+\caption{Relative SE Bias in Latent Interaction Effect Estimates for Nonzero Effect}
+\caption*{\textit{Note. Points with different shapes represent values for the three latent interaction methods across all simulation conditions. The red dashed lines indicate the acceptable range of [-10\%, 10\%].}}
+\end{figure*}
+\begin{figure*}[hbt]
+\ifnextchar[{\eatarg}{}
+[h]
+\centering
+\includegraphics[width=1.2\textwidth]{/Users/jimmy_z/R Projects/2SPA-Int/Paper/Qual_1_Supplemental_Material/2S_PA_Int_Plot_of_Simulation/cov_plot.png}
+\caption{Coverage Rate of 95\%CI in Latent Interaction Effect Estimates for Nonzero Effect}
+\caption*{\textit{Note. Points with various shapes represent values of three latent interaction methods for all simulation conditions. The red dashed lines indicate the level of 95\%.}}
+\end{figure*}
+\begin{figure*}[hbt]
+\ifnextchar[{\eatarg}{}
+[h]
+\centering
+\includegraphics[width=1.2\textwidth]{/Users/jimmy_z/R Projects/2SPA-Int/Paper/Qual_1_Supplemental_Material/2S_PA_Int_Plot_of_Simulation/type1_plot.png}
+\caption{Empirical Type I Error Rates in Latent Interaction Effect Estimates for Zero Effect}
+\caption*{\textit{Note. Points with various shapes represent values of three latent interaction methods for all simulation conditions.}}
+\end{figure*}
