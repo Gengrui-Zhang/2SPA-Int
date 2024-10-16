@@ -3,14 +3,10 @@ title             : "Two-Stage Path Analysis with Interaction: An Alternative Me
 shorttitle        : "2S-PA-Int"
 
 author: 
-  - name          : "Hok Chio (Mark) Lai"
+  - name          : "Gengrui (Jimmy) Zhang"
     affiliation   : "1"
     corresponding : yes    # Define only one corresponding author
     address       : "3620 McClintock Ave, Los Angeles, CA 90089"
-    email         : "hokchiol@usc.edu"
-
-  - name          : "Gengrui (Jimmy) Zhang"
-    affiliation   : "1"
     email         : "gengruiz@usc.edu"
 
 affiliation:
@@ -843,9 +839,6 @@ rmse_table <- apa_table(
 rmse_table
 ```
 
-
-The changing patterns of standardized bias, relative standard error (SE) bias, coverage rate of 95% CI, and empirical type I error rate could be visualized from four plots, which were provided in the online supplemental materials. 
-
 ## Empirical Type I Error Rate and Statistical Power
 
 Empirical Type I error rates for zero interaction effects, calculated as the proportion of times the null hypothesis ($\gamma_{xm} = 0$) was incorrectly rejected, ranged from 0.02 to 0.06 across all methods. While differences between methods were modest, MMR (ranging from 0.04 to 0.06) consistently exceeded the critical value ($\alpha = 0.05$) in conditions with low and medium sample sizes. Among the latent interaction methods, RAPI (ranging from 0.02 to 0.06) and 2S-PA-Int (ranging from 0.03 to 0.06) also occasionally exceeded the critical threshold under similar conditions, whereas matched-pair UPI (ranging from 0.02 to 0.05) remained consistently below the threshold. The results indicated that matched-pair UPI was the most conservative in avoiding false positive cases, though 2S-PA-Int and RAPI also maintained acceptable performance. 
@@ -908,6 +901,8 @@ type1_power_table <- apa_table(
 
 type1_power_table
 ```
+
+The changing patterns of standardized bias, relative standard error (SE) bias, coverage rate of 95% CI, and empirical type I error rate could be visualized from four plots, which were provided in the online supplemental materials. 
 
 # Empirical Demonstration Using Real Data
 
