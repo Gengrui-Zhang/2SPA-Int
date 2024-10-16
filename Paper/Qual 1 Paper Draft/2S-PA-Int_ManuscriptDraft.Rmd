@@ -1,24 +1,40 @@
 ---
-title             : "Two-Stage Path Analysis with Interaction: An Alternative Method of Modeling Latent Interaction Effects"
+title             : "Two-Stage Path Analysis with Interaction: An Alternative for Modeling Latent Interaction Effects"
 shorttitle        : "2S-PA-Int"
 
 author: 
-  - name          : "Gengrui (Jimmy) Zhang"
-    affiliation   : "1"
-    corresponding : yes    # Define only one corresponding author
-    address       : "3620 McClintock Ave, Los Angeles, CA 90089"
-    email         : "gengruiz@usc.edu"
-
+  - name: "Mark H. C. Lai"
+    affiliation: "1"
+    corresponding: yes    # Define only one corresponding author
+    address: "Department of Psychology, University of Southern California, 3620 S McClintock Ave., Los Angeles, CA 90089-1061, United States"
+    email: "hokchiol@usc.edu"
+    # role:         # Contributorship roles (e.g., CRediT, https://casrai.org/credit/)
+    #   - Conceptualization
+    #   - Supervision
+    
+  - name: "Gengrui Zhang"
+    affiliation: "1"
+    # role:
+    #   - Writing -- original draft
+    
 affiliation:
-  - id            : "1"
-    institution   : "University of Southern California"
+  - id: "1"
+    institution: "\\protect{Department of Psychology, University of Southern California}"  # need protected text
+
+authornote: |
+
+  Mark H. C. Lai: \orcidlinkf{0000-0002-9196-7406}
+
+  Gengrui Zhang: \orcidlinkf{0000-0002-2062-6620}
+  
+  Simulation codes are openly available on the project's anonymous GitHub page (https://anonymous.4open.science/r/2S-PA-Int-Supplemental-AAAA). This research is based on work supported by the National Science Foundation under Grant No. 2141790. We have no conflicts of interest to disclose.
 
 abstract: |
-  Modeling interaction effects within the latent variable modeling framework has become increasingly popular in psychological research as it facilitates exploration of in-depth theory and complex data structure. Comprared to the extensitvely used regression-based approaches assuming error-free variables, latent variable approach is able to account for measurement error and produce estimates with less bias and more accurate standard errors. Through a simulation study, we evaluated and compared three product indicator methods based on structural equation modeling (SEM): Matched-pair Unconstrained Product Indicator (UPI), Reliability-Adjusted Product Indicator (RAPI), and a newly proposed model based on the two-stage path analysis (2S-PA) framework, namely 2S-PA-Int. Our results showed that 2S-PA-Int consistently yielded estimates of interaction effect with low standardized bias, acceptable relative standard error bias, adequate coverage rates, and reasonable root mean square errors. The performance of 2S-PA-Int was comparable to that of matched-pair UPI and RAPI, particularly under conditions of small sample size and low reliability. Given its promising statistical properties and straightforward model specification, 2S-PA-Int emerges as a viable alternative to existing latent interaction methods. Directions for future research on 2S-PA-Int are also discussed.
+  Modeling interaction effects within the latent variable modeling framework has become increasingly popular in psychological research as it facilitates the exploration of in-depth theory and complex data structure. Compared to the extensively used regression-based approaches assuming error-free variables, the latent variable approach is able to account for measurement error and produce estimates with less bias and more accurate standard errors. Through a simulation study, we evaluated and compared three product indicator methods based on structural equation modeling (SEM): Matched-pair Unconstrained Product Indicator (UPI), Reliability-Adjusted Product Indicator (RAPI), and a newly proposed model based on the two-stage path analysis (2S-PA) framework, namely 2S-PA-Int. Our results showed that 2S-PA-Int consistently yielded estimates of interaction effect with low standardized bias, acceptable relative standard error bias, adequate coverage rates, and reasonable root mean square errors. The performance of 2S-PA-Int was comparable to that of matched-pair UPI and RAPI, particularly under conditions of small sample size and low reliability. Given its promising statistical properties and straightforward model specification, 2S-PA-Int emerges as a viable alternative to existing latent interaction methods. Directions for future research on 2S-PA-Int are also discussed.
   
   <!-- https://tinyurl.com/ybremelq -->
   
-keywords          : "Latent variables, interaction effect, path Analysis, structural equation modeling"
+keywords          : "Latent variables, interaction effect, two-stage path analysis, structural equation modeling"
 
 bibliography      : "r-references.bib"
 notice            : c("@kleinMaximumLikelihoodEstimation2000a", "@mullis2023")
@@ -26,7 +42,7 @@ notice            : c("@kleinMaximumLikelihoodEstimation2000a", "@mullis2023")
 floatsintext      : no
 linenumbers       : yes
 draft             : no
-mask              : true
+mask              : no
 
 figurelist        : no
 tablelist         : no
@@ -34,7 +50,10 @@ footnotelist      : no
 
 classoption       : "man"
 csl               : "`r system.file('rmd', 'apa7.csl', package = 'papaja')`"
-output            : papaja::apa6_pdf
+output            : 
+  papaja::apa6_pdf:
+    includes:
+      in_header: "preamble.tex"
 ---
 
 ```{r setup, include = FALSE}
@@ -70,7 +89,7 @@ sim_null <- sim_results %>% filter(gamma_xm == 0)
 sim_alt <- sim_results %>% filter(gamma_xm != 0)
 ```
 
-Social science research increasingly focuses on intricate dynamics of complex phenomena, such as nonlinear and moderation effects, rather than merely simple bivariate relationship. This shift reflects the multifaceted nature of our real world, which seldom conforms to straightforward patterns [@cartePursuitModerationNine2003b; @mackinnon2008; @cunninghamModerationSportManagement2019a]. For instance, while earlier studies have established that exercise contributes to weight loss, there is a burgeoning interest in understanding and probing into the underlying mechanisms, such as optimal timing, specific target populations, and the contextual conditions that modulate the effectiveness of exercise in promoting weight loss. Investigations into moderation, or interaction effects, provide critical insights into these inquiries by examining how additional variables, or an ensemble of variables, shape the dynamics between primary variables of interest.
+Social science research increasingly focuses on intricate dynamics of complex phenomena, such as nonlinear and moderation effects, rather than merely simple bivariate relationship. This shift reflects the multifaceted nature of our real world, which seldom conforms to straightforward patterns [@cartePursuitModerationNine2003b; @mackinnon2008; @cunninghamModerationSportManagement2019a]. For instance, while earlier studies have established that exercise contributes to weight loss, there is a burgeoning interest in understanding and probing into the underlying mechanisms, such as optimal timing, specific target populations, and the contextual conditions, that modulate the effectiveness of exercise in promoting weight loss. Investigations into moderation, or interaction effects, provide critical insights into these inquiries by examining how additional variables shape the dynamics between primary variables of interest.
 
 A prevalent approach to modeling moderation is through regression analysis, specifically by incorporating an interaction term, $XZ$:
 \begin{equation}
@@ -78,9 +97,9 @@ Y = b_{0} + b_{1}X + b_{2}Z + b_{3}XZ + \epsilon,
 \end{equation}
 where $b_{0}$ is the intercept, $b_{1}$ and $b_{2}$ are the regression coefficients for $X$ and $Z$ respectively, $b_{3}$ is the coefficient for the interaction term $XZ$, and $\epsilon$ is the error term. To maintain consistency with the naming convention used by @marsh2004, we refer to main effects (i.e., non-interaction effects) as "first-order effects". Hence $X$ and $Z$ are first-order variables, and $b_{1}$ and $b_{2}$ are first-order effects in this case. 
 
-Classical regression model typically assumes that variables are measured without error, a premise that can lead to biased parameter estimates when measurement errors are present in empirical research [@bollen1989; @cohen2002; @carrollMeasurementErrorNonlinear2006]. This bias is particularly remarkable in the estimation of interaction effects, where measurement error can lead to inflated estimates [@andersonComparisonBiasMean1996]. To mitigate this issue, researchers use latent variables that are inferred and measured by a set of observed indicators within the structural equation modeling (SEM) framework, which can control and accommodate measurement errors in observed indicators [@bollenLatentVariablesPsychology2002a]. For example, depression is widely measured and assessed using the Center for Epidemiologic Studies Depression (CES-D) scale consisting of 20 items [@radloffCESDScaleSelfreport1977b]. An expanding body of research has demonstrated that SEM-based moderation models reliably provide more accurate representations of the relationships among latent constructs [@mueller1997; @steinmetzThreeApproachesEstimate2011a; @cham2012; @maslowsky2015]. 
+Classical regression model typically assumes that variables are measured without error, a premise that can lead to biased parameter estimates when measurement errors are present in empirical research [@bollen1989; @cohen2002; @carrollMeasurementErrorNonlinear2006]. This bias is particularly remarkable in the estimation of interaction effects, where measurement errors can lead to inflated estimates [@andersonComparisonBiasMean1996]. To mitigate this issue, researchers use latent variables that are inferred and measured by a set of observed indicators within the structural equation modeling (SEM) framework, which can control and accommodate measurement errors in observed indicators [@bollenLatentVariablesPsychology2002a]. For example, depression is widely measured and assessed using the Center for Epidemiologic Studies Depression (CES-D) scale consisting of 20 items [@radloffCESDScaleSelfreport1977b]. An expanding body of research has demonstrated that SEM-based moderation models reliably provide more accurate representations of the relationships among latent constructs [@mueller1997; @steinmetzThreeApproachesEstimate2011a; @cham2012; @maslowsky2015]. 
 
-The two-stage path analysis (2S-PA; Lai & Hsiao, 2022) method models paths or pathway among latent variables through the use of factor scores. Simulation studies have shown its ability to yield parameter estimates with reduced standard error bias, enhanced convergence rates, and improved management of Type I error, particularly in small sample contexts [@laiTwostagePathAnalysis2022a; @laiCorrectingUnreliabilityPartial2023]. Given its promising statistical property, simpler model specification, and easier implementation in widely used software, we extended the 2S-PA method to incorporate latent interaction estimation in this study, and named it 2S-PA-Int. We reviewed two widely used latent interaction models using the product indicator method: Unconstrained Product Indicator with Matched Pairs (Matched-Pair UPI; Marsh et al., 2004) and Reliability-Adjusted Product Indicator (RAPI; Hsiao et al., 2018). Then we conducted a Monte Carlo simulation study to compare their performance with 2S-PA-Int. To proceed, we first introduced a classical model of latent interaction, and then presented UPI, RAPI, and 2S-PA-Int with technical details.
+The two-stage path analysis (2S-PA; Lai & Hsiao, 2022) method models relations and pathways between latent variables through the use of factor scores. Simulation studies have shown its ability to yield parameter estimates with reduced standard error bias, enhanced convergence rates, and improved management of Type I error, particularly in small sample contexts [@laiTwostagePathAnalysis2022a; @laiCorrectingUnreliabilityPartial2023]. Given its promising statistical property, simpler model specification, and easier implementation in widely used software, we extended the 2S-PA method to incorporate latent interaction estimation in this study, and named it 2S-PA-Int. We reviewed two widely used latent interaction models using the product indicator method: Unconstrained Product Indicator with Matched Pairs (Matched-Pair UPI; Marsh et al., 2004) and Reliability-Adjusted Product Indicator (RAPI; Hsiao et al., 2018). Then we conducted a Monte Carlo simulation study to compare their performance with 2S-PA-Int. To proceed, we first introduced a classical model of latent interaction, and then presented UPI, RAPI, and 2S-PA-Int with technical details.
 
 ## A Classical Model of Latent Interaction
 
@@ -94,7 +113,7 @@ The measurement model for the first-order latent predictors, such as $\xi_{x}$, 
 \begin{equation}
 \mathbf{x} = \boldsymbol{\tau_{x}} + \boldsymbol{\lambda_{x}}\xi_{x} + \boldsymbol{\delta_{x}},
 \end{equation}
-wherein, for each indicator $i = 1, \ 2, \ ..., \ p_{x}$ associated with the latent predictor $\xi_{x}$, $\mathbf{x}$ denotes a $p_{x} \times 1$ vector of observed first-order indicators (i.e., the indicators of $\xi_{x}$). The term $\boldsymbol{\tau_{x}}$ represents a $p_{x} \times 1$ vector of constant intercepts, while $\boldsymbol{\lambda}_{x}$ is a $p_{x} \times 1$ vector of factor loadings, which capture the strength of the relationship between the latent variable $\xi_{x}$ and each of its indicators. The vector $\boldsymbol{\delta_{x}}$ represents the $p_{x} \times 1$ vector of measurement errors associated with these indicators. Each measurement error $\delta_{x_{i}}$ is normally distributed with a mean of zero and a variance of $\theta_{x_{i}}$. Under the assumption of local independence, which posits that the first-order indicators are uncorrelated with one another when they are indicators of the same latent variable, the variance-covariance matrix of all the indicators' measurement errors is a diagonal matrix, denoted as $\mathbf{\Theta_{\delta_{x}}} = \text{diag}(\theta_{x_{1}}, \theta_{x_{2}}, ..., \theta_{x_{p}})$. This measurement model, along with its associated parameters, is similarly applicable to the latent predictor $\xi_{m}$, ensuring consistency in the modeling of both latent variables.
+wherein, for each indicator $i = 1, \ 2, \ ..., \ p_{x}$ associated with the latent predictor $\xi_{x}$, $\mathbf{x}$ denotes a $p_{x} \times 1$ vector of observed first-order indicators (i.e., the indicators of $\xi_{x}$). The term $\boldsymbol{\tau_{x}}$ represents a $p_{x} \times 1$ vector of constant intercepts, while $\boldsymbol{\lambda}_{x}$ is a $p_{x} \times 1$ vector of factor loadings, which capture strength of the relationship between the latent variable $\xi_{x}$ and each of its indicators. The vector $\boldsymbol{\delta_{x}}$ represents the $p_{x} \times 1$ vector of measurement errors associated with these indicators. Each measurement error $\delta_{x_{i}}$ is normally distributed with a mean of zero and a variance of $\theta_{x_{i}}$. Under the assumption of local independence, which posits that the first-order indicators are uncorrelated with one another when they are indicators of the same latent variable, the variance-covariance matrix of all the indicators' measurement errors is a diagonal matrix, denoted as $\mathbf{\Theta_{\delta_{x}}} = \text{diag}(\theta_{x_{1}}, \theta_{x_{2}}, ..., \theta_{x_{p}})$. This measurement model, along with its associated parameters, is similarly applicable to the latent predictor $\xi_{m}$, ensuring consistency in the modeling of both latent variables.
 
 Kenny and Judd's original formulation of model omitted the intercept $\alpha$, a point subsequently addressed by @joreskog1996, who revised the model under a set of assumptions. The revised latent interaction model is grounded in three primary assumptions related to multivariate normal distribution and independence: (1) The measurement errors of first-order indicators, the first-order latent predictors, and the disturbance term in the structural model are multivariate normal, uncorrelated, and independent to each other (i.e., $Corr[\delta, \xi] = 0$; $Corr[\zeta, \xi] = 0$; $Corr[\delta, \zeta] = 0$, where $Corr$ denotes the correlation index); (2) All measurement errors are mutually independent and uncorrelated to each other (i.e., $Corr[\delta_{i}, \delta_{i'}] = 0$ for $i \neq i'$); (3) The correlation between the first-order latent predictors, $Corr[\xi_{x}, \xi_{m}]$, is assumed to be non-zero and is freely estimated. This approach accounts for the fact that the product term $\xi_{x}\xi_{m}$ may exhibit a non-normal distribution even when $\xi_{x}$ and $\xi_{m}$ are themselves normally distributed with means of 0 [@joreskog1996].
 
@@ -234,7 +253,7 @@ Regarding the matched-pair UPI, the indicators are matched to create PIs:
 
 This alternative formulation leads to a significantly reduced number of PIs due to its simplicity. @marsh2004 argued that the matched-pair UPI is preferable based on two key criteria: (1) It leverages all available information by utilizing every first-order indicator, and (2) It avoids redundancy by ensuring that no first-order indicator is used more than once. Consequently, the matched-pair UPI method is recommended for its simplicity and effectiveness. Moreover, @marsh2004 demonstrated that the matched-pair UPI approach performs comparably to the all-pair model, exhibiting low bias and robustness to non-normal data. However, the matched-pair model is generally favored due to its greater simplicity and efficiency.
 
-Since the mean of $\xi_{x}\xi_{m}$ may not equal to 0 even though $\xi_{x}$ and $\xi_{m}$ are assumed to have 0 means, @marsh2004 included a mean structure in their UPI model: $\mathbf{\kappa} = (0,\ 0,\ Cov[\xi_{x}, \xi_{m}])^T$, where $\mathbf{\kappa}$ should be the means of the three latent variables (see Algina & Boulder [2001] for more details). This adjustment ensures that the model accurately reflects the statistical relations between the first-order latent variables and their interaction term. @linStructuralEquationModels2010b further simplified the model by proposing a Double Mean Centering (DMC) strategy, wherein PIs composed of paired mean-centered first-order indicators are mean-centered again (e.g., $x_{i}m_{i} - \overline{x_{i}m_{i}}$). DMC eliminates the need for including a mean structure in the UPI model and has been shown to perform well in parameter estimation, even when the normality assumption is violated. Consequently, we employed the UPI method with DMC in this study.
+Since the mean of $\xi_{x}\xi_{m}$ may not equal to 0 even though $\xi_{x}$ and $\xi_{m}$ are assumed to have 0 means, @marsh2004 included a mean structure in their UPI model: $\mathbf{\kappa} = (0,\ 0,\ Cov[\xi_{x}, \xi_{m}])^T$, where $\mathbf{\kappa}$ represents the means of the three latent variables (see Algina & Boulder [2001] for more details). This adjustment ensures that the model accurately reflects the statistical relations between the first-order latent variables and their interaction term. @linStructuralEquationModels2010b further simplified the model by proposing a Double Mean Centering (DMC) strategy, wherein PIs composed of paired mean-centered first-order indicators are mean-centered again (e.g., $x_{i}m_{i} - \overline{x_{i}m_{i}}$). DMC eliminates the need for including a mean structure in the UPI model and has been shown to perform well in parameter estimation, even when the normality assumption is violated. Consequently, we employed the UPI method with DMC in this study.
 
 Although UPI with DMC has simpler model specification and better performance of parameter estimation compared to the classical model, an arbitrariness-complexity dilemma between the all-pair and the matched-pair methods remains unresolved [@foldnesChoiceProductIndicators2014]. Consider a scenario involving two complex psychological constructs as latent predictors, each requiring more than 10 indicators to adequately capture the theoretical constructs. The all-pair UPI method could result in a latent interaction term indicated by hundreds of PIs. While having a large number of items can enhance the representation of latent constructs and theoretically increase the statistical power for detecting subtle effects, it also tends to create a cumbersome model. This complexity can negatively affect interpretability, escalate computational demands, and lead to overfitting. On the other hand, the matched-pair UPI strategy simplifies the model by reducing the number of necessary PIs but introduces the challenge of PI selection, particularly when researchers must handle unbalanced numbers of first-order indicators. For unbalanced indicators, researchers must decide how to properly form PIs, as multiple solutions exist. They might aggregate several observed indicators into fewer parcels [@jackman2011] or prioritize items with higher reliability for PI formation [@wu2013]. However, there is no consensus on the optimal strategy for forming matched pairs. The considerable arbitrariness across different approaches introduces uncertainty in selecting the best strategy and complicates the decision-making process in model specification. To address this issue, @wu2013 investigated two solutions in which researchers could form PIs by using highly reliable first-order indicators (i.e., items with higher factor loadings) while ignoring those with low reliability, or by matching parcels of the larger group of first-order indicators with indicators of the smaller group. They recommended to form PIs in accordance with the order of item reliability, emphasizing the importance of leveraging the most reliable indicators to enhance model performance.
 
@@ -351,7 +370,7 @@ The methodological literature on latent interaction models exhibited a range of 
 
 As for the correlation between first-order latent predictors, we followed the study design in @hsiao2021 and pre-specified three population correlations $Corr[{\xi_{x},\xi_{m}}]$ (0, 0.3, 0.6) as zero to large correlation. Given that the variances of $y$ (i.e., $\sigma_{y}^2$), $\sigma_{\xi_{x}}^2$, and $\sigma_{\xi_{x}}^2$ were all set to 1, the error variance of $y$ (i.e., $\psi$) could be computed as $1 - R^2$ in which $R^2 = \gamma_{x}^2 + \gamma_{m}^2 + 2\gamma_{x}\gamma_{m}Corr[{\xi_{x},\xi_{m}}] + \gamma_{xm}^2(1 + Corr[{\xi_{x},\xi_{m}}]^2)$. For instance, $\psi = 1 - (0.3^2 + 0.3^2 + 2\times0.3\times0.3\times0 + 0.3^2\times(1 + 0)^2) = 0.73$ for $Corr[{\xi_{x},\xi_{m}}] = 0$. Similarly, $\psi$ = 0.668 and 0.590 for $Corr[{\xi_{x},\xi_{m}}]$ = 0.3 and 0.6, respectively.
 
-In summary, our study implemented a $3 \times 3 \times 3 \times 2$ factorial design, accommodating variations across three sample sizes, three levels of correlation between first-order latent predictors, three levels of reliability, and two interaction effects (zero and non-zero). The simulation study was structured and performed using the R package `simDesign` [@simdesign]. The R code for the simulation script can be found in the online supplemental materials on an anonymous Github repository: https://anonymous.4open.science/r/2S-PA-Int-Supplemental-AAAA.
+In summary, our study implemented a $3 \times 3 \times 3 \times 2$ factorial design, accommodating variations across three sample sizes, three levels of correlation between first-order latent predictors, three levels of reliability, and two interaction effects (zero and non-zero). The simulation study was structured and performed using the R package `simDesign` [@simdesign]. The R code of the simulation script could be found in the online supplemental materials on an anonymous Github repository: https://anonymous.4open.science/r/2S-PA-Int-Supplemental-AAAA.
 
 ## Evaluation Criteria
 
