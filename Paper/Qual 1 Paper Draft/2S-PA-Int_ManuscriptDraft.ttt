@@ -266,7 +266,7 @@ $\textit{N}$ & \multicolumn{1}{c}{$Corr(\xi_{x}, \xi_{m})$} & \multicolumn{1}{c}
 \begin{lltable}
 
 \begin{TableNotes}[para]
-\normalsize{\textit{Note.} $\textit{N}$ = 4,900. Matched-Pair UPI = matched-pair product unconstrained indicator; RAPI = reliability-adjusted product indicator; 2S-PA-Int = two-stage path analysis with interaction. $\hat{\beta}_{IM}$ and $\hat{\beta}_{EM}$ denoted the first-order effect of IM and EM on reading performance scores, and $\hat{\beta}_{IM \times EM}$ was their latent interaction effect. SE represented the standard error of measurement and $\textit{p}$ denoted the significance value. The results showed significant first-order and latent interaction effects using all three methods.}
+\normalsize{\textit{Note.} $\textit{N}$ = 1,136. Matched-Pair UPI = matched-pair product unconstrained indicator; RAPI = reliability-adjusted product indicator; 2S-PA-Int = two-stage path analysis with interaction. $\hat{\beta}_{IM}$ and $\hat{\beta}_{EM}$ denoted the first-order effect of IM and EM on reading performance scores, and $\hat{\beta}_{IM \times EM}$ was their latent interaction effect. SE represented the standard error of measurement and $\textit{p}$ denoted the significance value. The results showed significant first-order and latent interaction effects using all three methods.}
 \end{TableNotes}
 
 \begin{longtable}{cccccccccc}\noalign{\getlongtablewidth\global\LTcapwidth=\longtablewidth}
